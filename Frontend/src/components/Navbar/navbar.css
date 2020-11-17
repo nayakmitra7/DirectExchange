@@ -1,0 +1,25 @@
+.containerBody{
+    margin-top: 1%; 
+    margin-left: 25%;
+    margin-right: 5%;
+    margin-bottom: 3%; 
+}
+.cardBody{
+    width: 60%;
+}
+.rowPadding{
+    padding-top: 1%;
+    padding-bottom: 1%;
+}
+.cardImg{
+    height: 25vw;
+    object-fit: cover;
+}
+.buttonPlacement {
+    float: right;
+     margin-top:5%;
+     margin-bottom: 5%;
+}
+.textAlignJustify{
+    text-align: justify;
+}
