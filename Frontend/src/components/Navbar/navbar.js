@@ -25,7 +25,7 @@ class NavigationBar extends Component {
                             <NavDropdown.Item href="/">Log Out</NavDropdown.Item>
 
                         </NavDropdown>
-                        <Nav.Link href="">Post an offer</Nav.Link>
+                        <Nav.Link href="/postOffer">Post an offer</Nav.Link>
                         <Nav.Link href="">Prevailing Rates</Nav.Link>
                         <Nav.Link href="">Browse and Filter</Nav.Link>
 
