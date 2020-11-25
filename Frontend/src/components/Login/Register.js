@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import firebase from "firebase";
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
 import VerifyEmail from "./VerifyEmail"
+import Navbar from '../Navbar/navbarLanding';
 
 firebase.initializeApp({
     apiKey: "AIzaSyC2C8BbrJZNiEJGjwba48SFNf0fLy5syaA",
@@ -32,7 +33,10 @@ class Register extends Component {
         this.setState({ emailVerified: status });
     }
     render() {
-        return (<div>
+        return (
+        
+        <div>
+            <Navbar></Navbar>
             {this.state.isSignedIn && !this.state.emailVerified ? (
                 <div>
                     <button
