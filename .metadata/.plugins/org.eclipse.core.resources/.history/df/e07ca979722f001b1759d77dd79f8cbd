@@ -1,0 +1,9 @@
+spring.datasource.url=jdbc:mysql://cmpe275db.cmr5xn359zyp.us-east-2.rds.amazonaws.com:3306/lab2
+spring.datasource.username=admin
+spring.datasource.password=admin#123
+spring.jpa.show-sql=true
+spring.jpa.database-platform=org.hibernate.dialect.MySQL5Dialect
+server.port=5000
+spring.jpa.properties.max_allowed_packet=2000
+spring.jpa.hibernate.ddl-auto=update
+spring.main.lazy-initialization=true
