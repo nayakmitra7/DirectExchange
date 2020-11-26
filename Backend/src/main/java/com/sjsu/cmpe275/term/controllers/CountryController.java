@@ -32,11 +32,11 @@ public class CountryController {
 	public ResponseEntity<List<CountryDto>> getSponsor() {
 		System.out.println("here in country api");
 		List<Country> allCountries = countryServiceImpl.getAllCountry();
-		List<CountryDto> dtos = allCountries
+		List<CountryDto> countryDtos = allCountries
 				  .stream()
-				  .map(user -> objectMapper.convertValue(user, CountryDto.class))
+				  .map(country -> objectMapper.convertValue(country, CountryDto.class))
 				  .collect(Collectors.toList());
-		return new ResponseEntity<List<CountryDto>>(dtos, HttpStatus.OK);
+		return new ResponseEntity<List<CountryDto>>(countryDtos, HttpStatus.OK);
 	}
 
 	

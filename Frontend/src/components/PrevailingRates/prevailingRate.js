@@ -56,9 +56,9 @@ export default class PrevailingRate extends Component {
       <div>
         <Navbar></Navbar>
         <Container>
-          <Card className="card">
+          <Card className="card-prevailing-rates">
             <Card.Header
-              className="card-header"
+              className="card-header-prevailing-rates"
               style={{ textAlign: "center" }}
             >
               <h2>Currency Exchange Rates</h2>

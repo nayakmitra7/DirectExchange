@@ -11,11 +11,6 @@ public class GenericException extends RuntimeException {
 		this.errorResponseDTO = errorResponseDTO;
 	}
 
-	public GenericException(String reason) {
-		this.errorResponseDTO = new ErrorResponseDTO(400, HttpStatus.BAD_REQUEST, reason);
-//		super(reason);
-	}
-
 	public GenericException() {
 		super();
 	}

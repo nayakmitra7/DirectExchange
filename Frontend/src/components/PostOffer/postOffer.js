@@ -6,26 +6,27 @@ import Navbar from '../Navbar/navbar';
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import FormCheck from 'react-bootstrap/FormCheck'
-
+import axios from 'axios';
 import Card from 'react-bootstrap/Card'
 import { toast } from 'react-toastify';
 import './postOffer.css';
+import { address } from '../../js/helper/constant';
 
 class PostOffer extends Component {
     constructor() {
         super();
         this.state = {
             hasMetRequirement: true,
-            sourceCountry:'',
-            destinationCountry:'',
+            sourceCountry: '',
+            destinationCountry: '',
             sourceCurrency: '',
-            destinationCurrency:'',
+            destinationCurrency: '',
             todayDate: new Date().toISOString().split("T")[0],
             counterOfferFlag: true,
             splitOfferFlag: true,
-            exchangeRate:'',
-            expirationDate:'',
-            countries:[{Country:"USA",Currency:"Dollar",ExchangeRate:"1"},{Country:"India",Currency:"Rupees",ExchangeRate:"70"},{Country:"Japan",Currency:"Yen",ExchangeRate:"100"}]
+            exchangeRate: '',
+            expirationDate: '',
+            countries: [{ Country: "USA", Currency: "Dollar", ExchangeRate: "1" }, { Country: "India", Currency: "Rupees", ExchangeRate: "70" }, { Country: "Japan", Currency: "Yen", ExchangeRate: "100" }]
         }
         this.sourceCurrencyPopulate = this.sourceCurrencyPopulate.bind(this);
         this.destinationCurrencyPopulate = this.destinationCurrencyPopulate.bind(this);
@@ -34,51 +35,66 @@ class PostOffer extends Component {
         this.toggleCounter = this.toggleCounter.bind(this);
         this.toggleSplit = this.toggleSplit.bind(this);
         this.setDate = this.setDate.bind(this);
-
+        this.postOffer = this.postOffer.bind(this);
     }
     componentDidMount() {
         if (!this.state.hasMetRequirement) {
-            toast.error("Please enroll atleast 2 bank accounts to avail the service !", { position: 'top-center', autoClose:false });
+            toast.error("Please enroll atleast 2 bank accounts to avail the service !", { position: 'top-center', autoClose: false });
         }
     }
 
-    populateSourceCountries() {
+    populateSourceCountries = () => {
         const countryItem = [];
         this.state.countries.forEach(element => {
             countryItem.push(<option value={element.Currency}>{element.Country}</option>);
-        }); 
+        });
         return countryItem;
     }
-    populateDestinationCountries(value) {
+    populateDestinationCountries = (value) => {
         const countryItem = [];
         this.state.countries.forEach(element => {
-            if(element.Country != (value) ){
+            if (element.Country != (value)) {
                 countryItem.push(<option value={element.Currency}>{element.Country}</option>);
             }
-        }); 
+        });
         return countryItem;
     }
-    sourceCurrencyPopulate(event) {
+    sourceCurrencyPopulate = (event) => {
         var selectedIndex = event.target.options.selectedIndex;
         this.setState({ sourceCurrency: event.target.value });
         this.setState({ sourceCountry: event.target.options[selectedIndex].text });
     }
-    destinationCurrencyPopulate(event) {
+    destinationCurrencyPopulate = (event) => {
         var selectedIndex = event.target.options.selectedIndex;
         this.setState({ destinationCurrency: event.target.value });
         this.setState({ destinationCountry: event.target.options[selectedIndex].text });
-        this.setState({exchangeRate:29});
+        this.setState({ exchangeRate: 29 });
     }
-    toggleCounter() {
+    toggleCounter = () => {
         this.setState(prevState => ({ counterOfferFlag: !prevState.counterOfferFlag }))
     }
-    toggleSplit() {
+    toggleSplit = () => {
         this.setState(prevState => ({ splitOfferFlag: !prevState.splitOfferFlag }))
     }
-    setDate(event){
-        console.log(event.target.value);
-        this.setState({expirationDate:event.target.value});
-        
+    setDate = (event) => {
+        this.setState({ expirationDate: event.target.value });
+
+    }
+    postOffer = (event) => {
+        event.preventDefault();
+        let amountInUSD = this.state.amount / 2;
+        let offer = { "sourceCountry": this.state.sourceCountry, "sourceCurrency": this.state.sourceCurrency, "amount": this.state.amount, "amountInUSD": amountInUSD, "destinationCountry": this.state.destinationCountry, "destinationCurrency": this.state.destinationCurrency, "counterOfferAllowed": this.state.counterOfferFlag, "splitOfferAllowed": this.state.splitOfferFlag, "expirationDate": this.state.expirationDate }
+        console.log(offer);
+        axios.post(address + '/offer', offer).then((response) => {
+            if (response.status == 200) {
+                toast.success(response.data.message);
+                setTimeout(() => {
+                    window.location.reload();
+                }, 3000);
+            }
+        }).catch(error => {
+            toast.error(error.response.data.error);
+        });
     }
     render() {
         return (
@@ -87,12 +103,12 @@ class PostOffer extends Component {
                 <Container>
                     <Row>
                         <Col >
-                            <Card className="card">
-                                <Card.Header className="card-header" style={{textAlign:'center'}}><h2>Post Offer</h2></Card.Header>
-                                
+                            <Card className="card-post-offer">
+                                <Card.Header className="card-header-post-offer" style={{ textAlign: 'center' }}><h2>Post Offer</h2></Card.Header>
+
                                 <Row>
-                                    <Col className="margin-left-right-5">
-                                        <Form>
+                                    <Col className="margin-left-right-5-post-offer">
+                                        <Form >
 
                                             <Row>
                                                 <Col>
@@ -115,7 +131,7 @@ class PostOffer extends Component {
                                                 <Col>
                                                     <Form.Group >
                                                         <Form.Label>Amount to Remit</Form.Label>
-                                                        <Form.Control type="number" required/>
+                                                        <Form.Control type="number" required onChange={(event) => this.setState({ amount: event.target.valueAsNumber })} />
                                                         <Form.Text className="text-muted">In source currency</Form.Text>
                                                     </Form.Group>
                                                 </Col>
@@ -125,7 +141,7 @@ class PostOffer extends Component {
                                                     <Form.Group >
                                                         <Form.Label>Destination Country</Form.Label>
                                                         <Form.Control as="select" onChange={this.destinationCurrencyPopulate} required disabled={this.state.sourceCurrency.toString().length == 0} required>
-                                                        <option></option>
+                                                            <option></option>
                                                             {this.populateDestinationCountries(this.state.sourceCountry)}
                                                         </Form.Control>
                                                     </Form.Group>
@@ -151,14 +167,14 @@ class PostOffer extends Component {
                                                         <Form.Label>Expiration Date</Form.Label>
                                                         <Row>
                                                             <Col>
-                                                                <input type="date" min={this.state.todayDate} onChange={this.setDate} required/>
+                                                                <input type="date" min={this.state.todayDate} onChange={this.setDate} required />
                                                             </Col>
                                                         </Row>
                                                     </Form.Group>
                                                 </Col>
-                                                
+
                                             </Row>
-                                            <Row className="margin-top">
+                                            <Row className="margin-top-post-offer">
                                                 <Col>
                                                     <Form.Group >
                                                         <FormCheck custom type="switch">
@@ -180,12 +196,12 @@ class PostOffer extends Component {
                                                     </Form.Group>
                                                 </Col>
                                             </Row>
-                                    <Card.Footer className="card-footer">
-                                            <Row>
-                                                <Col></Col>
-                                                <Col><Button variant="success" size="lg" type="submit" block disabled={!this.state.hasMetRequirement}>Post</Button></Col>
-                                                <Col></Col>
-                                            </Row>
+                                            <Card.Footer className="card-footer-post-offer">
+                                                <Row>
+                                                    <Col></Col>
+                                                    <Col><Button variant="success" size="lg" type="submit" block disabled={!this.state.hasMetRequirement} onClick={this.postOffer}>Post</Button></Col>
+                                                    <Col></Col>
+                                                </Row>
                                             </Card.Footer>
                                         </Form>
                                     </Col>
