@@ -26,7 +26,7 @@ class NavigationBar extends Component {
 
                         </NavDropdown>
                         <Nav.Link href="/postOffer">Post an offer</Nav.Link>
-                        <Nav.Link href="">Prevailing Rates</Nav.Link>
+                        <Nav.Link href="/prevailingRates">Prevailing Rates</Nav.Link>
                         <Nav.Link href="">Browse and Filter</Nav.Link>
 
 
