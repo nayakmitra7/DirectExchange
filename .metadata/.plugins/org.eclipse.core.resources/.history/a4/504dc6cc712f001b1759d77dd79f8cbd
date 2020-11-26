@@ -1,0 +1,5 @@
+package com.sjsu.cmpe275.termproject.controllers;
+
+public class UserController {
+
+}
