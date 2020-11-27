@@ -21,13 +21,16 @@ class PostOffer extends Component {
             destinationCountry: '',
             sourceCurrency: '',
             destinationCurrency: '',
+            symbol: '',
             todayDate: new Date().toISOString().split("T")[0],
             counterOfferFlag: true,
             splitOfferFlag: true,
             exchangeRate: '',
             expirationDate: '',
-            userId:2,
-            countries: [{ Country: "USA", Currency: "Dollar", ExchangeRate: "1" }, { Country: "India", Currency: "Rupees", ExchangeRate: "70" }, { Country: "Japan", Currency: "Yen", ExchangeRate: "100" }]
+            userId: 2,
+            exchangeRateList: [],
+            countries: [],
+            count: 0
         }
         this.sourceCurrencyPopulate = this.sourceCurrencyPopulate.bind(this);
         this.destinationCurrencyPopulate = this.destinationCurrencyPopulate.bind(this);
@@ -41,21 +44,25 @@ class PostOffer extends Component {
     componentDidMount() {
         if (!this.state.hasMetRequirement) {
             toast.error("Please enroll atleast 2 bank accounts to avail the service !", { position: 'top-center', autoClose: false });
+        } else {
+            axios.get(address + '/country').then((response) => {
+                this.setState({ countries: response.data });
+            });
         }
     }
 
     populateSourceCountries = () => {
         const countryItem = [];
         this.state.countries.forEach(element => {
-            countryItem.push(<option value={element.Currency}>{element.Country}</option>);
+            countryItem.push(<option value={element.currency}>{element.country}</option>);
         });
         return countryItem;
     }
     populateDestinationCountries = (value) => {
         const countryItem = [];
         this.state.countries.forEach(element => {
-            if (element.Country != (value)) {
-                countryItem.push(<option value={element.Currency}>{element.Country}</option>);
+            if (element.country != (value)) {
+                countryItem.push(<option value={element.currency}>{element.country}</option>);
             }
         });
         return countryItem;
@@ -64,12 +71,42 @@ class PostOffer extends Component {
         var selectedIndex = event.target.options.selectedIndex;
         this.setState({ sourceCurrency: event.target.value });
         this.setState({ sourceCountry: event.target.options[selectedIndex].text });
+        this.setState({ destinationCurrency: '' });
+        this.setState({ destinationCountry: '' });
+        this.state.countries.forEach(element => {
+            if (element.currency == event.target.value) {
+                axios.get(address + '/exchangerate/' + element.symbol).then((response) => {
+                    this.setState({ exchangeRateList: response.data })
+                })
+            }
+
+        });
+
     }
     destinationCurrencyPopulate = (event) => {
         var selectedIndex = event.target.options.selectedIndex;
         this.setState({ destinationCurrency: event.target.value });
         this.setState({ destinationCountry: event.target.options[selectedIndex].text });
-        this.setState({ exchangeRate: 29 });
+        switch (event.target.value) {
+
+            case 'Rupee':
+                this.setState({ exchangeRate: this.state.exchangeRateList.inrRate })
+                break;
+            case 'Yuan':
+                this.setState({ exchangeRate: this.state.exchangeRateList.rmbRate })
+                break;
+            case 'Dollar':
+                this.setState({ exchangeRate: this.state.exchangeRateList.usdRate })
+                break;
+            case 'Euro':
+                this.setState({ exchangeRate: this.state.exchangeRateList.eurRate })
+                break;
+            case 'Pound':
+                this.setState({ exchangeRate: this.state.exchangeRateList.gbpRate })
+                break;
+            default:
+                break;
+        }
     }
     toggleCounter = () => {
         this.setState(prevState => ({ counterOfferFlag: !prevState.counterOfferFlag }))
@@ -83,9 +120,8 @@ class PostOffer extends Component {
     }
     postOffer = (event) => {
         event.preventDefault();
-        let amountInUSD = this.state.amount / 2;
-        let offer = { "sourceCountry": this.state.sourceCountry, "sourceCurrency": this.state.sourceCurrency, "amount": this.state.amount, "amountInUSD": amountInUSD, "destinationCountry": this.state.destinationCountry, "destinationCurrency": this.state.destinationCurrency, "counterOfferAllowed": this.state.counterOfferFlag, "splitOfferAllowed": this.state.splitOfferFlag, "expirationDate": this.state.expirationDate, "userId":this.state.userId }
-        console.log(offer);
+        let amountInUSD = this.state.amount * this.state.exchangeRateList.usdRate;
+        let offer = { "sourceCountry": this.state.sourceCountry, "sourceCurrency": this.state.sourceCurrency, "amount": this.state.amount, "amountInUSD": amountInUSD, "destinationCountry": this.state.destinationCountry, "destinationCurrency": this.state.destinationCurrency, "counterOfferAllowed": this.state.counterOfferFlag, "splitOfferAllowed": this.state.splitOfferFlag, "expirationDate": this.state.expirationDate, "userId": this.state.userId }
         axios.post(address + '/offer', offer).then((response) => {
             if (response.status == 200) {
                 toast.success(response.data.message);
@@ -98,6 +134,7 @@ class PostOffer extends Component {
         });
     }
     render() {
+        let exchangeMessage = this.state.destinationCurrency ? '1 ' + this.state.sourceCurrency + ' = ' + this.state.exchangeRate + '  ' + this.state.destinationCurrency : '';
         return (
             <div>
                 <Navbar></Navbar>
@@ -141,7 +178,7 @@ class PostOffer extends Component {
                                                 <Col>
                                                     <Form.Group >
                                                         <Form.Label>Destination Country</Form.Label>
-                                                        <Form.Control as="select" onChange={this.destinationCurrencyPopulate} required disabled={this.state.sourceCurrency.toString().length == 0} required>
+                                                        <Form.Control as="select" onChange={this.destinationCurrencyPopulate} required disabled={this.state.sourceCurrency.toString().length == 0} value={this.state.destinationCurrency} required>
                                                             <option></option>
                                                             {this.populateDestinationCountries(this.state.sourceCountry)}
                                                         </Form.Control>
@@ -158,7 +195,8 @@ class PostOffer extends Component {
                                                 <Col>
                                                     <Form.Group >
                                                         <Form.Label>Exchange Rate</Form.Label>
-                                                        <Form.Control placeholder={this.state.exchangeRate} readOnly />
+
+                                                        <Form.Control placeholder={exchangeMessage} readOnly />
                                                     </Form.Group>
                                                 </Col>
                                             </Row>

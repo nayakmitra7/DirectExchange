@@ -29,7 +29,7 @@ public class CountryController {
 	
 	@GetMapping(value = "/country")
 	@ResponseBody
-	public ResponseEntity<List<CountryDto>> getSponsor() {
+	public ResponseEntity<List<CountryDto>> getAllCountry() {
 		List<Country> allCountries = countryServiceImpl.getAllCountry();
 		List<CountryDto> countryDtos = allCountries
 				  .stream()
