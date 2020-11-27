@@ -1,7 +1,11 @@
 package com.sjsu.cmpe275.term.service.offer;
 
 
+<<<<<<< HEAD
 import java.util.List;
+=======
+import java.util.Optional;
+>>>>>>> ff1737ccb8b9d6d979af0c343dcb1e29d636cec7
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,8 +26,14 @@ public class OfferServiceImpl implements OfferService {
 	}
 
 	@Override
+<<<<<<< HEAD
 	public List<Offer> getOffer() {
 		
 		return offerRepository.findAll();
+=======
+	public Offer getOfferById(Long offerId) {
+		// TODO Auto-generated method stub
+		return offerRepository.findById(offerId).orElse(null);
+>>>>>>> ff1737ccb8b9d6d979af0c343dcb1e29d636cec7
 	}
 }

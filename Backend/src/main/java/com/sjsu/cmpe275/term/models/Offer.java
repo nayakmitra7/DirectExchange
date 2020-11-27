@@ -43,11 +43,12 @@ public class Offer {
     private Boolean counterOfferAllowed;
 	@Column(name="splitOfferAllowed",nullable=false)
     private Boolean splitOfferAllowed;
-	
+	@Column(name="userId",nullable=false)
+    private Long userId;
 	
 	public Offer(String sourceCountry, String sourceCurrency, Double amount, Double amountInUSD,
 			String destinationCountry, String destinationCurrency, Date expirationDate, Boolean counterOfferAllowed,
-			Boolean splitOfferAllowed) {
+			Boolean splitOfferAllowed, Long userId) {
 		super();
 		this.sourceCountry = sourceCountry;
 		this.sourceCurrency = sourceCurrency;
@@ -58,6 +59,7 @@ public class Offer {
 		this.expirationDate = expirationDate;
 		this.counterOfferAllowed = counterOfferAllowed;
 		this.splitOfferAllowed = splitOfferAllowed;
+		this.userId = userId;
 	}
 
 
@@ -167,6 +169,16 @@ public class Offer {
 
 	public void setSplitOfferAllowed(Boolean splitOfferAllowed) {
 		this.splitOfferAllowed = splitOfferAllowed;
+	}
+
+
+	public Long getUserId() {
+		return userId;
+	}
+
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 
 
