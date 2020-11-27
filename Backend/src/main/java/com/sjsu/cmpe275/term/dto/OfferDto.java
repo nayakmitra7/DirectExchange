@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 public class OfferDto {
 	
-    private long id;
+    private Long id;
     private String sourceCountry;
     private String sourceCurrency;
     private Double amount;
@@ -29,7 +29,7 @@ public class OfferDto {
     private Date expirationDate;
     private Boolean counterOfferAllowed;
     private Boolean splitOfferAllowed;
-	
+    private Long userId;
 	
 	//List<CounterOffer> counterOffers;
 	public OfferDto() {
@@ -37,12 +37,12 @@ public class OfferDto {
 	}
 
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -106,17 +106,6 @@ public class OfferDto {
 		this.destinationCurrency = destinationCurrency;
 	}
 
-
-//	public Date getExpirationDate() {
-//		return expirationDate;
-//	}
-//
-//
-//	public void setExpirationDate(Date expirationDate) {
-//		this.expirationDate = expirationDate;
-//	}
-
-
 	public Boolean getCounterOfferAllowed() {
 		return counterOfferAllowed;
 	}
@@ -144,6 +133,16 @@ public class OfferDto {
 
 	public void setExpirationDate(Date expirationDate) {
 		this.expirationDate = expirationDate;
+	}
+
+
+	public Long getUserId() {
+		return userId;
+	}
+
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 
 	

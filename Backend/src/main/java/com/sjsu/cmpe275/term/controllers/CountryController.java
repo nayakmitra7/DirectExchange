@@ -30,7 +30,6 @@ public class CountryController {
 	@GetMapping(value = "/country")
 	@ResponseBody
 	public ResponseEntity<List<CountryDto>> getSponsor() {
-		System.out.println("here in country api");
 		List<Country> allCountries = countryServiceImpl.getAllCountry();
 		List<CountryDto> countryDtos = allCountries
 				  .stream()
