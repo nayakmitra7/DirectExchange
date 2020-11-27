@@ -26,6 +26,7 @@ class PostOffer extends Component {
             splitOfferFlag: true,
             exchangeRate: '',
             expirationDate: '',
+            userId:2,
             countries: [{ Country: "USA", Currency: "Dollar", ExchangeRate: "1" }, { Country: "India", Currency: "Rupees", ExchangeRate: "70" }, { Country: "Japan", Currency: "Yen", ExchangeRate: "100" }]
         }
         this.sourceCurrencyPopulate = this.sourceCurrencyPopulate.bind(this);
@@ -83,7 +84,7 @@ class PostOffer extends Component {
     postOffer = (event) => {
         event.preventDefault();
         let amountInUSD = this.state.amount / 2;
-        let offer = { "sourceCountry": this.state.sourceCountry, "sourceCurrency": this.state.sourceCurrency, "amount": this.state.amount, "amountInUSD": amountInUSD, "destinationCountry": this.state.destinationCountry, "destinationCurrency": this.state.destinationCurrency, "counterOfferAllowed": this.state.counterOfferFlag, "splitOfferAllowed": this.state.splitOfferFlag, "expirationDate": this.state.expirationDate }
+        let offer = { "sourceCountry": this.state.sourceCountry, "sourceCurrency": this.state.sourceCurrency, "amount": this.state.amount, "amountInUSD": amountInUSD, "destinationCountry": this.state.destinationCountry, "destinationCurrency": this.state.destinationCurrency, "counterOfferAllowed": this.state.counterOfferFlag, "splitOfferAllowed": this.state.splitOfferFlag, "expirationDate": this.state.expirationDate, "userId":this.state.userId }
         console.log(offer);
         axios.post(address + '/offer', offer).then((response) => {
             if (response.status == 200) {
