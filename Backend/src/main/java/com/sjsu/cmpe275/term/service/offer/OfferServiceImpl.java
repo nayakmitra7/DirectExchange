@@ -1,6 +1,8 @@
 package com.sjsu.cmpe275.term.service.offer;
 
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,5 +19,11 @@ public class OfferServiceImpl implements OfferService {
 	public Offer postOffer(Offer offer) {
 		// TODO Auto-generated method stub
 		return offerRepository.save(offer);
+	}
+
+	@Override
+	public List<Offer> getOffer() {
+		
+		return offerRepository.findAll();
 	}
 }
