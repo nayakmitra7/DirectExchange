@@ -1,7 +1,5 @@
 package com.sjsu.cmpe275.term.exceptions;
 
-import org.springframework.http.HttpStatus;
-
 import com.sjsu.cmpe275.term.dto.ErrorResponseDTO;
 
 public class GenericException extends RuntimeException {

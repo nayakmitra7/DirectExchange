@@ -1,7 +1,5 @@
 package com.sjsu.cmpe275.term.dto;
 
-
-
 public class CountryDto {
 
     private long id;
