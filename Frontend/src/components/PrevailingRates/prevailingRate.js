@@ -16,7 +16,7 @@ export default class PrevailingRate extends Component {
     };
   }
   async getUsersData() {
-    const res = await axios.get(`${address}/`);
+    const res = await axios.get(address + '/exchangerate/');
     console.log(res.data);
     this.setState({ users: res.data, loading: false });
   }
@@ -29,36 +29,36 @@ export default class PrevailingRate extends Component {
     const columns = [
       {
         Header: "Currency",
-        accessor: "id",
+        accessor: "currency",
       },
       {
         Header: "USD - US Dollar",
-        accessor: "name",
+        accessor: "usdRate",
       },
       {
         Header: "EUR - Euro",
-        accessor: "username",
+        accessor: "eurRate",
       },
       {
         Header: "INR - Indian Rupee",
-        accessor: "phone",
+        accessor: "inrRate",
       },
       {
         Header: "GBP - British Pound",
-        accessor: "email",
+        accessor: "gbpRate",
       },
       {
         Header: "RMB - Ren Min Bi",
-        accessor: "website",
+        accessor: "rmbRate",
       },
     ];
     return (
       <div>
         <Navbar></Navbar>
         <Container>
-          <Card className="card">
+          <Card className="card-prevailing-rates">
             <Card.Header
-              className="card-header"
+              className="card-header-prevailing-rates"
               style={{ textAlign: "center" }}
             >
               <h2>Currency Exchange Rates</h2>
