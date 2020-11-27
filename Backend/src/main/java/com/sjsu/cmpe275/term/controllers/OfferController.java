@@ -3,6 +3,7 @@ package com.sjsu.cmpe275.term.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -49,12 +50,16 @@ public class OfferController {
 
 	}
 	
-	@RequestMapping(value = "/offer", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/offer/{pagenumber}/{limit}/{sourcecountry}/{destinationcountry}/{sourcecurrency}/{destinationcurrency}/", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
-	public ResponseEntity<List<OfferDto>> getOffers() {
+	public ResponseEntity<List<OfferDto>> getOffers(@PathVariable("pagenumber") int pagenumber,@PathVariable("limit") int limit,
+			@PathVariable("sourcecountry") String sourcecountry,@PathVariable("destinationcountry") String destinationcountry,@PathVariable("sourcecurrency") String sourcecurrency,
+			@PathVariable("sourcecountry") String destinationcurrency
+			) {
 		try {
-			List<Offer> offers = offerService.getOffer();
-			List<OfferDto> offerdto=objectMapper.convertValue(offers, new TypeReference<List<OfferDto>>(){});
+			Page<Offer> offers = offerService.getOffer(pagenumber,limit,sourcecountry,destinationcountry,sourcecurrency,destinationcurrency);
+			List<Offer> content=offers.getContent();
+			List<OfferDto> offerdto=objectMapper.convertValue(content, new TypeReference<List<OfferDto>>(){});
 //			ResponseDTO responseDTO = new ResponseDTO(200, HttpStatus.OK, "Your offer has beeen succesfully posted!");
 			return new ResponseEntity<List<OfferDto>>(offerdto, HttpStatus.OK);
 		}catch(Exception ex){

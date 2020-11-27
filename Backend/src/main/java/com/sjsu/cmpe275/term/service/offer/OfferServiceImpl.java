@@ -1,11 +1,9 @@
 package com.sjsu.cmpe275.term.service.offer;
 
-
-
-import java.util.List;
-
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.sjsu.cmpe275.term.models.Offer;
@@ -19,11 +17,7 @@ public class OfferServiceImpl implements OfferService {
 
 	
 
-	@Override
-    public List<Offer> getOffer() {
-		
-		return offerRepository.findAll();
-	}
+	
 	@Override
 	public Offer getOfferById(Long offerId) {
 		// TODO Auto-generated method stub
@@ -34,4 +28,11 @@ public class OfferServiceImpl implements OfferService {
 		// TODO Auto-generated method stub
 		return offerRepository.save(offer);
 	}
+	@Override
+	public Page<Offer> getOffer(int pagenumber, int limit, String sourcecountry, String destinationcountry,
+			String sourcecurrency, String destinationcurrency) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 }

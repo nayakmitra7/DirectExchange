@@ -9,6 +9,9 @@ import "./browseoffer.css";
 import { address } from "../../js/helper/constant";
 import Select from "react-select";
 import ArrowRightAltSharpIcon from "@material-ui/icons/ArrowRightAltSharp";
+import Pagination from "@material-ui/lab/Pagination";
+import Typography from "@material-ui/core/Typography";
+
 const options = [
   { value: "chocolate", label: "Chocolate" },
   { value: "strawberry", label: "Strawberry" },
@@ -19,14 +22,26 @@ class BrowseOffer extends Component {
   state = {
     country: [],
     countryarr: [],
+    offers: [],
+    page: "1",
+    limit: "5",
+    count: "",
+    page: 1,
   };
-  componentDidMount() {
+  componentWillMount() {
     this.getCountries();
+    this.getOffers();
   }
 
-  //   async getProperties(){
-  //       const properties=  await axios.get(`${address}`)
-  //   }
+  async getOffers() {
+    const offers = await axios.get(`${address}/offer`);
+    this.setState({ offers: offers.data, count: offers.data.length }, () => {
+      this.setState({
+        pagecount: Math.ceil(this.state.count / this.state.limit),
+      });
+    });
+  }
+
   async getCountries() {
     const country = await axios.get(`${address}/country`);
     let countryarr = [];
@@ -35,26 +50,24 @@ class BrowseOffer extends Component {
     });
     this.setState({ countryarr });
   }
+  handlePageChange(pageNumber) {
+    console.log(`active page is ${pageNumber}`);
+    this.setState({ page: pageNumber });
+  }
   handleChange = (selectedOption) => {
     this.setState({ selectedOption });
-    // if (selectedOption.maximum) {
-    //   this.setState({
-    //     maxContingency: selectedOption.maximum,
-    //     minContingency: selectedOption.minimum,
-    //   });
-    // }
-    // let finalValue = this.state.finalValue;
-    // finalValue += selectedOption.contingency;
-    // this.setState({ finalValue });
 
     console.log(`Option selected:`, selectedOption);
+  };
+  handlePageChange = (event, value) => {
+    this.setState({ page: value });
   };
   render() {
     return (
       <div>
         <Navbar></Navbar>
         <Container>
-          <Card className="card">
+          <Card className="card mb-4">
             <Card.Header
               className="card-header"
               style={{ textAlign: "center" }}
@@ -110,39 +123,74 @@ class BrowseOffer extends Component {
               </div>
             </Card.Body>
           </Card>
-          <Card className="card">
-            <div className="d-flex justify-content-center p-2">
-              <h4>John Doe</h4>
+
+          {this.state.offers.length != 0
+            ? this.state.offers.map((offer) => (
+                <Card className="card">
+                  <div className="d-flex justify-content-center p-2">
+                    <h4>John Doe</h4>
+                  </div>
+                  <div className="d-flex justify-content-center p-3">
+                    <h5 className="mr-4">
+                      Source country:{" "}
+                      <span style={{ fontWeight: "bold" }}>
+                        {offer.sourceCountry}
+                      </span>
+                      <span style={{ color: "rgb(0,0,0,0.6)" }}>
+                        ({offer.sourceCurrency})
+                      </span>
+                    </h5>
+                    <ArrowRightAltSharpIcon />{" "}
+                    <h5 className="ml-4">
+                      Destination country:{" "}
+                      <span style={{ fontWeight: "bold" }}>
+                        {offer.destinationCountry}
+                      </span>
+                      <span style={{ color: "rgb(0,0,0,0.6)" }}>
+                        ({offer.destinationCurrency})
+                      </span>
+                    </h5>
+                  </div>
+                  <div className="p-3 d-flex justify-content-center">
+                    <div>
+                      <h5>
+                        {" "}
+                        Remit Amount: {offer.amount}{" "}
+                        <span style={{ color: "rgb(0,0,0,0.6)" }}>(USD)</span>
+                      </h5>
+                      {offer.splitOfferAllowed == true ? (
+                        <h5>
+                          Split offer{" "}
+                          <span style={{ color: "green" }}>allowed</span>
+                        </h5>
+                      ) : (
+                        ""
+                      )}
+                      {offer.counterOfferAllowed == true ? (
+                        <h5>
+                          <span style={{ color: "green" }}>Accepting </span>
+                          Counter Offers
+                        </h5>
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                  </div>
+                </Card>
+              ))
+            : ""}
+          <div className="center-page p-3 mt-2">
+            <Typography>Page: {this.state.page}</Typography>
+            <div className="d-flex justify-content-center mt-2">
+              <Pagination
+                count={this.state.pagecount}
+                page={this.state.page}
+                onChange={this.handlePageChange}
+                variant="outlined"
+                color="primary"
+              />
             </div>
-            <div className="d-flex justify-content-center p-3">
-              <h5 className="mr-4">
-                Source country: <span style={{ fontWeight: "bold" }}>USA</span>
-                <span style={{ color: "rgb(0,0,0,0.6)" }}>(USD)</span>
-              </h5>
-              <ArrowRightAltSharpIcon />{" "}
-              <h5 className="ml-4">
-                Destination country:{" "}
-                <span style={{ fontWeight: "bold" }}>India</span>
-                <span style={{ color: "rgb(0,0,0,0.6)" }}>(INR)</span>
-              </h5>
-            </div>
-            <div className="p-3 d-flex justify-content-center">
-              <div>
-                <h5>
-                  {" "}
-                  Remit Amount: 500{" "}
-                  <span style={{ color: "rgb(0,0,0,0.6)" }}>(USD)</span>
-                </h5>
-                <h5>
-                  Split offer <span style={{ color: "green" }}>allowed</span>
-                </h5>
-                <h5>
-                  <span style={{ color: "green" }}>Accepting </span>Counter
-                  Offers
-                </h5>
-              </div>
-            </div>
-          </Card>
+          </div>
         </Container>
       </div>
     );
