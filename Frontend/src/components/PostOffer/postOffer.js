@@ -27,7 +27,7 @@ class PostOffer extends Component {
             splitOfferFlag: true,
             exchangeRate: '',
             expirationDate: '',
-            userId: 2,
+            userId: 1,
             exchangeRateList: [],
             countries: [],
             count: 0
@@ -121,7 +121,8 @@ class PostOffer extends Component {
     postOffer = (event) => {
         event.preventDefault();
         let amountInUSD = this.state.amount * this.state.exchangeRateList.usdRate;
-        let offer = { "sourceCountry": this.state.sourceCountry, "sourceCurrency": this.state.sourceCurrency, "amount": this.state.amount, "amountInUSD": amountInUSD, "destinationCountry": this.state.destinationCountry, "destinationCurrency": this.state.destinationCurrency, "counterOfferAllowed": this.state.counterOfferFlag, "splitOfferAllowed": this.state.splitOfferFlag, "expirationDate": this.state.expirationDate, "userId": this.state.userId }
+        let amountInDes = this.state.amount * this.state.exchangeRate;
+        let offer = { "sourceCountry": this.state.sourceCountry, "sourceCurrency": this.state.sourceCurrency, "amountInSrc": this.state.amount, "amountInDes": amountInDes, "amountInUSD": amountInUSD, "destinationCountry": this.state.destinationCountry, "destinationCurrency": this.state.destinationCurrency, "counterOfferAllowed": this.state.counterOfferFlag, "splitOfferAllowed": this.state.splitOfferFlag, "expirationDate": this.state.expirationDate, "userId": this.state.userId }
         axios.post(address + '/offer', offer).then((response) => {
             if (response.status == 200) {
                 toast.success(response.data.message);

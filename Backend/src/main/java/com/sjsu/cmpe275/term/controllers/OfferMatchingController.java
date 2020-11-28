@@ -1,5 +1,7 @@
 package com.sjsu.cmpe275.term.controllers;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -41,45 +43,52 @@ public class OfferMatchingController {
 
 	@RequestMapping(value = "/offerMatching/single/{id}", method = RequestMethod.GET)
 	@ResponseBody
-	public ResponseEntity<OfferMatchingDTO> postOffer(@PathVariable Long id) {
+	public ResponseEntity<List<OfferMatchingDTO>> postOffer(@PathVariable Long id) {
 		try {
-			Offer offer = offerService.getOfferById(id);
-			OfferDto offerDto = objectMapper.convertValue(offer, OfferDto.class);
+			List<Long> offerIdList = new ArrayList<>(Arrays.asList((long) 4 ));
+			List<OfferMatchingDTO> offerMatchingDTOList = new ArrayList<>();
+			
+			for(Long i : offerIdList) {
+				Offer offer = offerService.getOfferById(i);
+				OfferDto offerDto = objectMapper.convertValue(offer, OfferDto.class);
 
-			Double min = offer.getAmountInUSD() - 0.1 * offer.getAmountInUSD();
-			Double max = offer.getAmountInUSD() + 0.1 * offer.getAmountInUSD();
-			Calendar cal = Calendar.getInstance();
-			cal.set(Calendar.HOUR_OF_DAY, 0);
-			cal.set(Calendar.MINUTE, 0);
-			cal.set(Calendar.SECOND, 0);
-			cal.set(Calendar.MILLISECOND, 0);
-			Date todayDate = cal.getTime();
+				Double min = offer.getAmountInUSD() - 0.1 * offer.getAmountInUSD();
+				Double max = offer.getAmountInUSD() + 0.1 * offer.getAmountInUSD();
+				Calendar cal = Calendar.getInstance();
+				cal.set(Calendar.HOUR_OF_DAY, 0);
+				cal.set(Calendar.MINUTE, 0);
+				cal.set(Calendar.SECOND, 0);
+				cal.set(Calendar.MILLISECOND, 0);
+				Date todayDate = cal.getTime();
 
-			List<Offer> matchedOffers = offerMatchingService.getSingleMatchesByID(offer.getId(), offer.getUserId(),
-					todayDate, min, max);
-			List<OfferDto> matchedOffersDtos = matchedOffers.stream()
-					.map(matchedOffer -> objectMapper.convertValue(matchedOffer, OfferDto.class))
-					.collect(Collectors.toList());
-			PriorityQueue<SortingHelperDTO> minHeap = new PriorityQueue<>((x, y) -> {
-				if (x.getDifference() < y.getDifference()) {
-					return -1;
-				} else if (x.getDifference() > y.getDifference()) {
-					return 1;
-				} else {
-					return 0;
+				List<Offer> matchedOffers = offerMatchingService.getSingleMatchesByID(offer.getId(), offer.getUserId(),
+						todayDate, min, max);
+				List<OfferDto> matchedOffersDtos = matchedOffers.stream()
+						.map(matchedOffer -> objectMapper.convertValue(matchedOffer, OfferDto.class))
+						.collect(Collectors.toList());
+				PriorityQueue<SortingHelperDTO> minHeap = new PriorityQueue<>((x, y) -> {
+					if (x.getDifference() < y.getDifference()) {
+						return -1;
+					} else if (x.getDifference() > y.getDifference()) {
+						return 1;
+					} else {
+						return 0;
+					}
+
+				});
+				for (OfferDto oDto : matchedOffersDtos) {
+
+					minHeap.add(new SortingHelperDTO(oDto, Math.abs(oDto.getAmountInUSD() - offer.getAmountInUSD())));
 				}
-
-			});
-			for (OfferDto oDto : matchedOffersDtos) {
-
-				minHeap.add(new SortingHelperDTO(oDto, Math.abs(oDto.getAmountInUSD() - offer.getAmountInUSD())));
+				matchedOffersDtos.clear();
+				while (!minHeap.isEmpty()) {
+					matchedOffersDtos.add(minHeap.poll().getOffer());
+				}
+				OfferMatchingDTO matchingDTO = new OfferMatchingDTO(offerDto, matchedOffersDtos);
+				offerMatchingDTOList.add(matchingDTO);
 			}
-			matchedOffersDtos.clear();
-			while (!minHeap.isEmpty()) {
-				matchedOffersDtos.add(minHeap.poll().getOffer());
-			}
-			OfferMatchingDTO matchingDTO = new OfferMatchingDTO(offerDto, matchedOffersDtos);
-			return new ResponseEntity<OfferMatchingDTO>(matchingDTO, HttpStatus.OK);
+			
+			return new ResponseEntity<List<OfferMatchingDTO>>(offerMatchingDTOList, HttpStatus.OK);
 		} catch (Exception ex) {
 			ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(500, HttpStatus.INTERNAL_SERVER_ERROR,
 					ex.getMessage());

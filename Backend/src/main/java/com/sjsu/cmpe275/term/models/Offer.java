@@ -28,8 +28,10 @@ public class Offer {
     private String sourceCountry;
 	@Column(name="sourceCurrency",nullable=false)
     private String sourceCurrency;
-	@Column(name="amount",nullable=false)
-    private Double amount;
+	@Column(name="amountInSrc",nullable=false)
+    private Double amountInSrc;
+	@Column(name="amountInDes",nullable=false)
+    private Double amountInDes;
 	@Column(name="amountInUSD",nullable=false)
     private Double amountInUSD;
 	@Column(name="destinationCountry",nullable=false)
@@ -46,13 +48,17 @@ public class Offer {
 	@Column(name="userId",nullable=false)
     private Long userId;
 	
-	public Offer(String sourceCountry, String sourceCurrency, Double amount, Double amountInUSD,
-			String destinationCountry, String destinationCurrency, Date expirationDate, Boolean counterOfferAllowed,
-			Boolean splitOfferAllowed, Long userId) {
+	
+
+	public Offer( String sourceCountry, String sourceCurrency, Double amountInSrc, Double amountInDes,
+			Double amountInUSD, String destinationCountry, String destinationCurrency, Date expirationDate,
+			Boolean counterOfferAllowed, Boolean splitOfferAllowed, Long userId) {
 		super();
+
 		this.sourceCountry = sourceCountry;
 		this.sourceCurrency = sourceCurrency;
-		this.amount = amount;
+		this.amountInSrc = amountInSrc;
+		this.amountInDes = amountInDes;
 		this.amountInUSD = amountInUSD;
 		this.destinationCountry = destinationCountry;
 		this.destinationCurrency = destinationCurrency;
@@ -101,14 +107,6 @@ public class Offer {
 
 
 
-	public Double getAmount() {
-		return amount;
-	}
-
-
-	public void setAmount(Double amount) {
-		this.amount = amount;
-	}
 
 
 	public Double getAmountInUSD() {
@@ -179,6 +177,26 @@ public class Offer {
 
 	public void setUserId(Long userId) {
 		this.userId = userId;
+	}
+
+
+	public Double getAmountInSrc() {
+		return amountInSrc;
+	}
+
+
+	public void setAmountInSrc(Double amountInSrc) {
+		this.amountInSrc = amountInSrc;
+	}
+
+
+	public Double getAmountInDes() {
+		return amountInDes;
+	}
+
+
+	public void setAmountInDes(Double amountInDes) {
+		this.amountInDes = amountInDes;
 	}
 
 
