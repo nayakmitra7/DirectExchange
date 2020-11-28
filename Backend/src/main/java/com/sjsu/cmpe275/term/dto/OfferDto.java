@@ -21,7 +21,8 @@ public class OfferDto {
     private Long id;
     private String sourceCountry;
     private String sourceCurrency;
-    private Double amount;
+    private Double amountInSrc;
+    private Double amountInDes;
     private Double amountInUSD;
     private String destinationCountry;
     private String destinationCurrency;
@@ -67,13 +68,25 @@ public class OfferDto {
 	}
 
 
-	public Double getAmount() {
-		return amount;
+
+
+	public Double getAmountInSrc() {
+		return amountInSrc;
 	}
 
 
-	public void setAmount(Double amount) {
-		this.amount = amount;
+	public void setAmountInSrc(Double amountInSrc) {
+		this.amountInSrc = amountInSrc;
+	}
+
+
+	public Double getAmountInDes() {
+		return amountInDes;
+	}
+
+
+	public void setAmountInDes(Double amountInDes) {
+		this.amountInDes = amountInDes;
 	}
 
 
