@@ -83,7 +83,8 @@ class AutoMatching extends Component {
 
                 </ListGroup.Item>)
             })
-            innerSplit.push(<ListGroup.Item variant={element.offer.userId == this.state.userId ? warning : standard}>
+            innerSplit.push(
+            <ListGroup.Item variant={element.offer.userId == this.state.userId ? warning : standard}>
                 <Row className="header-bold-auto-matching">
                     <Col>Offer ID</Col>
                     <Col>Username</Col>
@@ -108,20 +109,24 @@ class AutoMatching extends Component {
                     <Col>{element.offer.expirationDate}</Col>
 
                 </Row>
+                
+            </ListGroup.Item>
+           
+            )
+            innerSplit.push(<Row className="margin-top-1-auto-matching">
+            <Col md = "5"></Col>
+            <Col md="1.5">
+                <Button variant="success" size="sm">Accept Offer</Button>
+            </Col>
 
-            </ListGroup.Item>)
+            <Col md="2">
+                <Button size="sm"> Counter Offer</Button>
+            </Col>
+        </Row>)
             splitMatches.push(
                 <Card>
                     <Accordion.Toggle as={Card.Header} eventKey={val} className="gray-auto-matching header-bold-auto-matching">
-                        <Row>
-                            <Col md="8">Split Offer #{val}</Col>
-                            <Col md="2">
-                                <Button variant="success" size="sm"> Accept Offer</Button>
-                            </Col>
-                            <Col md="2">
-                                <Button size="sm"> Counter Offer</Button>
-                            </Col>
-                        </Row>
+                    Split Offer #{val}
                     </Accordion.Toggle>
                     <Accordion.Collapse eventKey={val}>
                         <Card.Body>
