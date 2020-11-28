@@ -1,5 +1,7 @@
 package com.sjsu.cmpe275.term.controllers;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +72,14 @@ public class OfferController {
 	@RequestMapping(value = "/offer", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public ResponseEntity<List<OfferDto>> getOffer(){
-		List<Offer> offers=offerService.getOffer();
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		Date todayDate = cal.getTime();
+		List<Offer> offers=offerService.getOffer(1L,todayDate);
+		
 		List<OfferDto> offerdto=objectMapper.convertValue(offers, new TypeReference<List<OfferDto>>(){});
 		return new ResponseEntity<List<OfferDto>>(offerdto, HttpStatus.OK);
 

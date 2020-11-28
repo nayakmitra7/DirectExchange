@@ -1,5 +1,6 @@
 package com.sjsu.cmpe275.term.service.offer;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManagerFactory;
@@ -72,8 +73,8 @@ public class OfferServiceImpl implements OfferService {
 //	}
 //	
 	@Override
-	public List<Offer> getOffer() {
+	public List<Offer> getOffer(Long userId,Date todayDate) {
 		// TODO Auto-generated method stub
-		return offerRepository.findAll();
+		return offerRepository.getOffer(userId,todayDate);
 	}
 }

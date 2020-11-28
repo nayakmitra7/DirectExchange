@@ -11,6 +11,7 @@ import Select from "react-select";
 import ArrowRightAltSharpIcon from "@material-ui/icons/ArrowRightAltSharp";
 import Pagination from "@material-ui/lab/Pagination";
 import Typography from "@material-ui/core/Typography";
+import OfferModal from "./OfferModal";
 
 const options = [
   { value: "chocolate", label: "Chocolate" },
@@ -32,6 +33,8 @@ class BrowseOffer extends Component {
     selectedSourceCurrencyOption: "empty",
     destinationAmountFilter: "empty",
     sourceAmountFilter: "empty",
+    modalShow: "none",
+    open: false,
   };
   componentWillMount() {
     this.getCountries();
@@ -121,14 +124,18 @@ class BrowseOffer extends Component {
       );
     }
     if (this.state.destinationAmountFilter != "empty") {
+      console.log(paginationOffers);
       paginationOffers = paginationOffers.filter(
         (offer) =>
-          offer.amountInDes === parseInt(this.state.destinationAmountFilter)
+          parseInt(offer.amountInDes) ===
+          parseInt(this.state.destinationAmountFilter)
       );
     }
     if (this.state.sourceAmountFilter != "empty") {
       paginationOffers = paginationOffers.filter(
-        (offer) => offer.amountInSrc === parseInt(this.state.sourceAmountFilter)
+        (offer) =>
+          parseInt(offer.amountInSrc) ===
+          parseInt(this.state.sourceAmountFilter)
       );
     }
 
@@ -138,6 +145,20 @@ class BrowseOffer extends Component {
       });
     });
   };
+  clearFilter = () => {
+    this.setState({ destinationAmountFilter: "empty" });
+    document.getElementById("sourceamount").value = "";
+    document.getElementById("desamount").value = "";
+
+    this.setState({ sourceAmountFilter: "empty" });
+    this.getOffers();
+  };
+  changeModalVisible = () => {
+    this.setState({ modalShow: "none", open: false }, () => {
+      console.log(this.state.modalShow);
+    });
+  };
+
   render() {
     return (
       <div>
@@ -186,8 +207,11 @@ class BrowseOffer extends Component {
                   </label>
                   <input
                     className="form-control"
+                    id="sourceamount"
                     onChange={(e) =>
-                      this.setState({ sourceAmountFilter: e.target.value })
+                      e.target.value !== ""
+                        ? this.setState({ sourceAmountFilter: e.target.value })
+                        : this.setState({ sourceAmountFilter: "empty" })
                     }
                   />
                 </div>
@@ -197,105 +221,128 @@ class BrowseOffer extends Component {
                   </label>
                   <input
                     className="form-control"
+                    id="desamount"
                     onChange={(e) =>
-                      this.setState({ destinationAmountFilter: e.target.value })
+                      e.target.value !== ""
+                        ? this.setState({
+                            destinationAmountFilter: e.target.value,
+                          })
+                        : this.setState({ destinationAmountFilter: "empty" })
                     }
                   />
                 </div>
               </div>
               <div className="d-flex justify-content-center p-3 mt-4">
                 <button
-                  className="btn btn-success"
+                  className="btn btn-success mr-3 px-3"
                   style={{ fontSize: "18px" }}
                   onClick={this.applyFilter}
                 >
                   Filter
                 </button>
+                <button
+                  className="btn btn-secondary ml-3"
+                  style={{ fontSize: "18px" }}
+                  onClick={this.clearFilter}
+                >
+                  Clear Filters
+                </button>
               </div>
             </Card.Body>
           </Card>
+          {/* 
+Cards to display offers
+*/}
 
           {this.state.paginationOffers.length != 0
             ? this.state.paginationOffers.map((offer) => (
-                <Card
-                  className="card"
-                  style={{ backgroundColor: "rgb(0,0,0,0.1)" }}
-                >
-                  <div className="d-flex justify-content-center p-2">
-                    <h4>John Doe</h4>
-                  </div>
-                  <div className="d-flex justify-content-center p-3">
-                    <h5 className="mr-4">
-                      Source country:{" "}
-                      <span style={{ fontWeight: "bold" }}>
-                        {offer.sourceCountry}
-                      </span>
-                      <span style={{ color: "rgb(0,0,0,0.6)" }}>
-                        ({offer.sourceCurrency})
-                      </span>
-                    </h5>
-                    <ArrowRightAltSharpIcon />{" "}
-                    <h5 className="ml-4">
-                      Destination country:{" "}
-                      <span style={{ fontWeight: "bold" }}>
-                        {offer.destinationCountry}
-                      </span>
-                      <span style={{ color: "rgb(0,0,0,0.6)" }}>
-                        ({offer.destinationCurrency})
-                      </span>
-                    </h5>
-                  </div>
-                  <div className="d-flex justify-content-center p-3">
-                    <h5 className="mr-4">
-                     Remit Amount:{" "}
-                      <span style={{ fontWeight: "bold" }}>
-                        {offer.sourceCountry}
-                      </span>
-                      <span style={{ color: "rgb(0,0,0,0.6)" }}>
-                        ({offer.sourceCurrency})
-                      </span>
-                    </h5>
-                    <ArrowRightAltSharpIcon />{" "}
-                    <h5 className="ml-4">
-                      Destination Amount:{" "}
-                      <span style={{ fontWeight: "bold" }}>
-                        {offer.destinationCountry}
-                      </span>
-                      <span style={{ color: "rgb(0,0,0,0.6)" }}>
-                        ({offer.destinationCurrency})
-                      </span>
-                    </h5>
-                  </div>
-                  <div className="p-3 d-flex justify-content-center">
-                    <div>
-                      <h5>
-                        {" "}
-                        Remit Amount: {offer.amountInSrc}{" "}
+                <div>
+                  <Card
+                    className="card browse_card"
+                    style={{ backgroundColor: "rgb(0,0,0,0.1)" }}
+                    onClick={() => {
+                      this.setState({ modalShow: "block", open: true });
+                      this.setState({ offerId: offer.id });
+                    }}
+                    key={offer.id}
+                  >
+                    <div className="d-flex justify-content-center p-2">
+                      <h4>John Doe</h4>
+                    </div>
+                    <div className="d-flex justify-content-center p-3">
+                      <h5 className="mr-4">
+                        Source country:{" "}
+                        <span style={{ fontWeight: "bold" }}>
+                          {offer.sourceCountry}
+                        </span>
                         <span style={{ color: "rgb(0,0,0,0.6)" }}>
                           ({offer.sourceCurrency})
                         </span>
                       </h5>
-                      {offer.splitOfferAllowed == true ? (
-                        <h5>
-                          Split offer{" "}
-                          <span style={{ color: "green" }}>allowed</span>
-                        </h5>
-                      ) : (
-                        ""
-                      )}
-                      {offer.counterOfferAllowed == true ? (
-                        <h5>
-                          <span style={{ color: "green" }}>Accepting </span>
-                          Counter Offers
-                        </h5>
-                      ) : (
-                        ""
-                      )}
+                      <ArrowRightAltSharpIcon />{" "}
+                      <h5 className="ml-4">
+                        Destination country:{" "}
+                        <span style={{ fontWeight: "bold" }}>
+                          {offer.destinationCountry}
+                        </span>
+                        <span style={{ color: "rgb(0,0,0,0.6)" }}>
+                          ({offer.destinationCurrency})
+                        </span>
+                      </h5>
                     </div>
-                  </div>
-                </Card>
+                    <div className="d-flex justify-content-center p-3">
+                      <h5 className="mr-4">
+                        Remit Amount:{" "}
+                        <span style={{ fontWeight: "bold" }}>
+                          {offer.amountInSrc}
+                        </span>
+                        <span style={{ color: "rgb(0,0,0,0.6)" }}>
+                          ({offer.sourceCurrency})
+                        </span>
+                      </h5>
+                      <ArrowRightAltSharpIcon />{" "}
+                      <h5 className="ml-4">
+                        Destination Amount:{" "}
+                        <span style={{ fontWeight: "bold" }}>
+                          {offer.amountInDes}
+                        </span>
+                        <span style={{ color: "rgb(0,0,0,0.6)" }}>
+                          ({offer.destinationCurrency})
+                        </span>
+                      </h5>
+                    </div>
+                    <div className="p-3 d-flex justify-content-center">
+                      <div>
+                        {offer.splitOfferAllowed == true ? (
+                          <h5>
+                            Split offer{" "}
+                            <span style={{ color: "green" }}>allowed</span>
+                          </h5>
+                        ) : (
+                          ""
+                        )}
+                        {offer.counterOfferAllowed == true ? (
+                          <h5>
+                            <span style={{ color: "green" }}>Accepting </span>
+                            Counter Offers
+                          </h5>
+                        ) : (
+                          ""
+                        )}
+                      </div>
+                    </div>
+                  </Card>
+                  {this.state.offerId === offer.id}
+                  <OfferModal
+                    offer={offer}
+                    modalShow={this.state.modalShow}
+                    changeModalVisible={this.changeModalVisible}
+                    open={this.state.open}
+                  ></OfferModal>
+                </div>
               ))
             : ""}
+
           <div className="center-page p-3 mt-2">
             <Typography>Page: {this.state.page}</Typography>
             <div className="d-flex justify-content-center mt-2">
