@@ -45,7 +45,7 @@ public class OfferMatchingController {
 	@ResponseBody
 	public ResponseEntity<List<OfferMatchingDTO>> postOffer(@PathVariable Long id) {
 		try {
-			List<Long> offerIdList = new ArrayList<>(Arrays.asList((long) 4 ));
+			List<Long> offerIdList = new ArrayList<>(Arrays.asList((long) 4,(long) 9 ));
 			List<OfferMatchingDTO> offerMatchingDTOList = new ArrayList<>();
 			
 			for(Long i : offerIdList) {
@@ -60,7 +60,7 @@ public class OfferMatchingController {
 				cal.set(Calendar.SECOND, 0);
 				cal.set(Calendar.MILLISECOND, 0);
 				Date todayDate = cal.getTime();
-
+				System.out.println(todayDate);
 				List<Offer> matchedOffers = offerMatchingService.getSingleMatchesByID(offer.getId(), offer.getUserId(),
 						todayDate, min, max);
 				List<OfferDto> matchedOffersDtos = matchedOffers.stream()
