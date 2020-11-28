@@ -21,6 +21,22 @@ public class OfferMatchingServiceImpl implements OfferMatchingService {
 	public List<Offer> getSingleMatchesByID(Long offerId,Long userId,Date expirationDate,Double min, Double max) {
 		return offerMatchingRepository.findSingleMatchingOffers(offerId, userId, expirationDate, min,  max);
 	}
+	@Override
+	public List<Offer> getSplitMatchingOfferContendersA(Long offerId, Long userId, Date expirationDate,
+			Double amount) {
+		// TODO Auto-generated method stub
+		return offerMatchingRepository.findSplitMatchingOfferContendersA(offerId, userId, expirationDate, amount);
+	}
+	@Override
+	public List<Offer> getSplitMatchingOfferContendersTarget(Long offerId, Long userId, Date expirationDate,Double amount) {
+		// TODO Auto-generated method stub
+		return offerMatchingRepository.findSplitMatchingOfferContendersTarget(offerId, userId, expirationDate, amount);
+	}
+	@Override
+	public List<Offer> getSplitMatchingOfferContendersPart(Long offerId, Long userId, Date expirationDate, Double amount) {
+		// TODO Auto-generated method stub
+		return offerMatchingRepository.findSplitMatchingOfferContendersPart(offerId, userId, expirationDate, amount);
+	}
 
 	
 }
