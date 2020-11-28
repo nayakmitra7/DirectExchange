@@ -1,0 +1,57 @@
+package com.sjsu.cmpe275.term.models;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "USER")
+public class User {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", unique = true, nullable = false)
+	private Long id;
+	@Column(name = "emailId", nullable = false)
+	private String emailId;
+	@Column(name = "nickname", unique = true, nullable = false)
+	private String nickname;
+
+	public User(Long id, String emailId, String nickname) {
+		super();
+		this.id = id;
+		this.emailId = emailId;
+		this.nickname = nickname;
+	}
+
+	public User() {
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getEmailId() {
+		return emailId;
+	}
+
+	public void setEmailId(String emailId) {
+		this.emailId = emailId;
+	}
+
+	public String getNickname() {
+		return nickname;
+	}
+
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
+	}
+
+}

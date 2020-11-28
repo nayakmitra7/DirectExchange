@@ -12,4 +12,14 @@ import com.sjsu.cmpe275.term.models.Offer;
 public interface OfferMatchingRepository extends JpaRepository<Offer, Long>{
 	@Query("Select o1 from Offer o1 where o1.destinationCountry = (Select o2.sourceCountry from Offer o2 where id = :offerId ) and o1.sourceCountry = (Select o2.destinationCountry from Offer o2 where id = :offerId ) and o1.userId != :userId and o1.amountInUSD >= :min and o1.amountInUSD <= :max and o1.expirationDate >= :expirationDate")
 	List<Offer> findSingleMatchingOffers(@Param("offerId") Long offerId, @Param("userId") Long userId, @Param("expirationDate") Date expirationDate, @Param("min") Double min, @Param("max") Double max );
+
+	@Query("Select o1 from Offer o1 where o1.destinationCountry = (Select o2.sourceCountry from Offer o2 where id = :offerId ) and o1.sourceCountry = (Select o2.destinationCountry from Offer o2 where id = :offerId ) and o1.userId != :userId and o1.amountInUSD < :amount and o1.expirationDate >= :expirationDate and o1.splitOfferAllowed=true")
+	List<Offer> findSplitMatchingOfferContendersA(@Param("offerId") Long offerId, @Param("userId") Long userId, @Param("expirationDate") Date expirationDate, @Param("amount") Double amount );
+
+	@Query("Select o1 from Offer o1 where o1.destinationCountry = (Select o2.sourceCountry from Offer o2 where id = :offerId ) and o1.sourceCountry = (Select o2.destinationCountry from Offer o2 where id = :offerId ) and o1.userId != :userId and o1.amountInUSD > :amount and o1.expirationDate >= :expirationDate and o1.splitOfferAllowed=true")
+	List<Offer> findSplitMatchingOfferContendersTarget(@Param("offerId") Long offerId, @Param("userId") Long userId, @Param("expirationDate") Date expirationDate, @Param("amount") Double amount );
+
+	@Query("Select o1 from Offer o1 where o1.sourceCountry = (Select o2.sourceCountry from Offer o2 where id = :offerId ) and o1.destinationCountry = (Select o2.destinationCountry from Offer o2 where id = :offerId ) and o1.userId != :userId and o1.amountInUSD < :amount and o1.expirationDate >= :expirationDate and o1.splitOfferAllowed=true")
+	List<Offer> findSplitMatchingOfferContendersPart(@Param("offerId") Long offerId, @Param("userId") Long userId, @Param("expirationDate") Date expirationDate, @Param("amount") Double amount );
+	
 }

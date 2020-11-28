@@ -13,13 +13,13 @@ class NavigationBarLanding extends Component {
 
             <Navbar expand="lg" bg="dark" variant="dark">
                 <Navbar.Brand href="/home">DirectExchange</Navbar.Brand>
-                    <Nav className="mr-auto">
+                <Nav className="mr-auto">
 
-                    </Nav>
-                    <Nav>
-                        <Nav.Link href="">Sign Up</Nav.Link>
-                        <Nav.Link href="">Login</Nav.Link>
-                    </Nav>
+                </Nav>
+                <Nav>
+                    <Nav.Link href="/register">Sign Up</Nav.Link>
+                    <Nav.Link href="">Login</Nav.Link>
+                </Nav>
             </Navbar>
 
 
