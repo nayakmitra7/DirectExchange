@@ -9,7 +9,7 @@ import com.sjsu.cmpe275.term.models.Offer;
 
 public interface OfferService {
 	public Offer postOffer(Offer offer);
-
-	public Page<Offer> getOffer(int pagenumber, int limit, String sourcecountry, String destinationcountry, String sourcecurrency, String destinationcurrency);
+	public List<Offer>  getOffer();
+//	public Page<Offer> getOffer(int pagenumber, int limit, String sourcecurrencyamount, String destinationcountry, String sourcecurrency, String destinationcurrency);
 	public Offer getOfferById(Long offerId);
 }

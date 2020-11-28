@@ -50,25 +50,33 @@ public class OfferController {
 
 	}
 	
-	@RequestMapping(value = "/offer/{pagenumber}/{limit}/{sourcecountry}/{destinationcountry}/{sourcecurrency}/{destinationcurrency}/", method = RequestMethod.GET, produces = "application/json")
+//	@RequestMapping(value = "/offer/{pagenumber}/{limit}/{sourcecurrencyamount}/{destinationcountry}/{sourcecurrency}/{destinationcurrency}", method = RequestMethod.GET, produces = "application/json")
+//	@ResponseBody
+//	public ResponseEntity<List<OfferDto>> getOffers(@PathVariable("pagenumber") int pagenumber,@PathVariable("limit") int limit,
+//			@PathVariable("sourcecurrencyamount") String sourcecurrencyamount,@PathVariable("destinationcountry") String destinationcountry,@PathVariable("sourcecurrency") String sourcecurrency,
+//			@PathVariable("destinationcurrency") String destinationcurrency
+//			) {
+//		try {
+//			Page<Offer> offers = offerService.getOffer(pagenumber,limit,sourcecurrencyamount,destinationcountry,sourcecurrency,destinationcurrency);
+//			List<Offer> content=offers.getContent();
+//			List<OfferDto> offerdto=objectMapper.convertValue(content, new TypeReference<List<OfferDto>>(){});
+////			ResponseDTO responseDTO = new ResponseDTO(200, HttpStatus.OK, "Your offer has beeen succesfully posted!");
+//			return new ResponseEntity<List<OfferDto>>(offerdto, HttpStatus.OK);
+//		}catch(Exception ex){
+//			ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(500, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
+//			throw new GenericException(errorResponseDTO);
+//		}
+//	
+//	}
+//	
+	@RequestMapping(value = "/offer", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
-	public ResponseEntity<List<OfferDto>> getOffers(@PathVariable("pagenumber") int pagenumber,@PathVariable("limit") int limit,
-			@PathVariable("sourcecountry") String sourcecountry,@PathVariable("destinationcountry") String destinationcountry,@PathVariable("sourcecurrency") String sourcecurrency,
-			@PathVariable("sourcecountry") String destinationcurrency
-			) {
-		try {
-			Page<Offer> offers = offerService.getOffer(pagenumber,limit,sourcecountry,destinationcountry,sourcecurrency,destinationcurrency);
-			List<Offer> content=offers.getContent();
-			List<OfferDto> offerdto=objectMapper.convertValue(content, new TypeReference<List<OfferDto>>(){});
-//			ResponseDTO responseDTO = new ResponseDTO(200, HttpStatus.OK, "Your offer has beeen succesfully posted!");
-			return new ResponseEntity<List<OfferDto>>(offerdto, HttpStatus.OK);
-		}catch(Exception ex){
-			ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(500, HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
-			throw new GenericException(errorResponseDTO);
-		}
-	
+	public ResponseEntity<List<OfferDto>> getOffer(){
+		List<Offer> offers=offerService.getOffer();
+		List<OfferDto> offerdto=objectMapper.convertValue(offers, new TypeReference<List<OfferDto>>(){});
+		return new ResponseEntity<List<OfferDto>>(offerdto, HttpStatus.OK);
+
 	}
-	
 
 	
 }

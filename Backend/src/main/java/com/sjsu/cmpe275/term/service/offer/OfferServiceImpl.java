@@ -1,5 +1,15 @@
 package com.sjsu.cmpe275.term.service.offer;
 
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -7,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.sjsu.cmpe275.term.models.Offer;
+import com.sjsu.cmpe275.term.models.Offer_;
 import com.sjsu.cmpe275.term.repository.OfferRepository;
 
 @Service
@@ -14,7 +25,8 @@ public class OfferServiceImpl implements OfferService {
 
 	@Autowired
 	OfferRepository offerRepository;
-
+	@PersistenceUnit
+	private EntityManagerFactory entityManagerFactory;
 	
 
 	
@@ -28,11 +40,49 @@ public class OfferServiceImpl implements OfferService {
 		// TODO Auto-generated method stub
 		return offerRepository.save(offer);
 	}
+//	@Override
+//	public Page<Offer> getOffer(int pagenumber, int limit, String sourcecurrencyamount, String destinationcountry,
+//			String sourcecurrency, String destinationcurrency) {
+//		CriteriaBuilder builder = entityManagerFactory.getCriteriaBuilder();
+//		EntityManager em= entityManagerFactory.createEntityManager();
+//		CriteriaQuery<Offer> criteria = builder.createQuery( Offer.class );
+//		Root<Offer> offerRoot = criteria.from( Offer.class );
+//		criteria.select( offerRoot );
+//		Predicate offerRestriction= builder.and(
+//				//if(!destinationcurrency.equals("empty")) {
+//					builder.equal( offerRoot.get( Offer_.sourceCurrency ),sourcecurrency ) 
+//				//}	
+//				
+//				);
+//		Predicate desCurrencyRestriction= builder.and(
+//				//if(!destinationcurrency.equals("empty")) {
+//					builder.equal( offerRoot.get( Offer_.destinationCurrency ),destinationcurrency ) 
+//				//}	
+//				
+//				);
+//				
+////		if(!sourcecountry.equals("empty")) {
+////			criteria.where( builder.equal( offerRoot.get( Offer_.sourceCountry ),sourcecountry ) );
+////		}
+////		if(!destinationcountry.equals("empty")) {
+////			criteria.where( builder.equal( offerRoot.get( Offer_.destinationCountry ),destinationcountry ) );
+////		}
+////		if(!sourcecurrency.equals("empty")) {
+////			criteria.where( builder.equal( offerRoot.get( Offer_.sourceCurrency ),sourcecurrency ) );
+////		}
+////		if(!destinationcurrency.equals("empty")) {
+////			criteria.where( builder.equal( offerRoot.get( Offer_.destinationCurrency ),destinationcurrency ) );
+////		}
+//		criteria.where(builder.and(offerRestriction,desCurrencyRestriction));
+//		List<Offer> people = em.createQuery( criteria ).getResultList();
+//		
+//		Pageable pageable=PageRequest.of(pagenumber, limit);
+//		return offerRepository.findAll(pageable);		
+//	}
+//	
 	@Override
-	public Page<Offer> getOffer(int pagenumber, int limit, String sourcecountry, String destinationcountry,
-			String sourcecurrency, String destinationcurrency) {
+	public List<Offer> getOffer() {
 		// TODO Auto-generated method stub
-		return null;
+		return offerRepository.findAll();
 	}
-	
 }

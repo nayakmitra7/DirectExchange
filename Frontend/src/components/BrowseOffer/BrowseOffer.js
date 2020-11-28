@@ -27,6 +27,7 @@ class BrowseOffer extends Component {
     limit: "5",
     count: "",
     page: 1,
+    paginationOffers: [],
   };
   componentWillMount() {
     this.getCountries();
@@ -36,9 +37,19 @@ class BrowseOffer extends Component {
   async getOffers() {
     const offers = await axios.get(`${address}/offer`);
     this.setState({ offers: offers.data, count: offers.data.length }, () => {
-      this.setState({
-        pagecount: Math.ceil(this.state.count / this.state.limit),
-      });
+      this.setState(
+        {
+          pagecount: Math.ceil(this.state.count / this.state.limit),
+        },
+        () => {
+          this.setState({
+            paginationOffers: this.state.offers.slice(
+              (this.state.page - 1) * this.state.limit,
+              this.state.limit
+            ),
+          });
+        }
+      );
     });
   }
 
@@ -61,6 +72,7 @@ class BrowseOffer extends Component {
   };
   handlePageChange = (event, value) => {
     this.setState({ page: value });
+    this.getOffers();
   };
   render() {
     return (
@@ -124,9 +136,12 @@ class BrowseOffer extends Component {
             </Card.Body>
           </Card>
 
-          {this.state.offers.length != 0
-            ? this.state.offers.map((offer) => (
-                <Card className="card">
+          {this.state.paginationOffers.length != 0
+            ? this.state.paginationOffers.map((offer) => (
+                <Card
+                  className="card"
+                  style={{ backgroundColor: "rgb(0,0,0,0.1)" }}
+                >
                   <div className="d-flex justify-content-center p-2">
                     <h4>John Doe</h4>
                   </div>
