@@ -1,6 +1,8 @@
 
 .margin-top-auto-matching{
     margin-top: 5%;
+    margin-left: 2%;
+    margin-right: 2%;
 }
 .header-bold-auto-matching{
     font-weight: bolder;
@@ -13,6 +15,9 @@
     margin-top: 2%;
 }
 .margin-top-22-auto-matching{
-    margin-top:22%;
+    margin-top:15%;
     margin-left:45%;
+}
+.gray-auto-matching{
+    background-color: rgb(0,0,0,0.1) !important;
 }

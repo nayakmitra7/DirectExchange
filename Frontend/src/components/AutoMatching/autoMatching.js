@@ -44,6 +44,7 @@ class AutoMatching extends Component {
                 inner.push(<ListGroup.Item>
                     <Row className="header-bold-auto-matching">
                         <Col>Offer ID</Col>
+                        <Col>Username</Col>
                         <Col>Country(src)</Col>
                         <Col>Currency(src)</Col>
                         <Col>Amount(src)</Col>
@@ -51,9 +52,11 @@ class AutoMatching extends Component {
                         <Col>Country(Des)</Col>
                         <Col>Currency(Des)</Col>
                         <Col>Exp Date</Col>
+                        
                     </Row>
                     <Row>
                         <Col>#{offer.id}</Col>
+                        <Col>Username</Col>
                         <Col>{offer.sourceCountry}</Col>
                         <Col>{offer.sourceCurrency}</Col>
                         <Col>{offer.amountInSrc}</Col>
@@ -61,6 +64,7 @@ class AutoMatching extends Component {
                         <Col>{offer.destinationCountry}</Col>
                         <Col>{offer.destinationCurrency}</Col>
                         <Col>{offer.expirationDate}</Col>
+                        
                     </Row>
                     <Row className="margin-top-1-auto-matching">
                         <Col md ="1.5">
@@ -75,9 +79,11 @@ class AutoMatching extends Component {
             })
             singleMatches.push(
                 <Card>
-                    <Accordion.Toggle as={Card.Header} eventKey={val} >
-                        <ListGroup.Item variant="secondary" className="list-group-style-auto-matching"><Row className="header-bold-auto-matching">
+                    <Accordion.Toggle as={Card.Header} eventKey={val} className="gray-auto-matching">
+                        <ListGroup.Item variant="secondary" className="list-group-style-auto-matching ">
+                            <Row className="header-bold-auto-matching ">
                             <Col>Offer ID</Col>
+                            <Col>Username</Col>
                             <Col>Country(Des)</Col>
                             <Col>Currency(Des)</Col>
                             <Col>Amount(Des)</Col>
@@ -88,6 +94,7 @@ class AutoMatching extends Component {
                         </Row>
                             <Row>
                                 <Col>#{element.offer.id}</Col>
+                                <Col>Username</Col>
                                 <Col>{element.offer.destinationCountry}</Col>
                                 <Col>{element.offer.destinationCurrency}</Col>
                                 <Col>{element.offer.amountInDes}</Col>
@@ -111,9 +118,9 @@ class AutoMatching extends Component {
         return (
             <div>
                 <Navbar></Navbar>
-                <Container>
-                    <Row className="margin-top-auto-matching">
-                        <Col >
+                
+                    <Row >
+                        <Col className="margin-top-auto-matching" >
                             <Tabs defaultActiveKey="single" >
                                 <Tab eventKey="single" title="Single Matches">
                                     <Accordion defaultActiveKey="0" className="margin-top-auto-matching">
@@ -131,7 +138,7 @@ class AutoMatching extends Component {
 
                         </Col>
                     </Row>
-                </Container>
+                
             </div>
         )
     }
