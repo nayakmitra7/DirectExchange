@@ -2,9 +2,7 @@ import React, { Component } from "react";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";
 import NavDropdown from "react-bootstrap/NavDropdown";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import firebase, { auth } from "../../js/helper/firebase";
+import { auth } from "../../js/helper/firebase";
 
 class NavigationBar extends Component {
     handleLogout = () => {

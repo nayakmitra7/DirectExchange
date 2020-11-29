@@ -4,10 +4,15 @@ import Nav from 'react-bootstrap/Nav'
 import NavDropdown from 'react-bootstrap/NavDropdown'
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import firebase, { auth } from "../../js/helper/firebase";
 
 class NavigationBarLanding extends Component {
-
+    handleLogout = () => {
+        auth.signOut();
+        localStorage.clear();
+    }
     render() {
+
         return (
 
 
@@ -17,8 +22,8 @@ class NavigationBarLanding extends Component {
 
                 </Nav>
                 <Nav>
-                    <Nav.Link href="/auth">Sign Up</Nav.Link>
-                    <Nav.Link href="/auth">Login</Nav.Link>
+                    <Nav.Link href="/auth" onClick={this.handleLogout}>Sign Up</Nav.Link>
+                    <Nav.Link href="/auth" onClick={this.handleLogout}>Login</Nav.Link>
                 </Nav>
             </Navbar>
 

@@ -15,7 +15,7 @@ import { toast } from 'react-toastify';
 //     authDomain,
 //     verificationMessage: ""
 // })
-let newUser = false;
+// let newUser = false;
 class Register extends Component {
     state = {
         isSignedIn: !!auth.currentUser,
@@ -35,12 +35,12 @@ class Register extends Component {
             firebase.auth.EmailAuthProvider.PROVIDER_ID,
         ],
         callbacks: {
-            signInSuccessWithAuthResult: async function (authResult, redirectUrl) {
-                console.log(authResult.additionalUserInfo.isNewUser);
-                // await this.setState({ newUser: authResult.additionalUserInfo.isNewUser }, () => { console.log(authResult.additionalUserInfo.isNewUser); });
-                newUser = authResult.additionalUserInfo.isNewUser;
-                return false;
-            }
+            signInSuccessWithAuthResult: false//async function (authResult, redirectUrl) {
+            // console.log(authResult);
+            // await this.setState({ newUser: authResult.additionalUserInfo.isNewUser }, () => { console.log(authResult.additionalUserInfo.isNewUser); });
+            // newUser = authResult.additionalUserInfo.isNewUser;
+            // return false;
+            //}
         }
     }
 
@@ -72,10 +72,15 @@ class Register extends Component {
         console.log("newusercheck")
         await axios.get(`${address}/user/${emailId}`)
             .then(res => {
+                console.log(res)
                 if (res.data.code === 404) {
                     this.setState({ isNewUser: true });
                 } else if (res.status === 200) {
-                    this.setState({ isNewUser: false });
+                    this.setState({ isNewUser: false, user: res.data });
+                    let u = res.data;
+                    localStorage.setItem("id", u.id);
+                    localStorage.setItem("emailId", u.emailId);
+                    localStorage.setItem("nickname", u.nickname);
                 }
             }).catch(err => {
                 if (err && err.response && err.response.data && err.response.data.code === 404) {
@@ -118,8 +123,12 @@ class Register extends Component {
 
                     />
                 ) : !this.state.isSignedIn ? (
-
-                    <StyledFirebaseAuth uiConfig={this.uiConfig} firebaseAuth={auth} />
+                    <div align="center" className="show-grid form-row-style mt-5 mb-5 p-5">
+                        <h3 className="m-5">Login/Register below!</h3>
+                        <div className="mb-5">
+                            <StyledFirebaseAuth uiConfig={this.uiConfig} firebaseAuth={auth} />
+                        </div>
+                    </div>
                 ) : ""}
                 { this.state.emailVerified && this.state.isNewUser ? (
                     <NewUserData
