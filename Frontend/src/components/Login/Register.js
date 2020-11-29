@@ -6,9 +6,10 @@ import Navbar from '../Navbar/navbarLanding';
 import { Redirect } from 'react-router';
 import { apiKey, authDomain } from "../../config";
 import axios from "axios";
-import { address } from "../../js/helper/constant"
-import NewUserData from "./NewUserData"
-import Verification from "./Verification"
+import { address } from "../../js/helper/constant";
+import NewUserData from "./NewUserData";
+import Verification from "./Verification";
+import { toast } from 'react-toastify';
 firebase.initializeApp({
     apiKey,
     authDomain,
@@ -56,9 +57,12 @@ class Register extends Component {
                 }
             })
             .catch(err => {
-                console.log(err.response.data.code, err.response.data.error)
-                if (err.response.data.code === 400)
+                if (err && err.response && err.response.data && err.response.data.code === 400) {
+                    toast.error(err.response.data.error, { position: 'top-center', autoClose: false })
                     this.setState({ submitMessage: err.response.data.error });
+                } else {
+                    toast.error("Internal server error has occured", { position: 'top-center', autoClose: false })
+                }
             })
 
 
@@ -74,7 +78,7 @@ class Register extends Component {
                     this.setState({ isNewUser: false });
                 }
             }).catch(err => {
-                if (err.response.data.code === 404) {
+                if (err && err.response && err.response.data && err.response.data.code === 404) {
                     this.setState({ isNewUser: true });
                 }
             })
@@ -110,8 +114,8 @@ class Register extends Component {
                 {redirectVar}
                 <Navbar></Navbar>
                 {this.state.isSignedIn && !this.state.emailVerified ? (
-                    <Verification 
-                    
+                    <Verification
+
                     />
                 ) : !this.state.isSignedIn ? (
 

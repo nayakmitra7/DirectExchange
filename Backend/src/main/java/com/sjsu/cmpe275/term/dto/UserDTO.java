@@ -1,18 +1,29 @@
 package com.sjsu.cmpe275.term.dto;
 
-import javax.persistence.Column;
+import java.util.List;
+
+import com.sjsu.cmpe275.term.models.Account;
 
 public class UserDTO {
-	
+
 	private Long id;
 	private String emailId;
 	private String nickname;
+	private List<Account> accounts;
 
 	public UserDTO(Long id, String emailId, String nickname) {
 		super();
 		this.id = id;
 		this.emailId = emailId;
 		this.nickname = nickname;
+	}
+
+	public List<Account> getAccount() {
+		return accounts;
+	}
+
+	public void setAccount(List<Account> accounts) {
+		this.accounts = accounts;
 	}
 
 	public UserDTO() {
