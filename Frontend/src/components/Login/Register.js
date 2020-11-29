@@ -1,25 +1,25 @@
 import React, { Component } from 'react';
-import firebase from "firebase";
+import firebase, { auth } from "../../js/helper/firebase";
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
 // import VerifyEmail from "./VerifyEmail"
 import Navbar from '../Navbar/navbarLanding';
 import { Redirect } from 'react-router';
-import { apiKey, authDomain } from "../../config";
+// import { apiKey, authDomain } from "../../config";
 import axios from "axios";
 import { address } from "../../js/helper/constant";
 import NewUserData from "./NewUserData";
 import Verification from "./Verification";
 import { toast } from 'react-toastify';
-firebase.initializeApp({
-    apiKey,
-    authDomain,
-    verificationMessage: ""
-})
+// firebase.initializeApp({
+//     apiKey,
+//     authDomain,
+//     verificationMessage: ""
+// })
 let newUser = false;
 class Register extends Component {
     state = {
-        isSignedIn: !!firebase.auth().currentUser,
-        emailVerified: firebase.auth().currentUser ? firebase.auth().currentUser.emailVerified : false,
+        isSignedIn: !!auth.currentUser,
+        emailVerified: auth.currentUser ? auth.currentUser.emailVerified : false,
         verificationClicked: false,
         isNewUser: true,
         reDirectLanding: false,
@@ -84,10 +84,10 @@ class Register extends Component {
             })
     }
     componentDidMount = () => {
-        // firebase.auth().signOut();
+        // auth.signOut();
         // this.setState({isSignedIn:false, emailVerified: false, verificationMessage: "" })
 
-        firebase.auth().onAuthStateChanged(user => {
+        auth.onAuthStateChanged(user => {
             console.log(user);
             if (user) {
                 this.setState({ user })
@@ -119,7 +119,7 @@ class Register extends Component {
                     />
                 ) : !this.state.isSignedIn ? (
 
-                    <StyledFirebaseAuth uiConfig={this.uiConfig} firebaseAuth={firebase.auth()} />
+                    <StyledFirebaseAuth uiConfig={this.uiConfig} firebaseAuth={auth} />
                 ) : ""}
                 { this.state.emailVerified && this.state.isNewUser ? (
                     <NewUserData

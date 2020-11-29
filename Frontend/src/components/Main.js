@@ -11,26 +11,26 @@ import CloseOffer from "./MyOffer/CloseOffer";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 //Create a Main Component
 class Main extends Component {
-  render() {
-    return (
-      <Router>
-        <div>
-          {/* <Switch> */}
-          <Route exact path="/" component={LandingPage} />
-          <Route path="/home" component={Home} />
-          <Route path="/prevailingRates" component={PrevailingRate} />
-          <Route path="/register" component={Register} />
-          <Route path="/postOffer" component={PostOffer} />
-          <Route path="/browseOffer" component={BrowseOffer} />
-          <Route path="/autoMatching" component={AutoMatching} />
-          <Route path="/myOffer/open" component={MyOffer} />
-          <Route path="/myOffer/close" component={CloseOffer} />
+    render() {
+        return (
+            <Router>
+                <div>
+                    {/* <Switch> */}
+                    <Route exact path="/" component={LandingPage} />
+                    <Route path="/home" component={Home} />
+                    <Route path="/prevailingRates" component={PrevailingRate} />
+                    <Route path="/auth" component={Register} />
+                    <Route path="/postOffer" component={PostOffer} />
+                    <Route path="/browseOffer" component={BrowseOffer} />
+                    <Route path="/autoMatching" component={AutoMatching} />
+                    <Route path="/myOffer/open" component={MyOffer} />
+                    <Route path="/myOffer/close" component={CloseOffer} />
 
-          {/* </Switch> */}
-        </div>
-      </Router>
-    );
-  }
+                    {/* </Switch> */}
+                </div>
+            </Router>
+        );
+    }
 }
 //Export The Main Component
 export default Main;

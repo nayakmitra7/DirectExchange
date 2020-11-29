@@ -17,8 +17,8 @@ class NavigationBarLanding extends Component {
 
                 </Nav>
                 <Nav>
-                    <Nav.Link href="/register">Sign Up</Nav.Link>
-                    <Nav.Link href="">Login</Nav.Link>
+                    <Nav.Link href="/auth">Sign Up</Nav.Link>
+                    <Nav.Link href="/auth">Login</Nav.Link>
                 </Nav>
             </Navbar>
 

@@ -5,11 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 
 @Entity
 @Table(name = "ACCOUNT")
@@ -33,13 +29,13 @@ public class Account {
 	private String primaryCurrency;
 	@Column(name = "transactionType", nullable = false)
 	private String transactionType;
-	@JsonInclude(JsonInclude.Include.NON_NULL)
-	@JsonIgnoreProperties("accounts")
-	@ManyToOne
-	private User user;
+//	@JsonInclude(JsonInclude.Include.NON_NULL)
+//	@JsonIgnoreProperties("accounts")
+//	@ManyToOne
+//	private User user;
 
 	public Account(Long id, String bankName, String countryName, String accountNumber, String ownerName,
-			String ownerAddress, String primaryCurrency, String transactionType, User user) {
+			String ownerAddress, String primaryCurrency, String transactionType) {
 		super();
 		this.id = id;
 		this.bankName = bankName;
@@ -49,7 +45,6 @@ public class Account {
 		this.ownerAddress = ownerAddress;
 		this.primaryCurrency = primaryCurrency;
 		this.transactionType = transactionType;
-		this.user = user;
 	}
 
 	public Account() {
@@ -119,12 +114,5 @@ public class Account {
 		this.transactionType = transactionType;
 	}
 
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
 
 }

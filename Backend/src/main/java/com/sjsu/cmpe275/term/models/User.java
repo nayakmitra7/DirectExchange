@@ -25,9 +25,9 @@ public class User {
 	private String emailId;
 	@Column(name = "nickname", unique = true, nullable = false)
 	private String nickname;
-	@JsonInclude(JsonInclude.Include.NON_NULL)
-	@JsonIgnoreProperties({ "user" })
-	@OneToMany(mappedBy = "user")
+//	@JsonInclude(JsonInclude.Include.NON_NULL)
+//	@JsonIgnoreProperties({ "user" })
+	@OneToMany
 	private List<Account> accounts;
 
 	public User(Long id, String emailId, String nickname) {

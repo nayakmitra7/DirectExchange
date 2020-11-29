@@ -1,5 +1,8 @@
 package com.sjsu.cmpe275.term.controllers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +37,7 @@ public class UserController {
 
 	@RequestMapping(value = "/user/{emailId}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
-	public ResponseEntity<UserDTO> getOfferController(@PathVariable("emailId") String emailId) {
+	public ResponseEntity<UserDTO> getUserController(@PathVariable("emailId") String emailId) {
 		User user = userService.getUserByEmailId(emailId);
 		UserDTO userDTO = null;
 		if (user == null) {
@@ -69,10 +72,12 @@ public class UserController {
 				throw new GenericException(errorResponseDTO);
 			}
 			User newUser = userService.createUser(user);
-			account1.setUser(newUser);
-			account2.setUser(newUser);
-			accountService.createAccount(account1);
-			accountService.createAccount(account2);
+//			account1.setUser(newUser);
+//			account2.setUser(newUser);
+			List<Account> accounts=new ArrayList<>();
+			accounts.add(accountService.createAccount(account1));
+			accounts.add(accountService.createAccount(account2));
+			newUser.setAccount(accounts);
 			UserDTO userDTO1 = objectMapper.convertValue(newUser, new TypeReference<UserDTO>() {
 			});
 			return new ResponseEntity<UserDTO>(userDTO1, HttpStatus.OK);

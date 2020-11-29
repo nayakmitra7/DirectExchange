@@ -1,7 +1,5 @@
 package com.sjsu.cmpe275.term.dto;
 
-import com.sjsu.cmpe275.term.models.User;
-
 public class AccountDTO {
 
 	private Long id;
@@ -12,10 +10,9 @@ public class AccountDTO {
 	private String ownerAddress;
 	private String primaryCurrency;
 	private String transactionType;
-	private User user;
 
 	public AccountDTO(Long id, String bankName, String countryName, String accountNumber, String ownerName,
-			String ownerAddress, String primaryCurrency, String transactionType, User user) {
+			String ownerAddress, String primaryCurrency, String transactionType) {
 		super();
 		this.id = id;
 		this.bankName = bankName;
@@ -25,7 +22,6 @@ public class AccountDTO {
 		this.ownerAddress = ownerAddress;
 		this.primaryCurrency = primaryCurrency;
 		this.transactionType = transactionType;
-		this.user = user;
 	}
 
 	public AccountDTO() {
@@ -95,13 +91,4 @@ public class AccountDTO {
 		this.transactionType = transactionType;
 	}
 
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-
 }
-
