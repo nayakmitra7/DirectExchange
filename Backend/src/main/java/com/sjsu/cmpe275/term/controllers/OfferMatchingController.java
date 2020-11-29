@@ -123,10 +123,10 @@ public class OfferMatchingController {
 					.collect(Collectors.toList());
 
 
-			List<Offer> matchedOffersPart = offerMatchingService.getSplitMatchingOfferContendersPart(offer.getId(), offer.getUserId(),todayDate,offer.getAmountInUSD());
-			List<OfferDto> matchedOffersDtosPart = matchedOffersPart.stream()
-					.map(matchedOffer -> objectMapper.convertValue(matchedOffer, OfferDto.class))
-					.collect(Collectors.toList());
+//			List<Offer> matchedOffersPart = offerMatchingService.getSplitMatchingOfferContendersPart(offer.getId(), offer.getUserId(),todayDate,offer.getAmountInUSD());
+//			List<OfferDto> matchedOffersDtosPart = matchedOffersPart.stream()
+//					.map(matchedOffer -> objectMapper.convertValue(matchedOffer, OfferDto.class))
+//					.collect(Collectors.toList());
 			PriorityQueue<SortingHelperDTO2> minHeap = new PriorityQueue<>((x, y) -> {
 				if (x.getDifference() < y.getDifference()) {
 					return -1;
@@ -137,29 +137,34 @@ public class OfferMatchingController {
 				}
 
 			});
-			Double maxAmount =  1.1 * offerDto.getAmountInUSD();
-			Double minAmount =  0.9 * offerDto.getAmountInUSD();
+			Double maxA =  1.1 * offerDto.getAmountInUSD();
+			Double minA =  0.9 * offerDto.getAmountInUSD();
 			for (int i = 0; i < matchedOffersDtosA.size(); i++) {
 				for(int j = i+1; j < matchedOffersDtosA.size(); j++) {
-					Double currentSum = matchedOffersDtosA.get(i).getAmountInUSD() + matchedOffersDtosA.get(j).getAmountInUSD();
-					if( currentSum <= maxAmount && currentSum >= minAmount) {
+					Double BplusC = matchedOffersDtosA.get(i).getAmountInUSD() + matchedOffersDtosA.get(j).getAmountInUSD();
+					if( BplusC <= maxA && BplusC >= minA) {
 						List<OfferDto> offers = new ArrayList<>();
 						offers.add(matchedOffersDtosA.get(i));
 						offers.add(matchedOffersDtosA.get(j));
-						SortingHelperDTO2 sortingHelperDTO2 = new SortingHelperDTO2(offerDto, offers, Math.abs(currentSum-offerDto.getAmountInUSD()));
+						SortingHelperDTO2 sortingHelperDTO2 = new SortingHelperDTO2(offerDto, offers, Math.abs(BplusC-offerDto.getAmountInUSD()));
 						minHeap.add(sortingHelperDTO2);
 					}
 				}
 			}
 			for (int i = 0; i < matchedOffersDtosTarget.size(); i++) {
-				for(int j = 0; j < matchedOffersDtosPart.size(); j++) {
-					Double currentSum = offer.getAmountInUSD() + matchedOffersDtosPart.get(j).getAmountInUSD();
-					Double target = matchedOffersDtosTarget.get(i).getAmountInUSD();
-					if( currentSum <= 1.1 * target && currentSum >= 0.9 * target) {
+				OfferDto targetOfferDto = matchedOffersDtosTarget.get(i);
+				List<Offer> matchedOffersContendersLesserThanTarget = offerMatchingService.getSplitMatchingOfferContendersLesserThanTarget(targetOfferDto.getId(), offerDto.getUserId(), targetOfferDto.getUserId(), cal.getTime(), targetOfferDto.getAmountInUSD());
+				List<OfferDto> matchedOffersContendersLesserThanTargetDtos = matchedOffersContendersLesserThanTarget.stream()
+						.map(matchedOffer -> objectMapper.convertValue(matchedOffer, OfferDto.class))
+						.collect(Collectors.toList());
+				for(int j = 0; j < matchedOffersContendersLesserThanTarget.size(); j++) {
+					Double BminusC = targetOfferDto.getAmountInUSD() - matchedOffersContendersLesserThanTargetDtos.get(j).getAmountInUSD();
+					Double A = offerDto.getAmountInUSD();
+					if( BminusC >= 0.9*A && BminusC <= 1.1*A) {
 						List<OfferDto> offers = new ArrayList<>();
-						offers.add(matchedOffersDtosPart.get(j));
+						offers.add(matchedOffersContendersLesserThanTargetDtos.get(j));
 						offers.add(offerDto);
-						SortingHelperDTO2 sortingHelperDTO2 = new SortingHelperDTO2(matchedOffersDtosTarget.get(i),offers, Math.abs(currentSum-target));
+						SortingHelperDTO2 sortingHelperDTO2 = new SortingHelperDTO2(matchedOffersDtosTarget.get(i),offers, Math.abs(BminusC-A));
 						minHeap.add(sortingHelperDTO2);
 					}
 				}
