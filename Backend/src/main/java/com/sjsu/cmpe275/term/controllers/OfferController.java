@@ -112,7 +112,7 @@ public class OfferController {
 		cal.set(Calendar.MILLISECOND, 0);
 		Date todayDate = cal.getTime();
 		
-		List<Offer> offers=offerService.getOwnOfferById(1L,todayDate,Constant.OFFERFULFILED);
+		List<Offer> offers=offerService.getCloseOfferById(1L,todayDate,Constant.OFFEROPEN);
 		
 		List<OfferDto> offerdto=objectMapper.convertValue(offers, new TypeReference<List<OfferDto>>(){});
 		return new ResponseEntity<List<OfferDto>>(offerdto, HttpStatus.OK);

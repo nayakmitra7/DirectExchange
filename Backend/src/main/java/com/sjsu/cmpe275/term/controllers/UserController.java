@@ -14,9 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sjsu.cmpe275.term.dto.ErrorResponseDTO;
+import com.sjsu.cmpe275.term.dto.UserAccountDTO;
 import com.sjsu.cmpe275.term.dto.UserDTO;
 import com.sjsu.cmpe275.term.exceptions.GenericException;
+import com.sjsu.cmpe275.term.models.Account;
 import com.sjsu.cmpe275.term.models.User;
+import com.sjsu.cmpe275.term.service.account.AccountService;
 import com.sjsu.cmpe275.term.service.user.UserService;
 
 @RestController
@@ -24,6 +27,8 @@ import com.sjsu.cmpe275.term.service.user.UserService;
 public class UserController {
 	@Autowired
 	UserService userService;
+	@Autowired
+	AccountService accountService;
 	@Autowired
 	private ObjectMapper objectMapper;
 
@@ -46,17 +51,28 @@ public class UserController {
 
 	@RequestMapping(value = "/user", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
-	public ResponseEntity<UserDTO> createUserController(@RequestBody UserDTO userDTO) {
+	public ResponseEntity<UserDTO> createUserController(@RequestBody UserAccountDTO userAccountDTO) {
 		ErrorResponseDTO errorResponseDTO = null;
 		try {
-			User user = objectMapper.convertValue(userDTO, User.class);
+			User user = objectMapper.convertValue(userAccountDTO.getUserDTO(), User.class);
+			Account account1 = objectMapper.convertValue(userAccountDTO.getAccountDTO1(), Account.class);
+			Account account2 = objectMapper.convertValue(userAccountDTO.getAccountDTO2(), Account.class);
 			String nickname = user.getNickname();
 			User existingUser = userService.getUserByNickname(nickname);
 			if (existingUser != null) {
 				errorResponseDTO = new ErrorResponseDTO(400, HttpStatus.BAD_REQUEST, "Nickname already exists");
 				throw new GenericException(errorResponseDTO);
 			}
+			if (account1.getCountryName().equals(account2.getCountryName())) {
+				errorResponseDTO = new ErrorResponseDTO(400, HttpStatus.BAD_REQUEST,
+						"Country names should be different");
+				throw new GenericException(errorResponseDTO);
+			}
 			User newUser = userService.createUser(user);
+			account1.setUser(newUser);
+			account2.setUser(newUser);
+			accountService.createAccount(account1);
+			accountService.createAccount(account2);
 			UserDTO userDTO1 = objectMapper.convertValue(newUser, new TypeReference<UserDTO>() {
 			});
 			return new ResponseEntity<UserDTO>(userDTO1, HttpStatus.OK);

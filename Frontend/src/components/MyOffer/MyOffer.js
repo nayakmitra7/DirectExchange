@@ -7,6 +7,7 @@ import axios from "axios";
 import Card from "react-bootstrap/Card";
 import { toast } from "react-toastify";
 import "./Offer.css";
+import Accordion from "react-bootstrap/Accordion";
 import { address } from "../../js/helper/constant";
 import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
@@ -23,7 +24,7 @@ class MyOffer extends Component {
     axios
       .get(`${address}/offer/1/open`)
       .then((response) => {
-          console.log(response.data)
+        console.log(response.data);
         this.setState({ openOffers: response.data });
       })
       .catch((error) => {
@@ -41,7 +42,13 @@ class MyOffer extends Component {
         <MyOfferHeader navarr={this.state.navarr}></MyOfferHeader>
         <div className="container">
           {this.state.openOffers.map((offer) => (
-                  <Accordion.Toggle as={Card.Header} eventKey="0" className="gray-auto-matching">
+            <Accordion.Toggle
+              as={Card.Header}
+              eventKey="0"
+              className="gray-auto-matching"
+              key={offer.id}
+              className={"offer" + offer.offerStatus}
+            >
               <ListGroup.Item
                 variant="secondary"
                 className="list-group-style-auto-matching "
@@ -59,7 +66,7 @@ class MyOffer extends Component {
                 </Row>
                 <Row>
                   <Col>#{offer.id}</Col>
-                  <Col>Username</Col>
+                  <Col>{offer.nickname}</Col>
                   <Col>{offer.destinationCountry}</Col>
                   <Col>{offer.destinationCurrency}</Col>
                   <Col>{offer.amountInDes}</Col>
@@ -69,7 +76,7 @@ class MyOffer extends Component {
                   <Col>{offer.expirationDate}</Col>
                 </Row>
               </ListGroup.Item>
-              </Accordion.Toggle>
+            </Accordion.Toggle>
           ))}
         </div>
       </div>

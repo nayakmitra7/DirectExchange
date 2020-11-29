@@ -59,6 +59,22 @@
   font-weight: bold;
   font-size: 20px;
 }
-.td_value{
-    font-size: 18px;
+.td_value {
+  font-size: 18px;
+}
+.offer2 {
+  border: 1px solid green;
+}
+.offer3 {
+  border: 1px solid red;
+}
+.offer1 {
+  border: 1px solid dodgerblue;
+}
+.margin-top-browse-offer{
+  margin-top: 3%;
+}
+.margin-left-right-browse-offer{
+  margin-left: 2%;
+  margin-right: 2%;
 }

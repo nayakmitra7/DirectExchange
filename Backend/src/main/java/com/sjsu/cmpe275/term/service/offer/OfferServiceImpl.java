@@ -82,4 +82,9 @@ public class OfferServiceImpl implements OfferService {
 		
 		return offerRepository.getOwnOfferById(userId,todayDate,openOffer);
 	}
+	@Override
+	public List<Offer> getCloseOfferById(Long userId, Date todayDate, int offerStatus) {
+		
+		return offerRepository.getCloseOfferById(userId,todayDate,offerStatus);
+	}
 }
