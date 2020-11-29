@@ -62,3 +62,10 @@
 .td_value{
     font-size: 18px;
 }
+.margin-top-browse-offer{
+  margin-top: 5%;
+}
+.margin-left-right-browse-offer{
+  margin-left: 2%;
+  margin-right: 2%;
+}
