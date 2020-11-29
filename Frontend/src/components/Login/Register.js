@@ -8,7 +8,7 @@ import { apiKey, authDomain } from "../../config";
 import axios from "axios";
 import { address } from "../../js/helper/constant"
 import NewUserData from "./NewUserData"
-
+import Verification from "./Verification"
 firebase.initializeApp({
     apiKey,
     authDomain,
@@ -22,7 +22,8 @@ class Register extends Component {
         verificationClicked: false,
         isNewUser: true,
         reDirectLanding: false,
-        isUniqueNickname: false
+        isUniqueNickname: false,
+        submitMessage: ""
     }
 
     uiConfig = {
@@ -45,27 +46,36 @@ class Register extends Component {
     handleNewUserSubmit = async (data) => {
         await axios.post(`${address}/user`, data)
             .then(res => {
-                console.log("In post user")
-                if (res.data.code === 400)
-                    this.setState({ submitMessage: res.data.error });
-                else if (res.data.code === 200) {
-                    this.setState({ reDirectLanding: true });
+                console.log("In post user", res)
+                if (res.status === 200) {
                     localStorage.setItem("id", res.data.id);
                     localStorage.setItem("emailId", res.data.emailId);
                     localStorage.setItem("nickname", res.data.nickname);
+                    this.setState({ reDirectLanding: true });
+
                 }
+            })
+            .catch(err => {
+                console.log(err.response.data.code, err.response.data.error)
+                if (err.response.data.code === 400)
+                    this.setState({ submitMessage: err.response.data.error });
             })
 
 
     }
 
     newUserCheck = async (emailId) => {
+        console.log("newusercheck")
         await axios.get(`${address}/user/${emailId}`)
             .then(res => {
                 if (res.data.code === 404) {
                     this.setState({ isNewUser: true });
-                } else if (res.data.code === 200) {
+                } else if (res.status === 200) {
                     this.setState({ isNewUser: false });
+                }
+            }).catch(err => {
+                if (err.response.data.code === 404) {
+                    this.setState({ isNewUser: true });
                 }
             })
     }
@@ -91,7 +101,7 @@ class Register extends Component {
 
     render() {
         let redirectVar = null;
-        if (this.state.reDirectLanding) {
+        if (this.state.reDirectLanding || (this.state.emailVerified && !this.state.isNewUser)) {
             redirectVar = <Redirect to="/home" />
         }
         return (
@@ -100,23 +110,9 @@ class Register extends Component {
                 {redirectVar}
                 <Navbar></Navbar>
                 {this.state.isSignedIn && !this.state.emailVerified ? (
-                    <div>
-                        Please verify your email. Check you inbox!
-                        <button
-                            onClick={() => {
-                                firebase.auth().currentUser.sendEmailVerification();
-                                this.setState({ verificationClicked: true, verificationMessage: "Email sent. Please verify" });
-                            }}
-                        >
-                            Send Verification email
-                        </button>
-                        <button onClick={() => {
-                            window.location.reload();
-                        }}>Refresh after verifying!</button>
-                        <button onClick={() => { firebase.auth().signOut(); this.setState({ emailVerified: false, verificationMessage: "" }) }}>Sign out!</button>
-                        {console.log(firebase.auth().currentUser)}
-                        {this.state.verificationMessage}
-                    </div>
+                    <Verification 
+                    
+                    />
                 ) : !this.state.isSignedIn ? (
 
                     <StyledFirebaseAuth uiConfig={this.uiConfig} firebaseAuth={firebase.auth()} />

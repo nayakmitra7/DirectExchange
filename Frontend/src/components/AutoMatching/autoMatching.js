@@ -32,7 +32,7 @@ class AutoMatching extends Component {
         }).catch(error => {
             toast.error("Internal error has occured", { position: 'top-center', autoClose: false })
         })
-        axios.get(address + '/offerMatching/split/11').then((response) => {
+        axios.get(address + '/offerMatching/split/4').then((response) => {
             if (response.status == 200) {
                 this.setState({ splitOfferList: response.data, offerExists: 1 })
             }
@@ -184,9 +184,9 @@ class AutoMatching extends Component {
                     </Col>}
                 </Row>
             </ListGroup.Item>)
-            inner.push()
+            
         })
-        this.state.offerExists > 0 && singleMatches.push(
+        this.state.offerExists > 0 && this.state.singleOfferList.matchingOffer.length > 0 && singleMatches.push(
             <Card>
                 <Accordion.Toggle as={Card.Header} eventKey="0" className="gray-auto-matching">
                     <ListGroup.Item variant="secondary" className="list-group-style-auto-matching ">
