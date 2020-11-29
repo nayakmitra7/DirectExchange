@@ -12,7 +12,8 @@ import ArrowRightAltSharpIcon from "@material-ui/icons/ArrowRightAltSharp";
 import Pagination from "@material-ui/lab/Pagination";
 import Typography from "@material-ui/core/Typography";
 import OfferModal from "./OfferModal";
-
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 const options = [
   { value: "chocolate", label: "Chocolate" },
   { value: "strawberry", label: "Strawberry" },
@@ -163,8 +164,7 @@ class BrowseOffer extends Component {
     return (
       <div>
         <Navbar></Navbar>
-        <Container>
-          <Card className="card mb-4">
+          <Card className="card mb-4 margin-top-browse-offer margin-left-right-browse-offer">
             <Card.Header
               className="card-header"
               style={{ textAlign: "center" }}
@@ -257,7 +257,43 @@ Cards to display offers
           {this.state.paginationOffers.length != 0
             ? this.state.paginationOffers.map((offer) => (
                 <div>
-                  <Card
+                  <Row >
+                    <Col>
+                    <Card className="margin-left-right-browse-offer" onClick={() => {
+                      this.setState({ modalShow: "block", open: true });
+                      this.setState({ offerId: offer.id });
+                    }}>
+                      <Card.Body>
+                      <Row className="header-bold-auto-matching  " >
+                            <Col >ID</Col>
+                            <Col >Username</Col>
+                            <Col >Country(src)</Col>
+                            <Col >Currency(src)</Col>
+                      
+                            <Col >Amount(src)</Col>
+                            <Col >Amount(des)</Col>
+                            <Col >Country(des)</Col>
+                            <Col >Currency(des)</Col>
+                            
+                            <Col >ExpDate</Col>
+                        </Row>
+                        <Row>
+                            <Col >#{offer.id}</Col>
+                            <Col >Username</Col>
+                            <Col >{offer.sourceCountry}</Col>
+                            <Col >{offer.sourceCurrency}</Col>
+                            <Col >{offer.amountInSrc}</Col>
+                            <Col >{offer.amountInDes}</Col>
+                            <Col >{offer.destinationCountry}</Col>
+                            <Col >{offer.destinationCurrency}</Col>
+                        
+                            <Col >{offer.expirationDate}</Col>
+                        </Row>
+                      </Card.Body>
+                    </Card>
+                    </Col>
+                  </Row>
+                  {/*<Card
                     className="card browse_card"
                     style={{ backgroundColor: "rgb(0,0,0,0.1)" }}
                     onClick={() => {
@@ -331,7 +367,7 @@ Cards to display offers
                         )}
                       </div>
                     </div>
-                  </Card>
+                        </Card>*/}
                   {this.state.offerId === offer.id}
                   <OfferModal
                     offer={offer}
@@ -343,7 +379,7 @@ Cards to display offers
               ))
             : ""}
 
-          <div className="center-page p-3 mt-2">
+          <div className="center-page p-3 mt-2 margin-left-right-browse-offer">
             <Typography>Page: {this.state.page}</Typography>
             <div className="d-flex justify-content-center mt-2">
               <Pagination
@@ -355,7 +391,6 @@ Cards to display offers
               />
             </div>
           </div>
-        </Container>
       </div>
     );
   }
