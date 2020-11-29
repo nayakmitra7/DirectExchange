@@ -77,4 +77,9 @@ public class OfferServiceImpl implements OfferService {
 		// TODO Auto-generated method stub
 		return offerRepository.getOffer(userId,todayDate);
 	}
+	@Override
+	public List<Offer> getOwnOfferById(Long userId, Date todayDate, int openOffer) {
+		
+		return offerRepository.getOwnOfferById(userId,todayDate,openOffer);
+	}
 }

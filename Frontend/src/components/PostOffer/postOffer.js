@@ -123,7 +123,7 @@ class PostOffer extends Component {
         
         let amountInUSD = this.state.amount * this.state.exchangeRateList.usdRate;
         let amountInDes = this.state.amount * this.state.exchangeRate;
-        let offer = { "sourceCountry": this.state.sourceCountry, "sourceCurrency": this.state.sourceCurrency, "amountInSrc": this.state.amount, "amountInDes": amountInDes.toFixed(2), "amountInUSD": amountInUSD.toFixed(2), "destinationCountry": this.state.destinationCountry, "destinationCurrency": this.state.destinationCurrency, "counterOfferAllowed": this.state.counterOfferFlag, "splitOfferAllowed": this.state.splitOfferFlag, "expirationDate": this.state.expirationDate, "userId": this.state.userId }
+        let offer = { "sourceCountry": this.state.sourceCountry, "sourceCurrency": this.state.sourceCurrency, "amountInSrc": this.state.amount, "amountInDes": amountInDes.toFixed(2), "amountInUSD": amountInUSD.toFixed(2), "destinationCountry": this.state.destinationCountry, "destinationCurrency": this.state.destinationCurrency, "counterOfferAllowed": this.state.counterOfferFlag, "splitOfferAllowed": this.state.splitOfferFlag, "expirationDate": this.state.expirationDate, "userId": this.state.userId,"offerStatus":"1","nickname":"PKS" }
         axios.post(address + '/offer', offer).then((response) => {
             if (response.status == 200) {
                 toast.success(response.data.message);

@@ -12,4 +12,8 @@ import com.sjsu.cmpe275.term.models.Offer;
 public interface OfferRepository extends JpaRepository<Offer, Long>{
 	@Query("Select o1 from Offer o1 where o1.expirationDate >= :expirationDate and o1.userId != :userId")
 	List<Offer> getOffer(@Param("userId") Long userId,@Param("expirationDate") Date expirationDate);
+	
+	@Query("Select o1 from Offer o1 where o1.expirationDate >= :expirationDate and o1.userId = :userId and o1.offerStatus=:offerStatus")
+	List<Offer> getOwnOfferById(@Param("userId")Long userId, @Param("expirationDate") Date expirationDate,@Param("offerStatus")int offerStatus);
+	
 }

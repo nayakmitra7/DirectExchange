@@ -31,6 +31,8 @@ public class OfferDto {
     private Boolean counterOfferAllowed;
     private Boolean splitOfferAllowed;
     private Long userId;
+    private int offerStatus;
+    private String nickname;
 	
 	//List<CounterOffer> counterOffers;
 	public OfferDto() {
@@ -156,6 +158,26 @@ public class OfferDto {
 
 	public void setUserId(Long userId) {
 		this.userId = userId;
+	}
+
+
+	public int getOfferStatus() {
+		return offerStatus;
+	}
+
+
+	public void setOfferStatus(int offerStatus) {
+		this.offerStatus = offerStatus;
+	}
+
+
+	public String getNickname() {
+		return nickname;
+	}
+
+
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
 	}
 
 	

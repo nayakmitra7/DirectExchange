@@ -22,6 +22,7 @@ import com.sjsu.cmpe275.term.dto.ResponseDTO;
 import com.sjsu.cmpe275.term.exceptions.GenericException;
 import com.sjsu.cmpe275.term.models.Offer;
 import com.sjsu.cmpe275.term.service.offer.OfferService;
+import com.sjsu.cmpe275.term.utils.Constant;
 
 
 @RestController
@@ -83,6 +84,38 @@ public class OfferController {
 		List<OfferDto> offerdto=objectMapper.convertValue(offers, new TypeReference<List<OfferDto>>(){});
 		return new ResponseEntity<List<OfferDto>>(offerdto, HttpStatus.OK);
 
+	}
+	
+	@RequestMapping(value="/offer/{userId}/open", method = RequestMethod.GET, produces = "application/json")
+	@ResponseBody
+	public ResponseEntity<List<OfferDto>> getOpenOfferById(){
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		Date todayDate = cal.getTime();
+		
+		List<Offer> offers=offerService.getOwnOfferById(1L,todayDate,Constant.OFFEROPEN);
+		
+		List<OfferDto> offerdto=objectMapper.convertValue(offers, new TypeReference<List<OfferDto>>(){});
+		return new ResponseEntity<List<OfferDto>>(offerdto, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value="/offer/{userId}/close", method = RequestMethod.GET, produces = "application/json")
+	@ResponseBody
+	public ResponseEntity<List<OfferDto>> getCloseOfferById(){
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		Date todayDate = cal.getTime();
+		
+		List<Offer> offers=offerService.getOwnOfferById(1L,todayDate,Constant.OFFERFULFILED);
+		
+		List<OfferDto> offerdto=objectMapper.convertValue(offers, new TypeReference<List<OfferDto>>(){});
+		return new ResponseEntity<List<OfferDto>>(offerdto, HttpStatus.OK);
 	}
 
 	

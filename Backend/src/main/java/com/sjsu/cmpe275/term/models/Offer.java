@@ -1,21 +1,15 @@
 package com.sjsu.cmpe275.term.models;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.Column;
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 
 @Entity
 @Table(name="OFFER")
@@ -47,12 +41,17 @@ public class Offer {
     private Boolean splitOfferAllowed;
 	@Column(name="userId",nullable=false)
     private Long userId;
+	@Column(name="offerStatus",nullable=false)
+    private int offerStatus;
+	@Column(name="nickname",nullable=false)
+    private String nickname;
 	
 	
 
 	public Offer( String sourceCountry, String sourceCurrency, Double amountInSrc, Double amountInDes,
 			Double amountInUSD, String destinationCountry, String destinationCurrency, Date expirationDate,
-			Boolean counterOfferAllowed, Boolean splitOfferAllowed, Long userId) {
+			Boolean counterOfferAllowed, Boolean splitOfferAllowed, Long userId,
+			String nickname,int offerStatus) {
 		super();
 
 		this.sourceCountry = sourceCountry;
@@ -66,6 +65,8 @@ public class Offer {
 		this.counterOfferAllowed = counterOfferAllowed;
 		this.splitOfferAllowed = splitOfferAllowed;
 		this.userId = userId;
+		this.nickname=nickname;
+		this.offerStatus=offerStatus;
 	}
 
 
@@ -200,6 +201,26 @@ public class Offer {
 	}
 
 
+	public int getOfferStatus() {
+		return offerStatus;
+	}
+
+
+	public void setOfferStatus(int offerStatus) {
+		this.offerStatus = offerStatus;
+	}
+
+
+	public String getNickname() {
+		return nickname;
+	}
+
+
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
+	}
+
+	
 
 	
 	

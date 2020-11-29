@@ -6,6 +6,8 @@ import PostOffer from "./PostOffer/postOffer";
 import PrevailingRate from "./PrevailingRates/prevailingRate";
 import BrowseOffer from "./BrowseOffer/BrowseOffer";
 import AutoMatching from "./AutoMatching/autoMatching";
+import MyOffer from "./MyOffer/MyOffer";
+import CloseOffer from "./MyOffer/CloseOffer";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 //Create a Main Component
 class Main extends Component {
@@ -21,6 +23,9 @@ class Main extends Component {
           <Route path="/postOffer" component={PostOffer} />
           <Route path="/browseOffer" component={BrowseOffer} />
           <Route path="/autoMatching" component={AutoMatching} />
+          <Route path="/myOffer/open" component={MyOffer} />
+          <Route path="/myOffer/close" component={CloseOffer} />
+
           {/* </Switch> */}
         </div>
       </Router>
