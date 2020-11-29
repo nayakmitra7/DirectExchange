@@ -55,7 +55,7 @@ public class TransactionController {
 			Offer offer2 = offerService.getOfferById(offerId2);
 			
 			
-			if (offer1.getAmountInUSD() != offer2.getAmountInUSD()) {
+			if (Double.compare(offer1.getAmountInUSD(), offer2.getAmountInUSD()) != 0)  {
 				ResponseDTO responseDTO = new ResponseDTO(200, HttpStatus.OK, "Selected offer amount doesn't match with your offer. Please make another selection.");
 				return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
 			}
@@ -99,7 +99,10 @@ public class TransactionController {
 			Offer offer2 = offerService.getOfferById(offerId2);
 			Offer offer3 = offerService.getOfferById(offerId3);
 
-			if ((offer1.getAmountInUSD() != offer2.getAmountInUSD() + offer3.getAmountInUSD()) || (offer1.getAmountInUSD() + offer2.getAmountInUSD() != offer3.getAmountInUSD())) {
+			
+			if ((Double.compare(offer1.getAmountInUSD(), offer2.getAmountInUSD() + offer3.getAmountInUSD()) != 0) 
+				|| (Double.compare(offer1.getAmountInUSD() + offer2.getAmountInUSD(), offer3.getAmountInUSD()) != 0)
+				|| (Double.compare(offer1.getAmountInUSD() + offer3.getAmountInUSD(), offer2.getAmountInUSD()) != 0)) {
 				ResponseDTO responseDTO = new ResponseDTO(200, HttpStatus.OK, "Selected offers amounts don't exactly match with your offer. Please make another selection.");
 				return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
 			}
