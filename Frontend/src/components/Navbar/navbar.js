@@ -22,7 +22,7 @@ class NavigationBar extends Component {
             <Nav.Link href="/postOffer">Post an offer</Nav.Link>
             <Nav.Link href="/prevailingRates">Prevailing Rates</Nav.Link>
             <Nav.Link href="/browseoffer">Browse and Filter</Nav.Link>
-            <Nav.Link href="/myOffer">My Offers</Nav.Link>
+            <Nav.Link href="/myOffer/open">My Offers</Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
