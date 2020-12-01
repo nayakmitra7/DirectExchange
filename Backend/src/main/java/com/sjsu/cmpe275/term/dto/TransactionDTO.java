@@ -10,10 +10,18 @@ public class TransactionDTO {
 	private Double offerIdStatus1;
 	private Double offerIdStatus2;
 	private Double offerIdStatus3;
+	private String offerEmailId1;
+	private String offerEmailId2;
+	private String offerEmailId3;
+	private Long offerUserId1;
+	private Long offerUserId2;
+	private Long offerUserId3;
 	private Double tranStatus;
 	
 	public TransactionDTO(Long id, Boolean isSplit, Double offerId1, Double offerId2, Double offerId3,
-			Double offerIdStatus1, Double offerIdStatus2, Double offerIdStatus3, Double tranStatus) {
+			Double offerIdStatus1, Double offerIdStatus2, Double offerIdStatus3, String offerEmailId1, 
+			String offerEmailId2, String offerEmailId3, Long offerUserId1, Long offerUserId2, 
+			Long offerUserId3, Double tranStatus) {
 		super();
 		this.id = id;
 		this.isSplit = isSplit;
@@ -23,6 +31,12 @@ public class TransactionDTO {
 		this.offerIdStatus1 = offerIdStatus1;
 		this.offerIdStatus2 = offerIdStatus2;
 		this.offerIdStatus3 = offerIdStatus3;
+		this.offerEmailId1 = offerEmailId1;
+		this.offerEmailId2 = offerEmailId2;
+		this.offerEmailId3 = offerEmailId3;
+		this.offerUserId1 = offerUserId1;
+		this.offerUserId2 = offerUserId2;
+		this.offerUserId3 = offerUserId3;
 		this.tranStatus = tranStatus;
 	}
 	
@@ -78,9 +92,58 @@ public class TransactionDTO {
 	public void setOfferIdStatus3(Double offerIdStatus3) {
 		this.offerIdStatus3 = offerIdStatus3;
 	}
+	public String getOfferEmailId1() {
+		return offerEmailId1;
+	}
+
+	public void setOfferEmailId1(String offerEmailId1) {
+		this.offerEmailId1 = offerEmailId1;
+	}
+
+	public String getOfferEmailId2() {
+		return offerEmailId2;
+	}
+
+	public void setOfferEmailId2(String offerEmailId2) {
+		this.offerEmailId2 = offerEmailId2;
+	}
+
+	public String getOfferEmailId3() {
+		return offerEmailId3;
+	}
+
+	public void setOfferEmailId3(String offerEmailId3) {
+		this.offerEmailId3 = offerEmailId3;
+	}
+	
+	public Long getOfferUserId1() {
+		return offerUserId1;
+	}
+
+	public void setOfferUserId1(Long offerUserId1) {
+		this.offerUserId1 = offerUserId1;
+	}
+
+	public Long getOfferUserId2() {
+		return offerUserId2;
+	}
+
+	public void setOfferUserId2(Long offerUserId2) {
+		this.offerUserId2 = offerUserId2;
+	}
+
+	public Long getOfferUserId3() {
+		return offerUserId3;
+	}
+
+	public void setOfferUserId3(Long offerUserId3) {
+		this.offerUserId3 = offerUserId3;
+	}
+
 	public Double getTranStatus() {
 		return tranStatus;
 	}
+	
 	public void setTranStatus(Double tranStatus) {
 		this.tranStatus = tranStatus;
 	}

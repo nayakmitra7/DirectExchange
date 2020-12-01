@@ -30,6 +30,18 @@ public class Transaction {
 	private int offerIdStatus2;
 	@Column(name = "offerIdStatus3", nullable = true)
 	private int offerIdStatus3;
+	@Column(name = "offerEmailId1", nullable = false)
+	private String offerEmailId1;
+	@Column(name = "offerEmailId2", nullable = false)
+	private String offerEmailId2;
+	@Column(name = "offerEmailId3", nullable = true)
+	private String offerEmailId3;
+	@Column(name = "offerUserId1", nullable = false)
+	private Long offerUserId1;
+	@Column(name = "offerUserId2", nullable = false)
+	private Long offerUserId2;
+	@Column(name = "offerUserId3", nullable = true)
+	private Long offerUserId3;
 	@Column(name = "tranStatus", nullable = false)
 	private int tranStatus;
 	
@@ -81,14 +93,48 @@ public class Transaction {
 	public void setOfferIdStatus3(int offerIdStatus3) {
 		this.offerIdStatus3 = offerIdStatus3;
 	}
+	public String getOfferEmailId1() {
+		return offerEmailId1;
+	}
+	public void setOfferEmailId1(String offerEmailId1) {
+		this.offerEmailId1 = offerEmailId1;
+	}
+	public String getOfferEmailId2() {
+		return offerEmailId2;
+	}
+	public void setOfferEmailId2(String offerEmailId2) {
+		this.offerEmailId2 = offerEmailId2;
+	}
+	public String getOfferEmailId3() {
+		return offerEmailId3;
+	}
+	public void setOfferEmailId3(String offerEmailId3) {
+		this.offerEmailId3 = offerEmailId3;
+	}
+	public Long getOfferUserId1() {
+		return offerUserId1;
+	}
+	public void setOfferUserId1(Long offerUserId1) {
+		this.offerUserId1 = offerUserId1;
+	}
+	public Long getOfferUserId2() {
+		return offerUserId2;
+	}
+	public void setOfferUserId2(Long offerUserId2) {
+		this.offerUserId2 = offerUserId2;
+	}
+	public Long getOfferUserId3() {
+		return offerUserId3;
+	}
+	public void setOfferUserId3(Long offerUserId3) {
+		this.offerUserId3 = offerUserId3;
+	}
 	public int getTranStatus() {
 		return tranStatus;
 	}
 	public void setTranStatus(int tranStatus) {
 		this.tranStatus = tranStatus;
 	}
-	
-	
 	
 }
 
