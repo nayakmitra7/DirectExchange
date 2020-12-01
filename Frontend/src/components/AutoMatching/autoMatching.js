@@ -13,6 +13,8 @@ import Tab from 'react-bootstrap/Tab'
 import Accordion from 'react-bootstrap/Accordion'
 import ListGroup from 'react-bootstrap/ListGroup'
 import Button from 'react-bootstrap/esm/Button';
+import Modal from 'react-bootstrap/Modal';
+import Form from 'react-bootstrap/Form'
 class AutoMatching extends Component {
     constructor() {
         super();
@@ -21,19 +23,30 @@ class AutoMatching extends Component {
             splitOfferList: [],
             offerExists: 0,
             userId: parseInt(localStorage.getItem("id")),
-            offerId:parseInt(localStorage.getItem("autoMatchId")),
+            offerId: parseInt(localStorage.getItem("autoMatchId")),
+            offerSrcAmount: 0,
+            modalShow: false,
+            sourceAmountChange: 0,
+            destinationAmount: 0
         }
+        this.modify = this.modify.bind(this);
+        this.accept = this.accept.bind(this);
+        this.handleClose = this.handleClose.bind(this);
+        this.handleOpen = this.handleOpen.bind(this);
+        this.setStateSourceAmount = this.setStateSourceAmount.bind(this);
+        this.acceptModal = this.acceptModal.bind(this);
 
     }
     componentDidMount() {
-        axios.get(address + '/offerMatching/single/'+this.state.offerId).then((response) => {
+        axios.get(address + '/offerMatching/single/' + this.state.offerId).then((response) => {
+            console.log(response.data)
             if (response.status == 200) {
-                this.setState({ singleOfferList: response.data, offerExists: 1 })
+                this.setState({ singleOfferList: response.data, offerExists: 1, offerSrcAmount: response.data.offer.amountInSrc, sourceAmountChange: response.data.offer.amountInSrc })
             }
         }).catch(error => {
             toast.error("Internal error has occured", { position: 'top-center', autoClose: false })
         })
-        axios.get(address + '/offerMatching/split/'+this.state.offerId).then((response) => {
+        axios.get(address + '/offerMatching/split/' + this.state.offerId).then((response) => {
             if (response.status == 200) {
                 this.setState({ splitOfferList: response.data, offerExists: 1 })
             }
@@ -41,7 +54,29 @@ class AutoMatching extends Component {
             toast.error("Internal error has occured", { position: 'top-center', autoClose: false })
         })
     }
+    handleClose = () => {
+        this.setState({ modalShow: false })
+    };
+    handleOpen = (destValue) => {
+        console.log(destValue)
+        this.setState({ modalShow: true, destinationAmount: destValue })
+    };
+    setStateSourceAmount = (event) => {
+        this.setState({ sourceAmountChange: event.target.value })
+    }
+    modify = (id) => {
 
+    }
+    accept = (id) => {
+
+    }
+    acceptModal = () => {
+        if (this.state.destinationAmount == this.state.sourceAmountChange) {
+
+        } else {
+            toast.error("The offers must match")
+        }
+    }
 
     render() {
         let singleMatches = [];
@@ -71,7 +106,7 @@ class AutoMatching extends Component {
                     </Row>
                     <Row>
                         <Col>#{offer.id}</Col>
-                        <Col>Username</Col>
+                        <Col>{offer.nickname}</Col>
                         <Col>{offer.sourceCountry}</Col>
                         <Col>{offer.sourceCurrency}</Col>
                         <Col>{offer.amountInSrc}</Col>
@@ -139,17 +174,18 @@ class AutoMatching extends Component {
                     </Accordion.Collapse>
                 </Card>)
         })
+
+
+
         this.state.offerExists && this.state.singleOfferList.matchingOffer.forEach(offer => {
             inner.push(<ListGroup.Item>
                 <Row className="header-bold-auto-matching">
                     <Col>Offer ID</Col>
                     <Col>Username</Col>
                     <Col>Country(src)</Col>
-                    <Col>Currency(src)</Col>
                     <Col>Amount(src)</Col>
                     <Col>Amount(des)</Col>
                     <Col>Country(des)</Col>
-                    <Col>Currency(des)</Col>
                     <Col>Exp Date</Col>
 
                 </Row>
@@ -157,30 +193,30 @@ class AutoMatching extends Component {
                     <Col>#{offer.id}</Col>
                     <Col>{offer.nickname}</Col>
                     <Col>{offer.sourceCountry}</Col>
-                    <Col>{offer.sourceCurrency}</Col>
-                    <Col>{offer.amountInSrc}</Col>
-                    <Col>{offer.amountInDes}</Col>
+                    <Col>{offer.amountInSrc} {offer.sourceCurrency}</Col>
+                    <Col>{offer.amountInDes} {offer.destinationCurrency}</Col>
                     <Col>{offer.destinationCountry}</Col>
-                    <Col>{offer.destinationCurrency}</Col>
                     <Col>{offer.expirationDate}</Col>
 
                 </Row>
-                
+
                 <Row className="margin-top-1-auto-matching">
                     <Col md="5"></Col>
-                    <Col md="1.5">
-                        <Button variant="success" size="sm">Accept Offer</Button>
-                    </Col>
-
-                    {offer.counterOfferAllowed && <Col md="2">
+                    {this.state.offerSrcAmount == offer.amountInDes && <Col md="1.5">
+                        <Button variant="success" size="sm" onClick={() => this.accept(offer.id)}>Accept Offer</Button>
+                    </Col>}
+                    {this.state.offerSrcAmount != offer.amountInDes && <Col md="1.5">
+                        <Button variant="danger" size="sm" onClick={() => { this.handleOpen(offer.amountInDes) }}>Modify My Offer</Button>
+                    </Col>}
+                    {offer.counterOfferAllowed && this.state.offerSrcAmount != offer.amountInDes && <Col md="2">
                         <Button size="sm"> Counter Offer</Button>
                     </Col>}
                 </Row>
             </ListGroup.Item>)
-            
+
         })
         inner.length > 0 && singleMatches.push(
-          
+
             <Card>
                 <Accordion.Toggle as={Card.Header} eventKey="0" className="gray-auto-matching">
                     <ListGroup.Item variant="secondary" className="list-group-style-auto-matching ">
@@ -188,22 +224,18 @@ class AutoMatching extends Component {
                             <Col>Offer ID</Col>
                             <Col>Username</Col>
                             <Col>Country(des)</Col>
-                            <Col>Currency(des)</Col>
                             <Col>Amount(des)</Col>
                             <Col>Amount(src)</Col>
                             <Col>Country(src)</Col>
-                            <Col>Currency(src)</Col>
                             <Col>Exp Date</Col>
                         </Row>
                         <Row>
                             <Col>#{this.state.singleOfferList.offer.id}</Col>
                             <Col>{this.state.singleOfferList.offer.nickname}</Col>
                             <Col>{this.state.singleOfferList.offer.destinationCountry}</Col>
-                            <Col>{this.state.singleOfferList.offer.destinationCurrency}</Col>
-                            <Col>{this.state.singleOfferList.offer.amountInDes}</Col>
-                            <Col>{this.state.singleOfferList.offer.amountInSrc}</Col>
+                            <Col>{this.state.singleOfferList.offer.amountInDes} {this.state.singleOfferList.offer.destinationCurrency}</Col>
+                            <Col>{this.state.singleOfferList.offer.amountInSrc} {this.state.singleOfferList.offer.sourceCurrency}</Col>
                             <Col>{this.state.singleOfferList.offer.sourceCountry}</Col>
-                            <Col>{this.state.singleOfferList.offer.sourceCurrency}</Col>
                             <Col>{this.state.singleOfferList.offer.expirationDate}</Col>
                         </Row>
                     </ListGroup.Item></Accordion.Toggle>
@@ -242,6 +274,52 @@ class AutoMatching extends Component {
 
                     </Col>
                 </Row>
+                <Modal show={this.state.modalShow} onHide={this.handleOpen} size="lg">
+                    <Modal.Header>
+                        <Modal.Title>Offer Modification</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Form>
+                        <Row>
+                            <Col>
+                                <Row>
+                                    <Col className="header-bold-auto-matching">Offer ID</Col>
+                                    {this.state.offerExists && <Col>#{this.state.singleOfferList.offer.id}</Col>}
+                                </Row>
+                                <Row>
+                                    <Col className="header-bold-auto-matching">Username</Col>
+                                    {this.state.offerExists && <Col>{this.state.singleOfferList.offer.nickname}</Col>}
+                                </Row>
+                                <Row>
+                                    <Col className="header-bold-auto-matching">Country(des)</Col>
+                                    {this.state.offerExists && <Col>{this.state.singleOfferList.offer.destinationCountry}</Col>}
+                                </Row>
+                                <Row>
+                                    <Col className="header-bold-auto-matching">Amount(des)</Col>
+                                    {this.state.offerExists && <Col>{this.state.singleOfferList.offer.amountInDes} {this.state.singleOfferList.offer.destinationCurrency}</Col>}
+                                </Row>
+                                <Row>
+                                    <Col className="header-bold-auto-matching">Amount(src)</Col>
+                                    {this.state.offerExists && <Col><input value={this.state.sourceAmountChange} onChange={this.setStateSourceAmount} />  {this.state.singleOfferList.offer.sourceCurrency}</Col>}
+                                </Row>
+                                <Row>
+                                    <Col className="header-bold-auto-matching">Country(src)</Col>
+                                    {this.state.offerExists && <Col>{this.state.singleOfferList.offer.sourceCountry}</Col>}
+                                </Row>
+                                <Row>
+                                    <Col className="header-bold-auto-matching">Exp Date</Col>
+                                    {this.state.offerExists && <Col>{this.state.singleOfferList.offer.expirationDate}</Col>}
+                                </Row>
+
+                            </Col>
+                        </Row>
+                        </Form>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={this.handleClose}>Close</Button>
+                        <Button variant="success" onClick={this.acceptModal} >Accept offer</Button>
+                    </Modal.Footer>
+                </Modal>
 
             </div>
         )
