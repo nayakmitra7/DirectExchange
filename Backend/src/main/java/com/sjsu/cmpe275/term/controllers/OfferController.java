@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -88,7 +89,7 @@ public class OfferController {
 	
 	@RequestMapping(value="/offer/{userId}/open", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
-	public ResponseEntity<List<OfferDto>> getOpenOfferById(){
+	public ResponseEntity<List<OfferDto>> getOpenOfferById(@PathVariable Long userId){
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.HOUR_OF_DAY, 0);
 		cal.set(Calendar.MINUTE, 0);
@@ -96,7 +97,7 @@ public class OfferController {
 		cal.set(Calendar.MILLISECOND, 0);
 		Date todayDate = cal.getTime();
 		
-		List<Offer> offers=offerService.getOwnOfferById(1L,todayDate,Constant.OFFEROPEN);
+		List<Offer> offers=offerService.getOwnOfferById(userId,todayDate,Constant.OFFEROPEN);
 		
 		List<OfferDto> offerdto=objectMapper.convertValue(offers, new TypeReference<List<OfferDto>>(){});
 		return new ResponseEntity<List<OfferDto>>(offerdto, HttpStatus.OK);

@@ -279,7 +279,7 @@ Cards to display offers
                         </Row>
                         <Row>
                             <Col >#{offer.id}</Col>
-                            <Col >Username</Col>
+                            <Col >{offer.nickname}</Col>
                             <Col >{offer.sourceCountry}</Col>
                             <Col >{offer.sourceCurrency}</Col>
                             <Col >{offer.amountInSrc}</Col>

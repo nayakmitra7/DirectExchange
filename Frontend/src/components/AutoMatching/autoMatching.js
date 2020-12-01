@@ -20,19 +20,20 @@ class AutoMatching extends Component {
             singleOfferList: [],
             splitOfferList: [],
             offerExists: 0,
-            userId: 1
+            userId: parseInt(localStorage.getItem("id")),
+            offerId:parseInt(localStorage.getItem("autoMatchId")),
         }
 
     }
     componentDidMount() {
-        axios.get(address + '/offerMatching/single/4').then((response) => {
+        axios.get(address + '/offerMatching/single/'+this.state.offerId).then((response) => {
             if (response.status == 200) {
                 this.setState({ singleOfferList: response.data, offerExists: 1 })
             }
         }).catch(error => {
             toast.error("Internal error has occured", { position: 'top-center', autoClose: false })
         })
-        axios.get(address + '/offerMatching/split/4').then((response) => {
+        axios.get(address + '/offerMatching/split/'+this.state.offerId).then((response) => {
             if (response.status == 200) {
                 this.setState({ splitOfferList: response.data, offerExists: 1 })
             }
@@ -138,7 +139,7 @@ class AutoMatching extends Component {
                     </Accordion.Collapse>
                 </Card>)
         })
-        this.state.offerExists > 0 && this.state.singleOfferList.matchingOffer.forEach(offer => {
+        this.state.offerExists && this.state.singleOfferList.matchingOffer.forEach(offer => {
             inner.push(<ListGroup.Item>
                 <Row className="header-bold-auto-matching">
                     <Col>Offer ID</Col>
@@ -164,15 +165,7 @@ class AutoMatching extends Component {
                     <Col>{offer.expirationDate}</Col>
 
                 </Row>
-                {/* <Row className="margin-top-1-auto-matching">
-                    <Col md="1.5">
-                        <Button variant="success" size="sm">Accept Offer</Button>
-                    </Col>
-
-                    {offer.counterOfferAllowed && <Col md="2">
-                        <Button size="sm"> Counter Offer</Button>
-                    </Col>}
-                </Row> */}
+                
                 <Row className="margin-top-1-auto-matching">
                     <Col md="5"></Col>
                     <Col md="1.5">
@@ -186,7 +179,8 @@ class AutoMatching extends Component {
             </ListGroup.Item>)
             
         })
-        this.state.offerExists > 0 && this.state.singleOfferList.matchingOffer.length > 0 && singleMatches.push(
+        inner.length > 0 && singleMatches.push(
+          
             <Card>
                 <Accordion.Toggle as={Card.Header} eventKey="0" className="gray-auto-matching">
                     <ListGroup.Item variant="secondary" className="list-group-style-auto-matching ">
@@ -234,8 +228,7 @@ class AutoMatching extends Component {
                             <Tab eventKey="single" title="Single Matches">
                                 <Accordion defaultActiveKey="0" className="margin-top-auto-matching">
                                     {singleMatches.length == 0 && <h5 className="margin-top-22-auto-matching">No rows available</h5>}
-
-                                    {singleMatches}
+                                    {singleMatches.length > 0 && singleMatches}
                                 </Accordion>
                             </Tab>
                             <Tab eventKey="split" title="Split Matches">
