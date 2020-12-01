@@ -100,7 +100,7 @@ class AutoMatching extends Component {
                     </Row>
                     <Row>
                         <Col>#{element.offer.id}</Col>
-                        <Col>Username</Col>
+                        <Col>{element.offer.nickname}</Col>
                         <Col>{element.offer.destinationCountry}</Col>
                         <Col>{element.offer.destinationCurrency}</Col>
                         <Col>{element.offer.amountInDes}</Col>
@@ -155,7 +155,7 @@ class AutoMatching extends Component {
                 </Row>
                 <Row>
                     <Col>#{offer.id}</Col>
-                    <Col>Username</Col>
+                    <Col>{offer.nickname}</Col>
                     <Col>{offer.sourceCountry}</Col>
                     <Col>{offer.sourceCurrency}</Col>
                     <Col>{offer.amountInSrc}</Col>
@@ -197,7 +197,7 @@ class AutoMatching extends Component {
                         </Row>
                         <Row>
                             <Col>#{this.state.singleOfferList.offer.id}</Col>
-                            <Col>Username</Col>
+                            <Col>{this.state.singleOfferList.offer.nickname}</Col>
                             <Col>{this.state.singleOfferList.offer.destinationCountry}</Col>
                             <Col>{this.state.singleOfferList.offer.destinationCurrency}</Col>
                             <Col>{this.state.singleOfferList.offer.amountInDes}</Col>
