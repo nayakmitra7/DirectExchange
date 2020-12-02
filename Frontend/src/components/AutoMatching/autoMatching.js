@@ -53,6 +53,7 @@ class AutoMatching extends Component {
     componentDidMount() {
         axios.get(address + '/offerMatching/single/' + this.state.offerId).then((response) => {
             if (response.status == 200) {
+                console.log(response.data)
                 this.setState({ singleOfferList: response.data, offerExists: 1, offerSrcAmount: response.data.offer.amountInSrc, sourceAmountChange: response.data.offer.amountInSrc, offer1: response.data.offer, myOffer: response.data.offer  })
             }
         }).catch(error => {
@@ -422,7 +423,7 @@ class AutoMatching extends Component {
 
                     </Col>
                 </Row>
-                {this.state.singleOfferList.offer && <Modal show={this.state.modalShow} onHide={this.handleOpen} size="lg">
+                {this.state.singleOfferList.offer != undefined && <Modal show={this.state.modalShow} onHide={this.handleOpen} size="lg">
                     <Modal.Header>
                         <Modal.Title>Offer Modification</Modal.Title>
                     </Modal.Header>
@@ -432,7 +433,7 @@ class AutoMatching extends Component {
                                 <Col>
                                     <Row>
                                         <Col className="header-bold-auto-matching">Offer ID</Col>
-                                        {this.state.offerExists && <Col>#{this.state.singleOfferList.offer.id}</Col>}
+                                        {this.state.singleOfferList.offer != undefined && <Col>#{this.state.singleOfferList.offer.id}</Col>}
                                     </Row>
                                     <Row>
                                         <Col className="header-bold-auto-matching">Username</Col>
@@ -484,7 +485,7 @@ class AutoMatching extends Component {
                     </Modal.Body>
 
                 </Modal>
-                <Modal show={this.state.modalShowSplit} onHide={this.handleOpen} size="lg">
+                {this.state.singleOfferList.offer != undefined && <Modal show={this.state.modalShowSplit} onHide={this.handleOpenSplit} size="lg">
                     <Modal.Header>
                         <Modal.Title>Offer Modification</Modal.Title>
                     </Modal.Header>
@@ -529,7 +530,7 @@ class AutoMatching extends Component {
                         <Button variant="secondary" onClick={this.handleClose}>Close</Button>
                         <Button variant="success" onClick={this.acceptModalSplit} >Accept offer</Button>
                     </Modal.Footer>
-                </Modal>
+                </Modal>}
                 <CounterOffer
                     myOffer={this.state.myOffer}
                     selectedCounterOffer={this.state.selectedCounterOffer}
