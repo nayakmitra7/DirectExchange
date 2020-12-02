@@ -11,6 +11,7 @@ import CloseOffer from "./MyOffer/CloseOffer";
 import InTransactionOffer from "./MyOffer/InTransactionOffer";
 import CounterReceived from "./MyOffer/CounterReceived";
 import CounterMade from "./MyOffer/CounterMade";
+import SendMessage from "./SendMessage/SendMessgae";
 
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 //Create a Main Component
@@ -32,6 +33,7 @@ class Main extends Component {
           <Route path="/myOffer/intranscation" component={InTransactionOffer} />
           <Route path="/myOffer/counterreceived" component={CounterReceived} />
           <Route path="/myOffer/countermade" component={CounterMade} />
+          <Route path="/sendMessage" component={SendMessage} />
 
           {/* </Switch> */}
         </div>

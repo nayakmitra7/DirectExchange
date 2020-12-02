@@ -39,7 +39,7 @@ class CloseOffer extends Component {
       <div>
         <Navbar></Navbar>
         <MyOfferHeader navarr={this.state.navarr}></MyOfferHeader>
-        <div className="container">
+        <div className="margin-left-right-offer">
           {this.state.closeOffers.map((offer) => (
             // {offer.offerStatus==3?this.setState({offerStatus:"offer_expired"}):this.setState({offerStatus:"offer_accepted"}) }
             <Accordion.Toggle

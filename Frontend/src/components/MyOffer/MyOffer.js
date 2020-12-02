@@ -20,7 +20,7 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-
+import Button1 from 'react-bootstrap/Button';
 class MyOffer extends Component {
   constructor(props) {
     super(props);
@@ -100,8 +100,16 @@ class MyOffer extends Component {
                   <Col>Amount(src)</Col>
                   <Col>Country(src)</Col>
                   <Col>Exp Date</Col>
-                  <Col></Col>
-                  <Col></Col>
+                  <Col>
+                  <Button1
+                    size="sm"
+                    style={{marginBottom:'1%'}}
+                      className="btn btn-primary"
+                      onClick={() => this.autoMatch(offer.id)}
+                    >
+                      Auto Match
+                    </Button1>
+                  </Col>
                 </Row>
                 <Row>
                   <Col>#{offer.id}</Col>
@@ -115,21 +123,16 @@ class MyOffer extends Component {
                   </Col>
                   <Col>{offer.sourceCountry}</Col>
                   <Col>{offer.expirationDate}</Col>
+                  
                   <Col>
-                    <span
-                      className="btn btn-primary"
-                      onClick={() => this.autoMatch(offer.id)}
-                    >
-                      Auto Match
-                    </span>
-                  </Col>
-                  <Col>
-                    <span
-                      className="btn btn-primary"
+                    <Button1
+                    style={{marginTop:'1%'}}
+                    size="sm"
+                      variant="success"
                       onClick={() => this.handleClickOpen(offer)}
                     >
                       Modify Order
-                    </span>
+                    </Button1>
                   </Col>
                 </Row>
                 <Row></Row>

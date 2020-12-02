@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
 			return null;
 		return returnuser.get(0);
 	}
-	
+
 	@Override
 	public User getUserByEmailId(String emailId) {
 
@@ -59,6 +59,17 @@ public class UserServiceImpl implements UserService {
 		if (returnuser.size() == 0)
 			return null;
 		return returnuser.get(0);
+	}
+
+	@Override
+	public User getUserById(Long id) {
+		return userRepository.findById(id).orElse(null);
+	}
+
+	@Override
+	public List<User> getBusinessUsers(Long id) {
+		// TODO Auto-generated method stub
+		return userRepository.findBuisnessUsers(id);
 	}
 
 }

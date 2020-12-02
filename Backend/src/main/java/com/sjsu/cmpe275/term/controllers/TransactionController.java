@@ -126,7 +126,12 @@ public class TransactionController {
 			offerService.postOffer(offer3);
 
 			transaction.setTranStatus(Constant.TRANSACTION_INPROGRESS);
-
+			transaction.setOfferEmailId1(emailList[0]);
+			transaction.setOfferEmailId2(emailList[1]);
+			transaction.setOfferEmailId3(emailList[2]);
+			transaction.setOfferIdStatus1(Constant.OFFERTRANSACTION);
+			transaction.setOfferIdStatus2(Constant.OFFERTRANSACTION);
+			transaction.setOfferIdStatus3(Constant.OFFERTRANSACTION);
 			Transaction savedOffer = transactionService.acceptSplitOffer(transaction);
 			emailUtil.sendEmail(emailList, "Accept Offer", "Accept Offer");
 
