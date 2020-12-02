@@ -128,7 +128,7 @@ class MyOffer extends Component {
                       className="btn btn-primary"
                       onClick={() => this.handleClickOpen(offer)}
                     >
-                      Modify Order
+                      Modify
                     </span>
                   </Col>
                 </Row>
