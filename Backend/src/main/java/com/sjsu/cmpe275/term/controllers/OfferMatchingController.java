@@ -49,7 +49,9 @@ public class OfferMatchingController {
 
 			Offer offer = offerService.getOfferById(id);
 			OfferDto offerDto = objectMapper.convertValue(offer, OfferDto.class);
-
+			if(offer.getOfferStatus() != 1) {
+				return new ResponseEntity<OfferMatchingDTO>(new OfferMatchingDTO(), HttpStatus.OK);
+			}
 			Double min = offer.getAmountInUSD() - 0.1 * offer.getAmountInUSD();
 			Double max = offer.getAmountInUSD() + 0.1 * offer.getAmountInUSD();
 			Calendar cal = Calendar.getInstance();
@@ -99,7 +101,7 @@ public class OfferMatchingController {
 		try {
 
 			Offer offer = offerService.getOfferById(id);
-			if(!offer.getSplitOfferAllowed()) {
+			if(!offer.getSplitOfferAllowed() || offer.getOfferStatus() != 1) {
 				return new ResponseEntity<List<OfferMatchingDTO>>(new ArrayList<OfferMatchingDTO>(), HttpStatus.OK);
 			}
 			OfferDto offerDto = objectMapper.convertValue(offer, OfferDto.class);
