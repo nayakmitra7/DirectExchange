@@ -1,0 +1,22 @@
+.margin-left-right-send-message{
+    margin-left: 5%;
+    margin-right: 5%;
+}
+.padding-left-2-send-message{
+    margin-left: 12px;
+}
+.card-post-send-message{
+    margin-top: 3%;
+
+    margin-bottom: 6%;
+}
+.margin-top-send-message{
+    margin-top: 1%;
+}
+.card-header-send-message{
+    margin-bottom: 3% !important;
+    text-align: center;
+}
+.card-footer-send-message{
+    background-color: white !important;
+}
