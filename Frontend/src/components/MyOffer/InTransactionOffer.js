@@ -84,7 +84,9 @@ class InTransactionOffer extends Component {
         <Navbar></Navbar>
         <MyOfferHeader navarr={this.state.navarr}></MyOfferHeader>
         <Row align="center">
-          <Col><h3>Single Matches</h3></Col>
+          <Col>
+            <h3>Single Matches</h3>
+          </Col>
         </Row>
         <Card>
           <Accordion.Toggle as={Card.Header} eventKey="0">
@@ -94,30 +96,32 @@ class InTransactionOffer extends Component {
                   variant="secondary"
                   className="list-group-style-auto-matching "
                 >
-                  <Row className="header-bold-auto-matching ">
-                    <Col>Offer ID</Col>
-                    <Col>Username</Col>
-                    <Col>Country(des)</Col>
-                    <Col>Amount(des)</Col>
-                    <Col>Amount(src)</Col>
-                    <Col>Country(src)</Col>
-                    <Col>Exp Date</Col>
-                  </Row>
-                  <Row>
-                    <Col>#{offerarr.mySingleOffer[0].id}</Col>
-                    <Col>{offerarr.mySingleOffer[0].nickname}</Col>
-                    <Col>{offerarr.mySingleOffer[0].destinationCountry}</Col>
-                    <Col>
-                      {offerarr.mySingleOffer[0].amountInDes}{" "}
-                      {offerarr.mySingleOffer[0].destinationCurrency}
-                    </Col>
-                    <Col>
-                      {offerarr.mySingleOffer[0].amountInSrc}{" "}
-                      {offerarr.mySingleOffer[0].sourceCurrency}
-                    </Col>
-                    <Col>{offerarr.mySingleOffer[0].sourceCountry}</Col>
-                    <Col>{offerarr.mySingleOffer[0].expirationDate}</Col>
-                  </Row>
+                  <div className="p-3" style={{ border: "3px hotpink solid" }}>
+                    <Row className="header-bold-auto-matching ">
+                      <Col>Offer ID</Col>
+                      <Col>Username</Col>
+                      <Col>Country(des)</Col>
+                      <Col>Amount(des)</Col>
+                      <Col>Amount(src)</Col>
+                      <Col>Country(src)</Col>
+                      <Col>Exp Date</Col>
+                    </Row>
+                    <Row>
+                      <Col>#{offerarr.mySingleOffer[0].id}</Col>
+                      <Col>{offerarr.mySingleOffer[0].nickname}</Col>
+                      <Col>{offerarr.mySingleOffer[0].destinationCountry}</Col>
+                      <Col>
+                        {offerarr.mySingleOffer[0].amountInDes}{" "}
+                        {offerarr.mySingleOffer[0].destinationCurrency}
+                      </Col>
+                      <Col>
+                        {offerarr.mySingleOffer[0].amountInSrc}{" "}
+                        {offerarr.mySingleOffer[0].sourceCurrency}
+                      </Col>
+                      <Col>{offerarr.mySingleOffer[0].sourceCountry}</Col>
+                      <Col>{offerarr.mySingleOffer[0].expirationDate}</Col>
+                    </Row>
+                  </div>
                 </ListGroup.Item>
                 <Card.Body>
                   <ListGroup variant="flush">
@@ -162,7 +166,9 @@ class InTransactionOffer extends Component {
           </Accordion.Toggle> */}
         </Card>
         <Row align="center">
-          <Col><h3>Split Matches</h3></Col>
+          <Col>
+            <h3>Split Matches</h3>
+          </Col>
         </Row>
         <Card>
           <Accordion.Toggle as={Card.Header} eventKey="0">
@@ -172,68 +178,63 @@ class InTransactionOffer extends Component {
                   variant="secondary"
                   className="list-group-style-auto-matching "
                 >
-                  <Row className="header-bold-auto-matching ">
-                    <Col>Offer ID</Col>
-                    <Col>Username</Col>
-                    <Col>Country(des)</Col>
-                    <Col>Amount(des)</Col>
-                    <Col>Amount(src)</Col>
-                    <Col>Country(src)</Col>
-                    <Col>Exp Date</Col>
-                  </Row>
-                  <Row>
-                    <Col>#{offerarr.mySplitOffer[0].id}</Col>
-                    <Col>{offerarr.mySplitOffer[0].nickname}</Col>
-                    <Col>{offerarr.mySplitOffer[0].destinationCountry}</Col>
-                    <Col>
-                      {offerarr.mySplitOffer[0].amountInDes}{" "}
-                      {offerarr.mySplitOffer[0].destinationCurrency}
-                    </Col>
-                    <Col>
-                      {offerarr.mySplitOffer[0].amountInSrc}{" "}
-                      {offerarr.mySplitOffer[0].sourceCurrency}
-                    </Col>
-                    <Col>{offerarr.mySplitOffer[0].sourceCountry}</Col>
-                    <Col>{offerarr.mySplitOffer[0].expirationDate}</Col>
-                  </Row>
+                  <div className="p-3" style={{ border: "3px hotpink solid" }}>
+                    <Row className="header-bold-auto-matching ">
+                      <Col>Offer ID</Col>
+                      <Col>Username</Col>
+                      <Col>Country(des)</Col>
+                      <Col>Amount(des)</Col>
+                      <Col>Amount(src)</Col>
+                      <Col>Country(src)</Col>
+                      <Col>Exp Date</Col>
+                    </Row>
+                    <Row>
+                      <Col>#{offerarr.mySplitOffer[0].id}</Col>
+                      <Col>{offerarr.mySplitOffer[0].nickname}</Col>
+                      <Col>{offerarr.mySplitOffer[0].destinationCountry}</Col>
+                      <Col>
+                        {offerarr.mySplitOffer[0].amountInDes}{" "}
+                        {offerarr.mySplitOffer[0].destinationCurrency}
+                      </Col>
+                      <Col>
+                        {offerarr.mySplitOffer[0].amountInSrc}{" "}
+                        {offerarr.mySplitOffer[0].sourceCurrency}
+                      </Col>
+                      <Col>{offerarr.mySplitOffer[0].sourceCountry}</Col>
+                      <Col>{offerarr.mySplitOffer[0].expirationDate}</Col>
+                    </Row>
+                  </div>
                 </ListGroup.Item>
-                {offerarr.otherSplitOffers.map((offer)=>(
-                <Card.Body>
-                  <ListGroup variant="flush">
-                    <ListGroup.Item variant="" className="">
-                      <Row className="header-bold-auto-matching ">
-                        <Col>Offer ID</Col>
-                        <Col>Username</Col>
-                        <Col>Country(des)</Col>
-                        <Col>Amount(des)</Col>
-                        <Col>Amount(src)</Col>
-                        <Col>Country(src)</Col>
-                        <Col>Exp Date</Col>
-                      </Row>
-                      <Row>
-                        <Col>#{offer.id}</Col>
-                        <Col>{offer.nickname}</Col>
-                        <Col>
-                          {offer.destinationCountry}
-                        </Col>
-                        <Col>
-                          {offer.amountInDes}{" "}
-                          {offer.destinationCurrency}
-                        </Col>
-                        <Col>
-                          {offer.amountInSrc}{" "}
-                          {offer.sourceCurrency}
-                        </Col>
-                        <Col>{offer.sourceCountry}</Col>
-                        <Col>
-                          {offer.expirationDate}
-                        </Col>
-                      </Row>
-                    </ListGroup.Item>
-                  </ListGroup>
-                </Card.Body> 
+                {offerarr.otherSplitOffers.map((offer) => (
+                  <Card.Body>
+                    <ListGroup variant="flush">
+                      <ListGroup.Item variant="" className="">
+                        <Row className="header-bold-auto-matching ">
+                          <Col>Offer ID</Col>
+                          <Col>Username</Col>
+                          <Col>Country(des)</Col>
+                          <Col>Amount(des)</Col>
+                          <Col>Amount(src)</Col>
+                          <Col>Country(src)</Col>
+                          <Col>Exp Date</Col>
+                        </Row>
+                        <Row>
+                          <Col>#{offer.id}</Col>
+                          <Col>{offer.nickname}</Col>
+                          <Col>{offer.destinationCountry}</Col>
+                          <Col>
+                            {offer.amountInDes} {offer.destinationCurrency}
+                          </Col>
+                          <Col>
+                            {offer.amountInSrc} {offer.sourceCurrency}
+                          </Col>
+                          <Col>{offer.sourceCountry}</Col>
+                          <Col>{offer.expirationDate}</Col>
+                        </Row>
+                      </ListGroup.Item>
+                    </ListGroup>
+                  </Card.Body>
                 ))}
-                
               </div>
             ))}
           </Accordion.Toggle>
