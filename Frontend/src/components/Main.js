@@ -9,7 +9,7 @@ import AutoMatching from "./AutoMatching/autoMatching";
 import MyOffer from "./MyOffer/MyOffer";
 import CloseOffer from "./MyOffer/CloseOffer";
 import InTransactionOffer from "./MyOffer/InTransactionOffer";
-
+import SendMessage from "./SendMessage/SendMessgae";
 
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 //Create a Main Component
@@ -29,6 +29,7 @@ class Main extends Component {
                     <Route path="/myOffer/open" component={MyOffer} />
                     <Route path="/myOffer/close" component={CloseOffer} />
                     <Route path="/myOffer/intranscation" component={InTransactionOffer} />
+                    <Route path="/sendMessage" component={SendMessage} />
 
                     {/* </Switch> */}
                 </div>

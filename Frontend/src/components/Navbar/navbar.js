@@ -18,7 +18,7 @@ class NavigationBar extends Component {
                     <Nav>
                         <NavDropdown title="My Services">
                             <NavDropdown.Item href="">My Offers</NavDropdown.Item>
-                            <NavDropdown.Item href="">Send a message</NavDropdown.Item>
+                            <NavDropdown.Item href="/sendMessage">Send a message</NavDropdown.Item>
                             <NavDropdown.Divider />
                             <NavDropdown.Item href="/auth" onClick={this.handleLogout}>Log Out</NavDropdown.Item>
                         </NavDropdown>

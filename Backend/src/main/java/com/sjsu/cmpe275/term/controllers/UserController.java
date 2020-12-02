@@ -2,10 +2,13 @@ package com.sjsu.cmpe275.term.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,14 +19,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sjsu.cmpe275.term.dto.CountryDto;
 import com.sjsu.cmpe275.term.dto.ErrorResponseDTO;
+import com.sjsu.cmpe275.term.dto.MessageDTO;
+import com.sjsu.cmpe275.term.dto.ResponseDTO;
 import com.sjsu.cmpe275.term.dto.UserAccountDTO;
 import com.sjsu.cmpe275.term.dto.UserDTO;
 import com.sjsu.cmpe275.term.exceptions.GenericException;
 import com.sjsu.cmpe275.term.models.Account;
+import com.sjsu.cmpe275.term.models.Country;
 import com.sjsu.cmpe275.term.models.User;
 import com.sjsu.cmpe275.term.service.account.AccountService;
 import com.sjsu.cmpe275.term.service.user.UserService;
+import com.sjsu.cmpe275.term.utils.EmailUtility;
 
 @RestController
 @CrossOrigin
@@ -34,6 +42,9 @@ public class UserController {
 	AccountService accountService;
 	@Autowired
 	private ObjectMapper objectMapper;
+	@Autowired
+	private JavaMailSender emailSender;
+	
 
 	@RequestMapping(value = "/user/{emailId}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
@@ -89,4 +100,29 @@ public class UserController {
 		}
 
 	}
+	@RequestMapping(value = "/user/messaging/{id}", method = RequestMethod.GET, produces = "application/json")
+	@ResponseBody
+	public ResponseEntity<List<UserDTO>> getBusinessUsers(@PathVariable("id") Long userId) {
+		List<User> user = userService.getBusinessUsers(userId);
+		List<UserDTO> userDTOs = user
+				  .stream()
+				  .map(element -> objectMapper.convertValue(element, UserDTO.class))
+				  .collect(Collectors.toList());
+		return new ResponseEntity<List<UserDTO>>(userDTOs, HttpStatus.OK);
+
+	}
+	@RequestMapping(value = "/user/messaging/send", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	@ResponseBody
+	public ResponseEntity<ResponseDTO> sendMessage(@RequestBody MessageDTO messageDTO) {
+		SimpleMailMessage msg = new SimpleMailMessage();
+
+		msg.setTo(messageDTO.getReceiverEmail());
+		msg.setSubject("Direct Messaging");
+		msg.setText(messageDTO.getMessage());
+		msg.setCc(messageDTO.getSenderEmail());
+		emailSender.send(msg);
+		return new ResponseEntity<ResponseDTO>(new ResponseDTO(200, HttpStatus.OK, "Message Sent"), HttpStatus.OK);
+
+	}
+
 }
