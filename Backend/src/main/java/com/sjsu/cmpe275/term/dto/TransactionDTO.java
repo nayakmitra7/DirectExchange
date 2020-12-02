@@ -4,24 +4,24 @@ public class TransactionDTO {
 
 	private Long id;
 	private Boolean isSplit;
-	private Double offerId1;
-	private Double offerId2;
-	private Double offerId3;
-	private Double offerIdStatus1;
-	private Double offerIdStatus2;
-	private Double offerIdStatus3;
+	private Long offerId1;
+	private Long offerId2;
+	private Long offerId3;
+	private int offerIdStatus1;
+	private int offerIdStatus2;
+	private int offerIdStatus3;
 	private String offerEmailId1;
 	private String offerEmailId2;
 	private String offerEmailId3;
 	private Long offerUserId1;
 	private Long offerUserId2;
 	private Long offerUserId3;
-	private Double tranStatus;
+	private int tranStatus;
 	
-	public TransactionDTO(Long id, Boolean isSplit, Double offerId1, Double offerId2, Double offerId3,
-			Double offerIdStatus1, Double offerIdStatus2, Double offerIdStatus3, String offerEmailId1, 
+	public TransactionDTO(Long id, Boolean isSplit, Long offerId1, Long offerId2, Long offerId3,
+			int offerIdStatus1, int offerIdStatus2, int offerIdStatus3, String offerEmailId1, 
 			String offerEmailId2, String offerEmailId3, Long offerUserId1, Long offerUserId2, 
-			Long offerUserId3, Double tranStatus) {
+			Long offerUserId3, int tranStatus) {
 		super();
 		this.id = id;
 		this.isSplit = isSplit;
@@ -43,55 +43,71 @@ public class TransactionDTO {
 	public TransactionDTO() {
 	
 	}
-	
+
 	public Long getId() {
 		return id;
 	}
+
 	public void setId(Long id) {
 		this.id = id;
 	}
+
 	public Boolean getIsSplit() {
 		return isSplit;
 	}
+
 	public void setIsSplit(Boolean isSplit) {
 		this.isSplit = isSplit;
 	}
-	public Double getOfferId1() {
+
+	public Long getOfferId1() {
 		return offerId1;
 	}
-	public void setOfferId1(Double offerId1) {
+
+	public void setOfferId1(Long offerId1) {
 		this.offerId1 = offerId1;
 	}
-	public Double getOfferId2() {
+
+	public Long getOfferId2() {
 		return offerId2;
 	}
-	public void setOfferId2(Double offerId2) {
+
+	public void setOfferId2(Long offerId2) {
 		this.offerId2 = offerId2;
 	}
-	public Double getOfferId3() {
+
+	public Long getOfferId3() {
 		return offerId3;
 	}
-	public void setOfferId3(Double offerId3) {
+
+	public void setOfferId3(Long offerId3) {
 		this.offerId3 = offerId3;
 	}
-	public Double getOfferIdStatus1() {
+
+	public int getOfferIdStatus1() {
 		return offerIdStatus1;
 	}
-	public void setOfferIdStatus1(Double offerIdStatus1) {
+
+	public void setOfferIdStatus1(int offerIdStatus1) {
 		this.offerIdStatus1 = offerIdStatus1;
 	}
-	public Double getOfferIdStatus2() {
+
+	public int getOfferIdStatus2() {
 		return offerIdStatus2;
 	}
-	public void setOfferIdStatus2(Double offerIdStatus2) {
+
+	public void setOfferIdStatus2(int offerIdStatus2) {
 		this.offerIdStatus2 = offerIdStatus2;
 	}
-	public Double getOfferIdStatus3() {
+
+	public int getOfferIdStatus3() {
 		return offerIdStatus3;
 	}
-	public void setOfferIdStatus3(Double offerIdStatus3) {
+
+	public void setOfferIdStatus3(int offerIdStatus3) {
 		this.offerIdStatus3 = offerIdStatus3;
 	}
+
 	public String getOfferEmailId1() {
 		return offerEmailId1;
 	}
@@ -115,7 +131,7 @@ public class TransactionDTO {
 	public void setOfferEmailId3(String offerEmailId3) {
 		this.offerEmailId3 = offerEmailId3;
 	}
-	
+
 	public Long getOfferUserId1() {
 		return offerUserId1;
 	}
@@ -140,12 +156,12 @@ public class TransactionDTO {
 		this.offerUserId3 = offerUserId3;
 	}
 
-	public Double getTranStatus() {
+	public int getTranStatus() {
 		return tranStatus;
 	}
-	
-	public void setTranStatus(Double tranStatus) {
+
+	public void setTranStatus(int tranStatus) {
 		this.tranStatus = tranStatus;
 	}
-	
+		
 }
