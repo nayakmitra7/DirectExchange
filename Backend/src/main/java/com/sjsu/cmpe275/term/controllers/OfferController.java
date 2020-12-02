@@ -140,6 +140,7 @@ public class OfferController {
 	public ResponseEntity<OfferDto> updateOffer(@RequestParam("id") Long id,
 			@RequestParam("amountInSrc") Double amountInSrc) {
 		try {
+			System.out.println("offer update");
 			// Offer offer = new Offer(offerDTO.getSourceCountry(),
 			// offerDTO.getSourceCurrency(),offerDTO.getAmount(),offerDTO.getAmountInUSD(),offerDTO.getDestinationCountry(),offerDTO.getDestinationCurrency(),offerDTO.getExpirationDate(),offerDTO.getCounterOfferAllowed(),offerDTO.getSplitOfferAllowed(),
 			// offerDTO.getUserId());
