@@ -42,7 +42,7 @@ class CounterOffer extends Component {
                                         </Row>
                                         <Row>
                                             <Col className="header-bold-auto-matching">Counter Amount(src) to request</Col>
-                                            <Col><input required value={this.state.counterAmtRequest} onChange={this.setCounterAmtRequest} min={selectedCounterOffer.amountInSrc * 0.9} max={selectedCounterOffer.amountInSrc * 1.1} placeholder={"Between " + selectedCounterOffer.amountInSrc * 0.9 + " - " + selectedCounterOffer.amountInSrc * 1.1} />{/*selectedCounterOffer.amountInDes*/} {selectedCounterOffer.sourceCurrency}</Col>
+                                            <Col><input required value={this.state.counterAmtRequest} onChange={(e) => this.setState({ counterAmtRequest: e.target.value })} min={selectedCounterOffer.amountInSrc * 0.9} max={selectedCounterOffer.amountInSrc * 1.1} placeholder={selectedCounterOffer.amountInSrc * 0.9 + " - " + selectedCounterOffer.amountInSrc * 1.1} />{/*selectedCounterOffer.amountInDes*/} {selectedCounterOffer.sourceCurrency}</Col>
                                         </Row>
                                         <Row>
                                             <Col className="header-bold-auto-matching">Amount(des)</Col>
@@ -61,7 +61,7 @@ class CounterOffer extends Component {
                                 </Row>
                                 <div align="right">
                                     <Button variant="secondary" onClick={this.props.counterModalClose} className="mr-2 mt-3">Close</Button>
-                                    <Button type="submit" variant="success" onClick={() => this.props.submitCounterHandle(this.state.counterAmtRequest)} className="mt-3">Counter offer</Button>
+                                    <Button type="submit" variant="success" onClick={(e) => this.props.submitCounterHandle(e, parseFloat(this.state.counterAmtRequest))} className="mt-3">Counter offer</Button>
                                 </div>
                             </Form>
                         </Modal.Body>

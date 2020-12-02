@@ -126,7 +126,9 @@ class AutoMatching extends Component {
     counterModalClose = () => {
         this.setState({ counterModal: false })
     }
-    submitCounterHandle = async (counterAmtFromSrcToTgt) => {
+    submitCounterHandle = async (e, counterAmtFromSrcToTgt) => {
+        e.preventDefault();
+        console.log("In submitCounterOffer")
         axios
             .post(address + '/offerMatching/counterOffer', { srcOfferDTO: this.state.myOffer, tgtOfferDTO: this.state.selectedCounterOffer, counterAmtFromSrcToTgt, counterCurrencyFromSrcToTgt: this.state.selectedCounterOffer.sourceCurrency })
             .then(res => {

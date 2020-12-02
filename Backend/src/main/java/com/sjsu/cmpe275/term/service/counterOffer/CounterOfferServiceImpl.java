@@ -19,8 +19,13 @@ public class CounterOfferServiceImpl implements CounterOfferService {
 	}
 
 	@Override
-	public List<CounterOffer> getAllCounterOffers() {
-		return counterOfferRepository.findAll();
+	public List<CounterOffer> getReceivedCounterOffers(Long userId) {
+		return counterOfferRepository.getReceivedCounterOffers(userId);
+	}
+
+	@Override
+	public List<CounterOffer> getProposedCounterOffers(Long userId) {
+		return counterOfferRepository.getProposedCounterOffers(userId);
 	}
 
 }
