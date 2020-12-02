@@ -1,17 +1,22 @@
 package com.sjsu.cmpe275.term.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sjsu.cmpe275.term.dto.ErrorResponseDTO;
+import com.sjsu.cmpe275.term.dto.OfferDto;
 import com.sjsu.cmpe275.term.dto.ResponseDTO;
 import com.sjsu.cmpe275.term.dto.TransactionDTO;
 import com.sjsu.cmpe275.term.exceptions.GenericException;
@@ -24,7 +29,7 @@ import com.sjsu.cmpe275.term.utils.Constant;
 import com.sjsu.cmpe275.term.utils.EmailUtility;
 
 @RestController
-@CrossOrigin
+@CrossOrigin()
 public class TransactionController {
 
 	@Autowired
@@ -38,7 +43,7 @@ public class TransactionController {
 
 	@Autowired
 	private ObjectMapper objectMapper;
-	
+
 	@Autowired
 	private EmailUtility emailUtil;
 
@@ -92,7 +97,7 @@ public class TransactionController {
 	public ResponseEntity<ResponseDTO> postThreePartyTransaction(@RequestBody TransactionDTO transactionDTO) {
 		try {
 			Transaction transaction = objectMapper.convertValue(transactionDTO, Transaction.class);
-		String[] emailList = new String[3];
+			String[] emailList = new String[3];
 			Long offerId1 = transaction.getOfferId1();
 			Long offerId2 = transaction.getOfferId2();
 			Long offerId3 = transaction.getOfferId3();
@@ -108,14 +113,14 @@ public class TransactionController {
 //				ResponseDTO responseDTO = new ResponseDTO(200, HttpStatus.OK, "Selected offers amounts don't exactly match with your offer. Please make another selection.");
 //				return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
 //			}
-			
+
 			offer1.setOfferStatus(Constant.OFFERTRANSACTION);
 			offer2.setOfferStatus(Constant.OFFERTRANSACTION);
 			offer3.setOfferStatus(Constant.OFFERTRANSACTION);
 			emailList[0] = userService.getUserByNickname(offer1.getNickname()).getEmailId();
 			emailList[1] = userService.getUserByNickname(offer2.getNickname()).getEmailId();
 			emailList[2] = userService.getUserByNickname(offer3.getNickname()).getEmailId();
-			
+
 			offerService.postOffer(offer1);
 			offerService.postOffer(offer2);
 			offerService.postOffer(offer3);
@@ -127,6 +132,63 @@ public class TransactionController {
 
 			ResponseDTO responseDTO = new ResponseDTO(200, HttpStatus.OK, "You have successfully accepted the offer!");
 			return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
+		} catch (Exception ex) {
+			ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(500, HttpStatus.INTERNAL_SERVER_ERROR,
+					ex.getMessage());
+			throw new GenericException(errorResponseDTO);
+		}
+
+	}
+
+	@RequestMapping(value = "/intransaction/{userId}", method = RequestMethod.GET, produces = "application/json")
+	@ResponseBody
+	public ResponseEntity<List<TransactionDTO>> getInTransactionData(@PathVariable("userId") Long userId) {
+		try {
+			List<Transaction> transaction = transactionService.getInTransactionData(userId);
+
+			List<TransactionDTO> transactionList = objectMapper.convertValue(transaction,
+					new TypeReference<List<TransactionDTO>>() {
+					});
+			return new ResponseEntity<List<TransactionDTO>>(transactionList, HttpStatus.OK);
+		} catch (Exception ex) {
+			ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(500, HttpStatus.INTERNAL_SERVER_ERROR,
+					ex.getMessage());
+			throw new GenericException(errorResponseDTO);
+		}
+
+	}
+	
+	
+	@RequestMapping(value = "/transaction/offer/{offerId1}/{offerId2}", method = RequestMethod.GET, produces = "application/json")
+	@ResponseBody
+	public ResponseEntity<List<OfferDto>> getSingleOfferByTransaction(@PathVariable("offerId1") Long offerId1,@PathVariable("offerId2") Long offerId2) {
+		try {
+			List<Offer> offers = transactionService.getSingleOfferByTransaction(offerId1,offerId2);
+
+			List<OfferDto> offerList = objectMapper.convertValue(offers,
+					new TypeReference<List<OfferDto>>() {
+					});
+			return new ResponseEntity<List<OfferDto>>(offerList, HttpStatus.OK);
+		} catch (Exception ex) {
+			ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(500, HttpStatus.INTERNAL_SERVER_ERROR,
+					ex.getMessage());
+			throw new GenericException(errorResponseDTO);
+		}
+
+	}
+	
+	
+	@RequestMapping(value = "/transaction/offer/{offerId1}/{offerId2}//{offerId3}", method = RequestMethod.GET, produces = "application/json")
+	@ResponseBody
+	public ResponseEntity<List<OfferDto>> getSplitOfferByTransaction(@PathVariable("offerId1") Long offerId1,@PathVariable("offerId2") Long offerId2,
+			@PathVariable("offerId3") Long offerId3) {
+		try {
+			List<Offer> offers = transactionService.getSplitOfferByTransaction(offerId1,offerId2,offerId3);
+
+			List<OfferDto> offerList = objectMapper.convertValue(offers,
+					new TypeReference<List<OfferDto>>() {
+					});
+			return new ResponseEntity<List<OfferDto>>(offerList, HttpStatus.OK);
 		} catch (Exception ex) {
 			ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(500, HttpStatus.INTERNAL_SERVER_ERROR,
 					ex.getMessage());

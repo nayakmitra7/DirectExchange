@@ -18,9 +18,12 @@ class MyOfferHeader extends Component {
           >
             <span className="navbar-toggler-icon"></span>
           </button>
-          <div className="collapse navbar-collapse" id="navbarTogglerDemo01">
+          <div
+            className="collapse navbar-collapse col-12"
+            id="navbarTogglerDemo01"
+          >
             <ul className="navbar-nav mr-auto mt-2 mt-lg-0">
-              <li className="nav-item active mx-5">
+              <li className="nav-item active mx-4">
                 <a
                   className="nav-link "
                   href="/myoffer/open"
@@ -32,7 +35,7 @@ class MyOfferHeader extends Component {
               <span style={{ height: "20px" }}>
                 <hr width="1" size="500" className="nav-hr"></hr>
               </span>
-              <li className="nav-item mx-5">
+              <li className="nav-item mx-4">
                 <a
                   className="nav-link link-color"
                   style={{ color: this.props.navarr[1] }}
@@ -44,13 +47,37 @@ class MyOfferHeader extends Component {
               <span style={{ height: "20px" }}>
                 <hr width="1" size="500" className="nav-hr"></hr>
               </span>
-              <li className="nav-item mx-5">
+              <li className="nav-item mx-4">
                 <a
                   className="nav-link link-color"
                   style={{ color: this.props.navarr[2] }}
                   href="/myOffer/intranscation"
                 >
                   <span>In Transaction Offers</span>
+                </a>
+              </li>
+              <span style={{ height: "20px" }}>
+                <hr width="1" size="500" className="nav-hr"></hr>
+              </span>
+              <li className="nav-item mx-4">
+                <a
+                  className="nav-link link-color"
+                  style={{ color: this.props.navarr[3] }}
+                  href="/myOffer/countermade"
+                >
+                  <span>CounterMade</span>
+                </a>
+              </li>
+              <span style={{ height: "20px" }}>
+                <hr width="1" size="500" className="nav-hr"></hr>
+              </span>
+              <li className="nav-item mx-4">
+                <a
+                  className="nav-link link-color"
+                  style={{ color: this.props.navarr[4] }}
+                  href="/myOffer/counterreceived"
+                >
+                  <span>CounterReceived</span>
                 </a>
               </li>
             </ul>

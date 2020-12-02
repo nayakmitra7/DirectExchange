@@ -15,7 +15,7 @@ import ListGroup from "react-bootstrap/ListGroup";
 import Button from "react-bootstrap/esm/Button";
 class CloseOffer extends Component {
   state = {
-    navarr: ["black", "rgb(0, 106, 255)","black"],
+    navarr: ["black", "rgb(0, 106, 255)","black","black","black"],
     closeOffers: [],
   };
 

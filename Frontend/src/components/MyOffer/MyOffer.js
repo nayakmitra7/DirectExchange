@@ -26,7 +26,7 @@ class MyOffer extends Component {
     super(props);
   }
   state = {
-    navarr: ["rgb(0, 106, 255)", "black", "black"],
+    navarr: ["rgb(0, 106, 255)", "black", "black","black","black"],
     openOffers: [],
     open: false,
   };
