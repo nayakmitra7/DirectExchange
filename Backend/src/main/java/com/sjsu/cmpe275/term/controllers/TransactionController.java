@@ -48,21 +48,22 @@ public class TransactionController {
 		try {
 			Transaction transaction = objectMapper.convertValue(transactionDTO, Transaction.class);
 			String[] emailList = new String[2];
+			System.out.println("Transaction");
 			Long offerId1 = transaction.getOfferId1();
 			Long offerId2 = transaction.getOfferId2();
 
 			Offer offer1 = offerService.getOfferById(offerId1);
 			Offer offer2 = offerService.getOfferById(offerId2);
-			
-			
+			emailList[0] = userService.getUserByNickname(offer1.getNickname()).getEmailId();
+			emailList[1] = userService.getUserByNickname(offer2.getNickname()).getEmailId();
+			transaction.setOfferEmailId1(emailList[0]);
+			transaction.setOfferEmailId2(emailList[1]);
+			transaction.setOfferIdStatus1(Constant.OFFERTRANSACTION);
+			transaction.setOfferIdStatus2(Constant.OFFERTRANSACTION);
 			if (Double.compare(offer1.getAmountInUSD(), offer2.getAmountInUSD()) != 0)  {
 				ResponseDTO responseDTO = new ResponseDTO(200, HttpStatus.OK, "Selected offer amount doesn't match with your offer. Please make another selection.");
 				return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
 			}
-			
-			
-			emailList[0] = userService.getUserByNickname(offer1.getNickname()).getEmailId();
-			emailList[1] = userService.getUserByNickname(offer2.getNickname()).getEmailId();
 		
 			offer1.setOfferStatus(Constant.OFFERTRANSACTION);
 			offer2.setOfferStatus(Constant.OFFERTRANSACTION);
@@ -78,6 +79,7 @@ public class TransactionController {
 			ResponseDTO responseDTO = new ResponseDTO(200, HttpStatus.OK, "You have successfully accepted the offer!");
 			return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
 		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
 			ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(500, HttpStatus.INTERNAL_SERVER_ERROR,
 					ex.getMessage());
 			throw new GenericException(errorResponseDTO);
