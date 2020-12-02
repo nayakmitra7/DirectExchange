@@ -8,6 +8,9 @@ import BrowseOffer from "./BrowseOffer/BrowseOffer";
 import AutoMatching from "./AutoMatching/autoMatching";
 import MyOffer from "./MyOffer/MyOffer";
 import CloseOffer from "./MyOffer/CloseOffer";
+import InTransactionOffer from "./MyOffer/InTransactionOffer";
+
+
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 //Create a Main Component
 class Main extends Component {
@@ -25,6 +28,7 @@ class Main extends Component {
                     <Route path="/autoMatching" component={AutoMatching} />
                     <Route path="/myOffer/open" component={MyOffer} />
                     <Route path="/myOffer/close" component={CloseOffer} />
+                    <Route path="/myOffer/intranscation" component={InTransactionOffer} />
 
                     {/* </Switch> */}
                 </div>

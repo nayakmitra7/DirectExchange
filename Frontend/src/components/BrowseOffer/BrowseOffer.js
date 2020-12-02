@@ -264,7 +264,7 @@ Cards to display offers
                       this.setState({ offerId: offer.id });
                     }}>
                       <Card.Body>
-                      <Row className="header-bold-auto-matching  " >
+                      <Row className="header-bold-auto-matching" style={{ cursor: "pointer" }} >
                             <Col >ID</Col>
                             <Col >Username</Col>
                             <Col >Country(src)</Col>
@@ -368,13 +368,13 @@ Cards to display offers
                       </div>
                     </div>
                         </Card>*/}
-                  {this.state.offerId === offer.id}
+                  {this.state.offerId === offer.id?
                   <OfferModal
                     offer={offer}
                     modalShow={this.state.modalShow}
                     changeModalVisible={this.changeModalVisible}
                     open={this.state.open}
-                  ></OfferModal>
+                  ></OfferModal>:""}
                 </div>
               ))
             : ""}

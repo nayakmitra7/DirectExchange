@@ -41,6 +41,18 @@ class MyOfferHeader extends Component {
                   <span>Closed Offers</span>
                 </a>
               </li>
+              <span style={{ height: "20px" }}>
+                <hr width="1" size="500" className="nav-hr"></hr>
+              </span>
+              <li className="nav-item mx-5">
+                <a
+                  className="nav-link link-color"
+                  style={{ color: this.props.navarr[2] }}
+                  href="/myOffer/intranscation"
+                >
+                  <span>In Transaction Offers</span>
+                </a>
+              </li>
             </ul>
           </div>
         </nav>

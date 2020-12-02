@@ -11,6 +11,10 @@
     background-color: rgb(0,0,0,0.0050) !important;
     border:rgb(0,0,0,0.03)!important;
 }
+.list-group-style-offermodal{
+    border:rgb(0,0,0,0.03)!important;
+    
+}
 .margin-top-1-auto-matching{
     margin-top: 2%;
 }
