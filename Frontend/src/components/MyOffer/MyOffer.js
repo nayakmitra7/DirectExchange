@@ -36,20 +36,19 @@ class MyOffer extends Component {
     this.getOffer();
   }
 
-
-  getOffer(){
+  getOffer() {
     axios
-    .get(`${address}/offer/` + localStorage.getItem("id") + `/open`)
-    .then((response) => {
-      console.log(response.data);
-      this.setState({ openOffers: response.data });
-    })
-    .catch((error) => {
-      toast.error(error, {
-        position: "top-center",
-        autoClose: false,
+      .get(`${address}/offer/` + localStorage.getItem("id") + `/open`)
+      .then((response) => {
+        console.log(response.data);
+        this.setState({ openOffers: response.data });
+      })
+      .catch((error) => {
+        toast.error(error, {
+          position: "top-center",
+          autoClose: false,
+        });
       });
-    });
   }
   autoMatch = (id) => {
     localStorage.setItem("autoMatchId", id);
@@ -63,15 +62,17 @@ class MyOffer extends Component {
   handleClose = () => {
     this.setState({ open: false });
   };
-  modifyAmount = () => {
+  modifyAmount = async () => {
     const offer = {
       id: this.state.offerToBeModified.id,
       amount: this.state.modifiedAmount,
     };
-    const modifiedoffer = axios.put(
-      `${address}/offer?id=${offer.id}&amountInSrc=${offer.amount}`
-    )
+    const modifiedoffer = await axios.put(
+      `${address}/offer?id=${offer.id}&amountInSrc=${offer.amount}`,
+      offer
+    );
     this.getOffer();
+    this.handleClose();
   };
   render() {
     return (
