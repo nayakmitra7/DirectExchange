@@ -128,7 +128,7 @@ class AutoMatching extends Component {
     }
     submitCounterHandle = async (counterAmtFromSrcToTgt) => {
         axios
-            .post(address + '/offerMatching/counterOffer', { srcOfferDTO: this.state.myOffer, tgtOfferDTO: this.state.selectedCounterOffer, counterAmtFromSrcToTgt })
+            .post(address + '/offerMatching/counterOffer', { srcOfferDTO: this.state.myOffer, tgtOfferDTO: this.state.selectedCounterOffer, counterAmtFromSrcToTgt, counterCurrencyFromSrcToTgt: this.state.selectedCounterOffer.sourceCurrency })
             .then(res => {
                 if (res.status === 200) {
                     toast.success("Counter offer email has been sent to " + this.state.selectedCounterOffer.nickname);
