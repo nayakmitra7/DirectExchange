@@ -30,7 +30,8 @@ class AutoMatching extends Component {
             modalShow: false,
             sourceAmountChange: 0,
             destinationAmount: 0,
-            spinner: false
+            spinner: false,
+            offer2:''
         }
         this.modify = this.modify.bind(this);
         this.accept = this.accept.bind(this);
@@ -60,9 +61,9 @@ class AutoMatching extends Component {
     handleClose = () => {
         this.setState({ modalShow: false })
     };
-    handleOpen = (destValue) => {
-        console.log(destValue)
-        this.setState({ modalShow: true, destinationAmount: destValue })
+    handleOpen = (offer2) => {
+        console.log()
+        this.setState({ modalShow: true, destinationAmount: offer2.amountInDes, offer2:offer2 })
     };
     setStateSourceAmount = (event) => {
         this.setState({ sourceAmountChange: event.target.value })
@@ -71,6 +72,7 @@ class AutoMatching extends Component {
 
     }
     accept = (offer2) => {
+        this.handleClose()
         this.setState({ spinner: true });
         let data = { isSplit: false, offerId1: this.state.offerId, offerId2: offer2.id, offerUserId1: this.state.userId, offerUserId2: offer2.userId }
         console.log(data)
@@ -86,17 +88,26 @@ class AutoMatching extends Component {
                 }).catch(error => {
                     toast.error("Internal error has occured", { position: 'top-center', autoClose: false })
                 })
-                // setTimeout(() => {
-                //     window.location.reload();
-                // }, 2000);
+
             }
         }).catch((error) => {
             toast.error("Internal Error Occured");
         })
     }
     acceptModal = () => {
+        
         if (this.state.destinationAmount == this.state.sourceAmountChange) {
-
+            const params = {
+                id: this.state.offerId,
+                amountInSrc: this.state.sourceAmountChange
+        }
+            axios.put(address+'/offer?id='+this.state.offerId+'&amountInSrc='+this.state.sourceAmountChange, params).then((response) =>{
+                if(response.status == 200){
+                    this.accept(this.state.offer2);
+                }
+            }).catch(() =>{
+                toast.error("Internal Error Occurred")
+            })
         } else {
             toast.error("The offers must match")
         }
@@ -230,7 +241,7 @@ class AutoMatching extends Component {
                         <Button variant="success" size="sm" onClick={() => this.accept(offer)}>Accept Offer</Button>
                     </Col>}
                     {this.state.offerSrcAmount != offer.amountInDes && <Col md="1.5">
-                        <Button variant="danger" size="sm" onClick={() => { this.handleOpen(offer.amountInDes) }}>Modify My Offer</Button>
+                        <Button variant="danger" size="sm" onClick={() => { this.handleOpen(offer) }}>Modify My Offer</Button>
                     </Col>}
                     {offer.counterOfferAllowed && this.state.offerSrcAmount != offer.amountInDes && <Col md="2">
                         <Button size="sm"> Counter Offer</Button>

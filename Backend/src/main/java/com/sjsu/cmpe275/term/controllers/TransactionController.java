@@ -60,11 +60,11 @@ public class TransactionController {
 			transaction.setOfferEmailId2(emailList[1]);
 			transaction.setOfferIdStatus1(Constant.OFFERTRANSACTION);
 			transaction.setOfferIdStatus2(Constant.OFFERTRANSACTION);
-			if (Double.compare(offer1.getAmountInUSD(), offer2.getAmountInUSD()) != 0)  {
-				ResponseDTO responseDTO = new ResponseDTO(200, HttpStatus.OK, "Selected offer amount doesn't match with your offer. Please make another selection.");
-				return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
-			}
-		
+//			if (Double.compare(offer1.getAmountInUSD(), offer2.getAmountInUSD()) != 0)  {
+//				ResponseDTO responseDTO = new ResponseDTO(200, HttpStatus.OK, "Selected offer amount doesn't match with your offer. Please make another selection.");
+//				return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
+//			}
+//		
 			offer1.setOfferStatus(Constant.OFFERTRANSACTION);
 			offer2.setOfferStatus(Constant.OFFERTRANSACTION);
 
@@ -101,13 +101,13 @@ public class TransactionController {
 			Offer offer2 = offerService.getOfferById(offerId2);
 			Offer offer3 = offerService.getOfferById(offerId3);
 
-			
-			if ((Double.compare(offer1.getAmountInUSD(), offer2.getAmountInUSD() + offer3.getAmountInUSD()) != 0) 
-				|| (Double.compare(offer1.getAmountInUSD() + offer2.getAmountInUSD(), offer3.getAmountInUSD()) != 0)
-				|| (Double.compare(offer1.getAmountInUSD() + offer3.getAmountInUSD(), offer2.getAmountInUSD()) != 0)) {
-				ResponseDTO responseDTO = new ResponseDTO(200, HttpStatus.OK, "Selected offers amounts don't exactly match with your offer. Please make another selection.");
-				return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
-			}
+//			
+//			if ((Double.compare(offer1.getAmountInUSD(), offer2.getAmountInUSD() + offer3.getAmountInUSD()) != 0) 
+//				|| (Double.compare(offer1.getAmountInUSD() + offer2.getAmountInUSD(), offer3.getAmountInUSD()) != 0)
+//				|| (Double.compare(offer1.getAmountInUSD() + offer3.getAmountInUSD(), offer2.getAmountInUSD()) != 0)) {
+//				ResponseDTO responseDTO = new ResponseDTO(200, HttpStatus.OK, "Selected offers amounts don't exactly match with your offer. Please make another selection.");
+//				return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
+//			}
 			
 			offer1.setOfferStatus(Constant.OFFERTRANSACTION);
 			offer2.setOfferStatus(Constant.OFFERTRANSACTION);
