@@ -7,10 +7,14 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { address } from "../../js/helper/constant";
 import Select from "react-select";
+import CounterOffer from "../AutoMatching/CounterOffer"
 
 class OfferModal extends Component {
   state = {
     modalShow: "none",
+    myOffer: {},
+    selectedCounterOffer: {},
+    counterModal: false
   };
 
   handleChange = (selectedOption) => {
@@ -25,14 +29,14 @@ class OfferModal extends Component {
       .get(`${address}/offer/` + localStorage.getItem("id") + `/open`)
       .then((response) => {
         // console.log(response.data);
-        this.setState({ openOffers: response.data },()=>{
+        this.setState({ openOffers: response.data }, () => {
           //console.log(this.state.openOffers)
           this.state.openOffers.map((offer) =>
-          offeroptions.push({ label: offer.id, value: offer })
-     
-        );
+            offeroptions.push({ label: offer.id + " - Offer Amount(Des): " + offer.amountInDes + " " + offer.destinationCurrency, value: offer })
+
+          );
         });
-       this.setState({offeroptions})
+        this.setState({ offeroptions })
       })
       .catch((error) => {
         toast.error(error, {
@@ -40,9 +44,40 @@ class OfferModal extends Component {
           autoClose: false,
         });
       });
-     // console.log(offeroptions)
-   
+    // console.log(offeroptions)
+
   }
+  //Kena
+  counterModalOpen = (selectedCounterOffer) => {
+    console.log("counter open")
+    this.setState({ counterModal: true, selectedCounterOffer })
+  }
+  counterModalClose = () => {
+    this.setState({ counterModal: false })
+  }
+  submitCounterHandle = async (e, counterAmtFromSrcToTgt) => {
+    e.preventDefault();
+    console.log("In submitCounterOffer")
+    let minBound = this.state.selectedCounterOffer.amountInSrc * 0.9;
+    let maxBound = this.state.selectedCounterOffer.amountInSrc * 1.1;
+    let withinRange = minBound <= counterAmtFromSrcToTgt && counterAmtFromSrcToTgt <= maxBound;
+    if (withinRange) {
+      axios
+        .post(address + '/offerMatching/counterOffer', { srcOfferDTO: this.state.myOffer, tgtOfferDTO: this.state.selectedCounterOffer, counterAmtFromSrcToTgt, counterCurrencyFromSrcToTgt: this.state.selectedCounterOffer.sourceCurrency })
+        .then(res => {
+          if (res.status === 200) {
+            toast.success("Counter offer email has been sent to " + this.state.selectedCounterOffer.nickname);
+          }
+        })
+        .catch(err => {
+          toast.error("Error in making the counter offer");
+        })
+    } else {
+      toast.error("Amount entered must be within the mentioned range");
+    }
+
+  }
+
   render() {
     return (
       <div>
@@ -125,9 +160,9 @@ class OfferModal extends Component {
                   <Col>{this.props.offer.expirationDate}</Col>
                 </Row>
               </ListGroup.Item>
-              <div>
+              <div className="mt-5">
                 <label style={{ fontWeight: "bold" }}>
-                  Select your offer for which you want to accept the offer
+                  Select your offer for which you want to accept or counter the offer
                 </label>
                 <Select
                   value={
@@ -143,14 +178,21 @@ class OfferModal extends Component {
                 <button className="btn btn-success mx-2">Accept Offer</button>
 
                 {this.props.offer.counterOfferAllowed === true ? (
-                  <button className="btn btn-danger mx-2">Counter Offer</button>
+                  <button className="btn btn-danger mx-2" onClick={() => { this.setState({ myOffer: this.state.selectedOption.value }); this.counterModalOpen(this.props.offer) }}>Counter Offer</button>
                 ) : (
-                  ""
-                )}
+                    ""
+                  )}
               </div>
             </div>
           </div>
         </div>
+        <CounterOffer
+          myOffer={this.state.myOffer}
+          selectedCounterOffer={this.state.selectedCounterOffer}
+          counterModal={this.state.counterModal}
+          counterModalClose={this.counterModalClose}
+          submitCounterHandle={this.submitCounterHandle}
+        />
       </div>
     );
   }

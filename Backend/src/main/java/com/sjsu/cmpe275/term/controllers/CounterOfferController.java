@@ -1,18 +1,24 @@
 package com.sjsu.cmpe275.term.controllers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sjsu.cmpe275.term.dto.CounterOfferWrapperDTO;
 import com.sjsu.cmpe275.term.dto.ErrorResponseDTO;
+import com.sjsu.cmpe275.term.dto.OfferDto;
 import com.sjsu.cmpe275.term.dto.ResponseDTO;
 import com.sjsu.cmpe275.term.exceptions.GenericException;
 import com.sjsu.cmpe275.term.models.CounterOffer;
@@ -90,5 +96,71 @@ public class CounterOfferController {
 			throw new GenericException(errorResponseDTO);
 		}
 
+	}
+
+	@RequestMapping(value = "/offerMatching/receivedCounterOffers/{userId}", method = RequestMethod.GET, consumes = "application/json", produces = "application/json")
+	@ResponseBody
+	public ResponseEntity<List<CounterOfferWrapperDTO>> getReceivedCounterOffers(@PathVariable Long userId) {
+		try {
+			List<CounterOffer> receivedCounterOffers = counterOfferService.getReceivedCounterOffers(userId);
+
+			List<CounterOfferWrapperDTO> counterOfferWrapperDTO = new ArrayList<>();
+
+			for (CounterOffer co : receivedCounterOffers) {
+
+				Offer srcOffer = offerService.getOfferById(co.getSrcOfferId());
+				OfferDto srcOfferDto = objectMapper.convertValue(srcOffer, new TypeReference<OfferDto>() {
+				});
+				Offer tgtOffer = offerService.getOfferById(co.getTgtOfferId());
+				OfferDto tgtOfferDto = objectMapper.convertValue(tgtOffer, new TypeReference<OfferDto>() {
+				});
+				Double counterAmtFromSrcToTgt = co.getCounterAmtFromSrcToTgt();
+				String currencyAmtFromSrcToTgt = co.getCounterCurrencyFromSrcToTgt();
+				CounterOfferWrapperDTO cowDTO = new CounterOfferWrapperDTO(srcOfferDto, tgtOfferDto,
+						counterAmtFromSrcToTgt, currencyAmtFromSrcToTgt);
+				counterOfferWrapperDTO.add(cowDTO);
+
+			}
+
+			// return response
+			return new ResponseEntity<List<CounterOfferWrapperDTO>>(counterOfferWrapperDTO, HttpStatus.OK);
+		} catch (Exception ex) {
+			ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(500, HttpStatus.INTERNAL_SERVER_ERROR,
+					ex.getMessage());
+			throw new GenericException(errorResponseDTO);
+		}
+	}
+
+	@RequestMapping(value = "/offerMatching/proposedCounterOffers/{userId}", method = RequestMethod.GET, consumes = "application/json", produces = "application/json")
+	@ResponseBody
+	public ResponseEntity<List<CounterOfferWrapperDTO>> getProposedCounterOffers(@PathVariable Long userId) {
+		try {
+			List<CounterOffer> proposedCounterOffers = counterOfferService.getProposedCounterOffers(userId);
+
+			List<CounterOfferWrapperDTO> counterOfferWrapperDTO = new ArrayList<>();
+
+			for (CounterOffer co : proposedCounterOffers) {
+
+				Offer srcOffer = offerService.getOfferById(co.getSrcOfferId());
+				OfferDto srcOfferDto = objectMapper.convertValue(srcOffer, new TypeReference<OfferDto>() {
+				});
+				Offer tgtOffer = offerService.getOfferById(co.getTgtOfferId());
+				OfferDto tgtOfferDto = objectMapper.convertValue(tgtOffer, new TypeReference<OfferDto>() {
+				});
+				Double counterAmtFromSrcToTgt = co.getCounterAmtFromSrcToTgt();
+				String currencyAmtFromSrcToTgt = co.getCounterCurrencyFromSrcToTgt();
+				CounterOfferWrapperDTO cowDTO = new CounterOfferWrapperDTO(srcOfferDto, tgtOfferDto,
+						counterAmtFromSrcToTgt, currencyAmtFromSrcToTgt);
+				counterOfferWrapperDTO.add(cowDTO);
+
+			}
+
+			// return response
+			return new ResponseEntity<List<CounterOfferWrapperDTO>>(counterOfferWrapperDTO, HttpStatus.OK);
+		} catch (Exception ex) {
+			ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(500, HttpStatus.INTERNAL_SERVER_ERROR,
+					ex.getMessage());
+			throw new GenericException(errorResponseDTO);
+		}
 	}
 }

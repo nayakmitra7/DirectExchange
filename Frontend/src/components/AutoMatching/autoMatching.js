@@ -54,7 +54,7 @@ class AutoMatching extends Component {
         axios.get(address + '/offerMatching/single/' + this.state.offerId).then((response) => {
             if (response.status == 200) {
                 console.log(response.data)
-                this.setState({ singleOfferList: response.data, offerExists: 1, offerSrcAmount: response.data.offer.amountInSrc, sourceAmountChange: response.data.offer.amountInSrc, offer1: response.data.offer, myOffer: response.data.offer  })
+                this.setState({ singleOfferList: response.data, offerExists: 1, offerSrcAmount: response.data.offer.amountInSrc, sourceAmountChange: response.data.offer.amountInSrc, offer1: response.data.offer, myOffer: response.data.offer })
             }
         }).catch(error => {
             toast.error("Internal error has occured", { position: 'top-center', autoClose: false })
@@ -184,17 +184,26 @@ class AutoMatching extends Component {
     counterModalClose = () => {
         this.setState({ counterModal: false })
     }
-    submitCounterHandle = async (counterAmtFromSrcToTgt) => {
-        axios
-            .post(address + '/offerMatching/counterOffer', { srcOfferDTO: this.state.myOffer, tgtOfferDTO: this.state.selectedCounterOffer, counterAmtFromSrcToTgt, counterCurrencyFromSrcToTgt: this.state.selectedCounterOffer.sourceCurrency })
-            .then(res => {
-                if (res.status === 200) {
-                    toast.success("Counter offer email has been sent to " + this.state.selectedCounterOffer.nickname);
-                }
-            })
-            .catch(err => {
-                toast.error("Error in making the counter offer");
-            })
+    submitCounterHandle = async (e, counterAmtFromSrcToTgt) => {
+        e.preventDefault();
+        console.log("In submitCounterOffer")
+        let minBound = this.state.selectedCounterOffer.amountInSrc * 0.9;
+        let maxBound = this.state.selectedCounterOffer.amountInSrc * 1.1;
+        let withinRange = minBound <= counterAmtFromSrcToTgt && counterAmtFromSrcToTgt <= maxBound;
+        if (withinRange) {
+            axios
+                .post(address + '/offerMatching/counterOffer', { srcOfferDTO: this.state.myOffer, tgtOfferDTO: this.state.selectedCounterOffer, counterAmtFromSrcToTgt, counterCurrencyFromSrcToTgt: this.state.selectedCounterOffer.sourceCurrency })
+                .then(res => {
+                    if (res.status === 200) {
+                        toast.success("Counter offer email has been sent to " + this.state.selectedCounterOffer.nickname);
+                    }
+                })
+                .catch(err => {
+                    toast.error("Error in making the counter offer");
+                })
+        } else {
+            toast.error("Amount entered must be within the mentioned range");
+        }
     }
 
     render() {
@@ -290,7 +299,7 @@ class AutoMatching extends Component {
                     </Col>}
 
                     <Col md="2">
-                        <Button size="sm" onClick={() => this.counterModalOpen(element.offer)}> Counter Offer</Button>
+                        <Button size="sm" onClick={() => { this.setState({ myOffer: element.offer }); this.counterModalOpen(element.matchingOffer[0].amountInSrc > element.matchingOffer[1].amountInSrc ? element.matchingOffer[0] : element.matchingOffer[1]) }}> Counter Offer</Button>
                     </Col>
                 </Row>)
             } else {
@@ -304,7 +313,7 @@ class AutoMatching extends Component {
                     </Col>}
 
                     <Col md="2">
-                        <Button size="sm" onClick={() => this.counterModalOpen(element.offer)}> Counter Offer</Button>
+                        <Button size="sm" onClick={() => { this.setState({ myOffer: element.offer }); this.counterModalOpen(element.matchingOffer[0].amountInSrc > element.matchingOffer[1].amountInSrc ? element.matchingOffer[0] : element.matchingOffer[1]) }}> Counter Offer</Button>
                     </Col>
                 </Row>)
             }

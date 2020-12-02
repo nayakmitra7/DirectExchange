@@ -28,9 +28,10 @@ public class CounterOffer {
 	private Double counterAmtFromSrcToTgt;
 	@Column(name = "counterCurrencyFromSrcToTgt", nullable = false)
 	private String counterCurrencyFromSrcToTgt;
-	
-	public CounterOffer(Long srcUserId, Long srcOfferId, Long tgtUserId, Long tgtOfferId,
-			Double counterAmtFromSrcToTgt, String counterCurrencyFromSrcToTgt) {
+
+	public CounterOffer() {}
+	public CounterOffer(Long srcUserId, Long srcOfferId, Long tgtUserId, Long tgtOfferId, Double counterAmtFromSrcToTgt,
+			String counterCurrencyFromSrcToTgt) {
 		super();
 		this.srcUserId = srcUserId;
 		this.srcOfferId = srcOfferId;
@@ -88,11 +89,11 @@ public class CounterOffer {
 		this.counterAmtFromSrcToTgt = counterAmtFromSrcToTgt;
 	}
 
-	public String getCurrencyAmtFromSrcToTgt() {
+	public String getCounterCurrencyFromSrcToTgt() {
 		return counterCurrencyFromSrcToTgt;
 	}
 
-	public void setCurrencyAmtFromSrcToTgt(String counterAmtFromSrcToTgt) {
+	public void setCounterCurrencyFromSrcToTgt(String counterAmtFromSrcToTgt) {
 		this.counterCurrencyFromSrcToTgt = counterAmtFromSrcToTgt;
 	}
 

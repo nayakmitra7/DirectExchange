@@ -1,10 +1,22 @@
 package com.sjsu.cmpe275.term.dto;
 
 public class CounterOfferWrapperDTO {
-	private OfferDto srcOfferDTO;
-	private OfferDto tgtOfferDTO;
-	private Double counterAmtFromSrcToTgt;
-	private String counterCurrencyFromSrcToTgt;
+	private OfferDto srcOfferDTO;// srcOfferDTO
+	private OfferDto tgtOfferDTO;// tgtOfferDTO
+	private Double counterAmtFromSrcToTgt;// counterAmtFromSrcToTgt
+	private String counterCurrencyFromSrcToTgt;// counterCurrencyFromSrcToTgt
+
+	public CounterOfferWrapperDTO(OfferDto srcOfferDTO, OfferDto tgtOfferDTO, Double counterAmtFromSrcToTgt,
+			String counterCurrencyFromSrcToTgt) {
+		super();
+		this.srcOfferDTO = srcOfferDTO;
+		this.tgtOfferDTO = tgtOfferDTO;
+		this.counterAmtFromSrcToTgt = counterAmtFromSrcToTgt;
+		this.counterCurrencyFromSrcToTgt = counterCurrencyFromSrcToTgt;
+	}
+
+	CounterOfferWrapperDTO() {
+	}
 
 	public OfferDto getSrcOfferDTO() {
 		return srcOfferDTO;
