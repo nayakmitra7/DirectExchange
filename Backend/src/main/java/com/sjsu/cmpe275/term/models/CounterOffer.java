@@ -29,6 +29,7 @@ public class CounterOffer {
 	@Column(name = "counterCurrencyFromSrcToTgt", nullable = false)
 	private String counterCurrencyFromSrcToTgt;
 
+	public CounterOffer() {}
 	public CounterOffer(Long srcUserId, Long srcOfferId, Long tgtUserId, Long tgtOfferId, Double counterAmtFromSrcToTgt,
 			String counterCurrencyFromSrcToTgt) {
 		super();

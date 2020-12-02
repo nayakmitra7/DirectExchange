@@ -98,9 +98,9 @@ public class CounterOfferController {
 
 	}
 
-	@RequestMapping(value = "/offerMatching/receivedCounterOffers", method = RequestMethod.GET, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/offerMatching/receivedCounterOffers/{userId}", method = RequestMethod.GET, consumes = "application/json", produces = "application/json")
 	@ResponseBody
-	public ResponseEntity<List<CounterOfferWrapperDTO>> getReceivedCounterOffers(@PathVariable("userId") Long userId) {
+	public ResponseEntity<List<CounterOfferWrapperDTO>> getReceivedCounterOffers(@PathVariable Long userId) {
 		try {
 			List<CounterOffer> receivedCounterOffers = counterOfferService.getReceivedCounterOffers(userId);
 
@@ -111,7 +111,7 @@ public class CounterOfferController {
 				Offer srcOffer = offerService.getOfferById(co.getSrcOfferId());
 				OfferDto srcOfferDto = objectMapper.convertValue(srcOffer, new TypeReference<OfferDto>() {
 				});
-				Offer tgtOffer = offerService.getOfferById(co.getSrcOfferId());
+				Offer tgtOffer = offerService.getOfferById(co.getTgtOfferId());
 				OfferDto tgtOfferDto = objectMapper.convertValue(tgtOffer, new TypeReference<OfferDto>() {
 				});
 				Double counterAmtFromSrcToTgt = co.getCounterAmtFromSrcToTgt();
@@ -131,9 +131,9 @@ public class CounterOfferController {
 		}
 	}
 
-	@RequestMapping(value = "/offerMatching/proposedCounterOffers", method = RequestMethod.GET, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/offerMatching/proposedCounterOffers/{userId}", method = RequestMethod.GET, consumes = "application/json", produces = "application/json")
 	@ResponseBody
-	public ResponseEntity<List<CounterOfferWrapperDTO>> getProposedCounterOffers(@PathVariable("userId") Long userId) {
+	public ResponseEntity<List<CounterOfferWrapperDTO>> getProposedCounterOffers(@PathVariable Long userId) {
 		try {
 			List<CounterOffer> proposedCounterOffers = counterOfferService.getProposedCounterOffers(userId);
 
@@ -144,7 +144,7 @@ public class CounterOfferController {
 				Offer srcOffer = offerService.getOfferById(co.getSrcOfferId());
 				OfferDto srcOfferDto = objectMapper.convertValue(srcOffer, new TypeReference<OfferDto>() {
 				});
-				Offer tgtOffer = offerService.getOfferById(co.getSrcOfferId());
+				Offer tgtOffer = offerService.getOfferById(co.getTgtOfferId());
 				OfferDto tgtOfferDto = objectMapper.convertValue(tgtOffer, new TypeReference<OfferDto>() {
 				});
 				Double counterAmtFromSrcToTgt = co.getCounterAmtFromSrcToTgt();
