@@ -7,6 +7,7 @@ public class Constant {
 	public static int OFFEROPEN=1;
 	public static int OFFERTRANSACTION=3;
 	public static int OFFERTRANSFERRED=4;
+	public static int COUNTERMADE=5;
 	
 // TRANSACTION STATUS	
 	public static int TRANSACTION_INPROGRESS=1;

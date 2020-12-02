@@ -12,19 +12,31 @@ import { address } from "../../js/helper/constant";
 import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
 import ListGroup from "react-bootstrap/ListGroup";
-import Button from "react-bootstrap/esm/Button";
-
+// import Button from "react-bootstrap/esm/Button";
+import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import Button1 from 'react-bootstrap/Button';
 class MyOffer extends Component {
   constructor(props) {
     super(props);
   }
   state = {
-    navarr: ["rgb(0, 106, 255)","black", "black"],
+    navarr: ["rgb(0, 106, 255)", "black", "black"],
     openOffers: [],
+    open: false,
   };
 
   componentDidMount() {
     //change the id of user after kena complete
+    this.getOffer();
+  }
+
+  getOffer() {
     axios
       .get(`${address}/offer/` + localStorage.getItem("id") + `/open`)
       .then((response) => {
@@ -39,9 +51,29 @@ class MyOffer extends Component {
       });
   }
   autoMatch = (id) => {
-    localStorage.setItem("autoMatchId",id);
-    this.props.history.push('/autoMatching')
-  }
+    localStorage.setItem("autoMatchId", id);
+    this.props.history.push("/autoMatching");
+  };
+  handleClickOpen = (offer) => {
+    this.setState({ offerToBeModified: offer });
+    this.setState({ open: true });
+  };
+
+  handleClose = () => {
+    this.setState({ open: false });
+  };
+  modifyAmount = async () => {
+    const offer = {
+      id: this.state.offerToBeModified.id,
+      amount: this.state.modifiedAmount,
+    };
+    const modifiedoffer = await axios.put(
+      `${address}/offer?id=${offer.id}&amountInSrc=${offer.amount}`,
+      offer
+    );
+    this.getOffer();
+    this.handleClose();
+  };
   render() {
     return (
       <div>
@@ -68,22 +100,77 @@ class MyOffer extends Component {
                   <Col>Amount(src)</Col>
                   <Col>Country(src)</Col>
                   <Col>Exp Date</Col>
-                  <Col></Col>
+                  <Col>
+                  <Button1
+                    size="sm"
+                    style={{marginBottom:'1%'}}
+                      className="btn btn-primary"
+                      onClick={() => this.autoMatch(offer.id)}
+                    >
+                      Auto Match
+                    </Button1>
+                  </Col>
                 </Row>
                 <Row>
                   <Col>#{offer.id}</Col>
                   <Col>{offer.nickname}</Col>
                   <Col>{offer.destinationCountry}</Col>
-                  <Col>{offer.amountInDes} {offer.destinationCurrency}</Col>
-                  <Col>{offer.amountInSrc} {offer.sourceCurrency}</Col>
+                  <Col>
+                    {offer.amountInDes} {offer.destinationCurrency}
+                  </Col>
+                  <Col>
+                    {offer.amountInSrc} {offer.sourceCurrency}
+                  </Col>
                   <Col>{offer.sourceCountry}</Col>
                   <Col>{offer.expirationDate}</Col>
-                  <Col><Button onClick={() => this.autoMatch(offer.id)}>Auto Match</Button></Col>
+                  
+                  <Col>
+                    <Button1
+                    style={{marginTop:'1%'}}
+                    size="sm"
+                      variant="success"
+                      onClick={() => this.handleClickOpen(offer)}
+                    >
+                      Modify Order
+                    </Button1>
+                  </Col>
                 </Row>
+                <Row></Row>
               </ListGroup.Item>
             </Accordion.Toggle>
           ))}
         </div>
+        <Dialog
+          open={this.state.open}
+          onClose={this.handleClose}
+          aria-labelledby="form-dialog-title"
+        >
+          <DialogTitle id="form-dialog-title">Modify Your Offer</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Please enter new amount for your offer to modify.
+            </DialogContentText>
+            <TextField
+              autoFocus
+              margin="dense"
+              id="name"
+              label="Offer Amount"
+              type="number"
+              fullWidth
+              onChange={(e) => {
+                this.setState({ modifiedAmount: e.target.value });
+              }}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleClose} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={this.modifyAmount} color="primary">
+              Modify
+            </Button>
+          </DialogActions>
+        </Dialog>
       </div>
     );
   }

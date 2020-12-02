@@ -14,6 +14,7 @@ import Accordion from 'react-bootstrap/Accordion'
 import ListGroup from 'react-bootstrap/ListGroup'
 import Button from 'react-bootstrap/esm/Button';
 import Modal from 'react-bootstrap/Modal';
+import CounterOffer from './CounterOffer';
 import Form from 'react-bootstrap/Form';
 import { Spinner } from 'react-bootstrap';
 
@@ -31,6 +32,9 @@ class AutoMatching extends Component {
             modalShowSplit: false,
             sourceAmountChange: 0,
             destinationAmount: 0,
+            counterModal: false,
+            myOffer: {},
+            selectedCounterOffer: {},
             spinner: false,
             offer2: '',
             offer1: '',
@@ -40,6 +44,8 @@ class AutoMatching extends Component {
         this.accept = this.accept.bind(this);
         this.handleClose = this.handleClose.bind(this);
         this.handleOpen = this.handleOpen.bind(this);
+        this.counterModalOpen = this.counterModalOpen.bind(this);
+        this.counterModalClose = this.counterModalClose.bind(this);
         this.setStateSourceAmount = this.setStateSourceAmount.bind(this);
         this.acceptModal = this.acceptModal.bind(this);
         this.handleOpenSplit = this.handleOpenSplit.bind(this);
@@ -47,7 +53,7 @@ class AutoMatching extends Component {
     componentDidMount() {
         axios.get(address + '/offerMatching/single/' + this.state.offerId).then((response) => {
             if (response.status == 200) {
-                this.setState({ singleOfferList: response.data, offerExists: 1, offerSrcAmount: response.data.offer.amountInSrc, sourceAmountChange: response.data.offer.amountInSrc, offer1: response.data.offer })
+                this.setState({ singleOfferList: response.data, offerExists: 1, offerSrcAmount: response.data.offer.amountInSrc, sourceAmountChange: response.data.offer.amountInSrc, offer1: response.data.offer, myOffer: response.data.offer  })
             }
         }).catch(error => {
             toast.error("Internal error has occured", { position: 'top-center', autoClose: false })
@@ -169,6 +175,26 @@ class AutoMatching extends Component {
             toast.error("The offers must match")
         }
     }
+    //Kena
+    counterModalOpen = (selectedCounterOffer) => {
+        console.log("counter open")
+        this.setState({ counterModal: true, selectedCounterOffer })
+    }
+    counterModalClose = () => {
+        this.setState({ counterModal: false })
+    }
+    submitCounterHandle = async (counterAmtFromSrcToTgt) => {
+        axios
+            .post(address + '/offerMatching/counterOffer', { srcOfferDTO: this.state.myOffer, tgtOfferDTO: this.state.selectedCounterOffer, counterAmtFromSrcToTgt })
+            .then(res => {
+                if (res.status === 200) {
+                    toast.success("Counter offer email has been sent to " + this.state.selectedCounterOffer.nickname);
+                }
+            })
+            .catch(err => {
+                toast.error("Error in making the counter offer");
+            })
+    }
 
     render() {
         let singleMatches = [];
@@ -263,7 +289,7 @@ class AutoMatching extends Component {
                     </Col>}
 
                     <Col md="2">
-                        <Button size="sm"> Counter Offer</Button>
+                        <Button size="sm" onClick={() => this.counterModalOpen(element.offer)}> Counter Offer</Button>
                     </Col>
                 </Row>)
             } else {
@@ -277,11 +303,10 @@ class AutoMatching extends Component {
                     </Col>}
 
                     <Col md="2">
-                        <Button size="sm"> Counter Offer</Button>
+                        <Button size="sm" onClick={() => this.counterModalOpen(element.offer)}> Counter Offer</Button>
                     </Col>
                 </Row>)
             }
-
             splitMatches.push(
                 <Card>
                     <Accordion.Toggle as={Card.Header} eventKey={val} className="gray-auto-matching header-bold-auto-matching">
@@ -300,7 +325,7 @@ class AutoMatching extends Component {
 
 
 
-        this.state.offerExists && this.state.singleOfferList.matchingOffer.forEach(offer => {
+        this.state.singleOfferList.matchingOffer != undefined && this.state.singleOfferList.matchingOffer.forEach(offer => {
             inner.push(<ListGroup.Item>
                 <Row className="header-bold-auto-matching">
                     <Col>Offer ID</Col>
@@ -332,7 +357,7 @@ class AutoMatching extends Component {
                         <Button variant="danger" size="sm" onClick={() => { this.handleOpen(offer) }}>Modify My Offer</Button>
                     </Col>}
                     {offer.counterOfferAllowed && this.state.offerSrcAmount != offer.amountInDes && <Col md="2">
-                        <Button size="sm"> Counter Offer</Button>
+                        <Button size="sm" onClick={() => this.counterModalOpen(offer)}> Counter Offer</Button>
                     </Col>}
                 </Row>
             </ListGroup.Item>)
@@ -397,7 +422,7 @@ class AutoMatching extends Component {
 
                     </Col>
                 </Row>
-                <Modal show={this.state.modalShow} onHide={this.handleOpen} size="lg">
+                {this.state.singleOfferList.offer && <Modal show={this.state.modalShow} onHide={this.handleOpen} size="lg">
                     <Modal.Header>
                         <Modal.Title>Offer Modification</Modal.Title>
                     </Modal.Header>
@@ -442,7 +467,7 @@ class AutoMatching extends Component {
                         <Button variant="secondary" onClick={this.handleClose}>Close</Button>
                         <Button variant="success" onClick={this.acceptModal} >Accept offer</Button>
                     </Modal.Footer>
-                </Modal>
+                </Modal>}
                 <Modal show={this.state.spinner} size="sm" centered>
 
                     <Modal.Body>
@@ -505,6 +530,13 @@ class AutoMatching extends Component {
                         <Button variant="success" onClick={this.acceptModalSplit} >Accept offer</Button>
                     </Modal.Footer>
                 </Modal>
+                <CounterOffer
+                    myOffer={this.state.myOffer}
+                    selectedCounterOffer={this.state.selectedCounterOffer}
+                    counterModal={this.state.counterModal}
+                    counterModalClose={this.counterModalClose}
+                    submitCounterHandle={this.submitCounterHandle}
+                />
             </div>
         )
     }

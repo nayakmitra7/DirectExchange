@@ -6,4 +6,5 @@ public interface UserService {
 	public User createUser(User user);
 	public User getUserByNickname(String nickname);
 	public User getUserByEmailId(String emailId);
+	public User getUserById(Long id);
 }
