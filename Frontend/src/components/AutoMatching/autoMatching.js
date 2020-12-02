@@ -14,7 +14,9 @@ import Accordion from 'react-bootstrap/Accordion'
 import ListGroup from 'react-bootstrap/ListGroup'
 import Button from 'react-bootstrap/esm/Button';
 import Modal from 'react-bootstrap/Modal';
-import Form from 'react-bootstrap/Form'
+import Form from 'react-bootstrap/Form';
+import { Spinner } from 'react-bootstrap';
+
 class AutoMatching extends Component {
     constructor() {
         super();
@@ -27,7 +29,9 @@ class AutoMatching extends Component {
             offerSrcAmount: 0,
             modalShow: false,
             sourceAmountChange: 0,
-            destinationAmount: 0
+            destinationAmount: 0,
+            spinner: false,
+            offer2:''
         }
         this.modify = this.modify.bind(this);
         this.accept = this.accept.bind(this);
@@ -57,9 +61,9 @@ class AutoMatching extends Component {
     handleClose = () => {
         this.setState({ modalShow: false })
     };
-    handleOpen = (destValue) => {
-        console.log(destValue)
-        this.setState({ modalShow: true, destinationAmount: destValue })
+    handleOpen = (offer2) => {
+        console.log()
+        this.setState({ modalShow: true, destinationAmount: offer2.amountInDes, offer2:offer2 })
     };
     setStateSourceAmount = (event) => {
         this.setState({ sourceAmountChange: event.target.value })
@@ -67,12 +71,43 @@ class AutoMatching extends Component {
     modify = (id) => {
 
     }
-    accept = (id) => {
+    accept = (offer2) => {
+        this.handleClose()
+        this.setState({ spinner: true });
+        let data = { isSplit: false, offerId1: this.state.offerId, offerId2: offer2.id, offerUserId1: this.state.userId, offerUserId2: offer2.userId }
+        console.log(data)
+        axios.post(address + "/twoPartyTransaction", data).then((response) => {
+            if (response.status == 200) {
+                this.setState({ spinner: false })
+                toast.success("Your offer has now entered in transaction mode");
+                axios.get(address + '/offerMatching/single/' + this.state.offerId).then((response) => {
+                    console.log(response.data)
+                    if (response.status == 200) {
+                        this.setState({ singleOfferList: response.data, offerExists: 1, offerSrcAmount: response.data.offer.amountInSrc, sourceAmountChange: response.data.offer.amountInSrc })
+                    }
+                }).catch(error => {
+                    toast.error("Internal error has occured", { position: 'top-center', autoClose: false })
+                })
 
+            }
+        }).catch((error) => {
+            toast.error("Internal Error Occured");
+        })
     }
     acceptModal = () => {
+        
         if (this.state.destinationAmount == this.state.sourceAmountChange) {
-
+            const params = {
+                id: this.state.offerId,
+                amountInSrc: this.state.sourceAmountChange
+        }
+            axios.put(address+'/offer?id='+this.state.offerId+'&amountInSrc='+this.state.sourceAmountChange, params).then((response) =>{
+                if(response.status == 200){
+                    this.accept(this.state.offer2);
+                }
+            }).catch(() =>{
+                toast.error("Internal Error Occurred")
+            })
         } else {
             toast.error("The offers must match")
         }
@@ -203,10 +238,10 @@ class AutoMatching extends Component {
                 <Row className="margin-top-1-auto-matching">
                     <Col md="5"></Col>
                     {this.state.offerSrcAmount == offer.amountInDes && <Col md="1.5">
-                        <Button variant="success" size="sm" onClick={() => this.accept(offer.id)}>Accept Offer</Button>
+                        <Button variant="success" size="sm" onClick={() => this.accept(offer)}>Accept Offer</Button>
                     </Col>}
                     {this.state.offerSrcAmount != offer.amountInDes && <Col md="1.5">
-                        <Button variant="danger" size="sm" onClick={() => { this.handleOpen(offer.amountInDes) }}>Modify My Offer</Button>
+                        <Button variant="danger" size="sm" onClick={() => { this.handleOpen(offer) }}>Modify My Offer</Button>
                     </Col>}
                     {offer.counterOfferAllowed && this.state.offerSrcAmount != offer.amountInDes && <Col md="2">
                         <Button size="sm"> Counter Offer</Button>
@@ -280,39 +315,39 @@ class AutoMatching extends Component {
                     </Modal.Header>
                     <Modal.Body>
                         <Form>
-                        <Row>
-                            <Col>
-                                <Row>
-                                    <Col className="header-bold-auto-matching">Offer ID</Col>
-                                    {this.state.offerExists && <Col>#{this.state.singleOfferList.offer.id}</Col>}
-                                </Row>
-                                <Row>
-                                    <Col className="header-bold-auto-matching">Username</Col>
-                                    {this.state.offerExists && <Col>{this.state.singleOfferList.offer.nickname}</Col>}
-                                </Row>
-                                <Row>
-                                    <Col className="header-bold-auto-matching">Country(des)</Col>
-                                    {this.state.offerExists && <Col>{this.state.singleOfferList.offer.destinationCountry}</Col>}
-                                </Row>
-                                <Row>
-                                    <Col className="header-bold-auto-matching">Amount(des)</Col>
-                                    {this.state.offerExists && <Col>{this.state.singleOfferList.offer.amountInDes} {this.state.singleOfferList.offer.destinationCurrency}</Col>}
-                                </Row>
-                                <Row>
-                                    <Col className="header-bold-auto-matching">Amount(src)</Col>
-                                    {this.state.offerExists && <Col><input value={this.state.sourceAmountChange} onChange={this.setStateSourceAmount} />  {this.state.singleOfferList.offer.sourceCurrency}</Col>}
-                                </Row>
-                                <Row>
-                                    <Col className="header-bold-auto-matching">Country(src)</Col>
-                                    {this.state.offerExists && <Col>{this.state.singleOfferList.offer.sourceCountry}</Col>}
-                                </Row>
-                                <Row>
-                                    <Col className="header-bold-auto-matching">Exp Date</Col>
-                                    {this.state.offerExists && <Col>{this.state.singleOfferList.offer.expirationDate}</Col>}
-                                </Row>
+                            <Row>
+                                <Col>
+                                    <Row>
+                                        <Col className="header-bold-auto-matching">Offer ID</Col>
+                                        {this.state.offerExists && <Col>#{this.state.singleOfferList.offer.id}</Col>}
+                                    </Row>
+                                    <Row>
+                                        <Col className="header-bold-auto-matching">Username</Col>
+                                        {this.state.offerExists && <Col>{this.state.singleOfferList.offer.nickname}</Col>}
+                                    </Row>
+                                    <Row>
+                                        <Col className="header-bold-auto-matching">Country(des)</Col>
+                                        {this.state.offerExists && <Col>{this.state.singleOfferList.offer.destinationCountry}</Col>}
+                                    </Row>
+                                    <Row>
+                                        <Col className="header-bold-auto-matching">Amount(des)</Col>
+                                        {this.state.offerExists && <Col>{this.state.singleOfferList.offer.amountInDes} {this.state.singleOfferList.offer.destinationCurrency}</Col>}
+                                    </Row>
+                                    <Row>
+                                        <Col className="header-bold-auto-matching">Amount(src)</Col>
+                                        {this.state.offerExists && <Col><input value={this.state.sourceAmountChange} onChange={this.setStateSourceAmount} />  {this.state.singleOfferList.offer.sourceCurrency}</Col>}
+                                    </Row>
+                                    <Row>
+                                        <Col className="header-bold-auto-matching">Country(src)</Col>
+                                        {this.state.offerExists && <Col>{this.state.singleOfferList.offer.sourceCountry}</Col>}
+                                    </Row>
+                                    <Row>
+                                        <Col className="header-bold-auto-matching">Exp Date</Col>
+                                        {this.state.offerExists && <Col>{this.state.singleOfferList.offer.expirationDate}</Col>}
+                                    </Row>
 
-                            </Col>
-                        </Row>
+                                </Col>
+                            </Row>
                         </Form>
                     </Modal.Body>
                     <Modal.Footer>
@@ -320,7 +355,22 @@ class AutoMatching extends Component {
                         <Button variant="success" onClick={this.acceptModal} >Accept offer</Button>
                     </Modal.Footer>
                 </Modal>
+                <Modal show={this.state.spinner} size="sm" centered>
 
+                    <Modal.Body>
+                        <Row>
+                            <Col></Col>
+                            <Col><div>
+                                <Spinner animation="border" role="status">
+                                    <span className="sr-only">Loading...</span>
+                                </Spinner>
+                            </div ></Col>
+                            <Col></Col>
+                        </Row>
+
+                    </Modal.Body>
+
+                </Modal>
             </div>
         )
     }
