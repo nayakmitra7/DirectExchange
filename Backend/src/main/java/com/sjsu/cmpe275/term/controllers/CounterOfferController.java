@@ -17,7 +17,6 @@ import com.sjsu.cmpe275.term.dto.ResponseDTO;
 import com.sjsu.cmpe275.term.exceptions.GenericException;
 import com.sjsu.cmpe275.term.models.CounterOffer;
 import com.sjsu.cmpe275.term.models.Offer;
-import com.sjsu.cmpe275.term.models.Transaction;
 import com.sjsu.cmpe275.term.service.counterOffer.CounterOfferService;
 import com.sjsu.cmpe275.term.service.offer.OfferService;
 import com.sjsu.cmpe275.term.service.user.UserService;
@@ -39,48 +38,51 @@ public class CounterOfferController {
 	@Autowired
 	private EmailUtility emailUtil;
 
-	@RequestMapping(value = "/twoPartyTransaction", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/offerMatching/counterOffer", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
 	public ResponseEntity<ResponseDTO> postTwoPartyTransaction(
 			@RequestBody CounterOfferWrapperDTO counterOfferWrapperDTO) {
 		try {
+
+			// Get required data from body
 			Offer srcOffer = objectMapper.convertValue(counterOfferWrapperDTO.getSrcOfferDTO(), Offer.class);
 			Offer tgtOffer = objectMapper.convertValue(counterOfferWrapperDTO.getTgtOfferDTO(), Offer.class);
+			Double counterAmtFromSrcToTgt = counterOfferWrapperDTO.getCounterAmtFromSrcToTgt();
+			String counterCurrencyFromSrcToTgt = counterOfferWrapperDTO.getCounterCurrencyFromSrcToTgt();
 
-			srcOffer.setOfferStatus(Constant.COUNTERMADE);
+			// Collect data for creating record in CounterOffer model
 			Long srcUserId = srcOffer.getUserId();
 			Long srcOfferId = srcOffer.getId();
 			Long tgtUserId = tgtOffer.getUserId();
 			Long tgtOfferId = tgtOffer.getId();
-			Double counterAmtFromSrcToTgt = counterOfferWrapperDTO.getCounterAmtFromSrcToTgt();
-			String counterCurrencyFromSrcToTgt = counterOfferWrapperDTO.getCounterCurrencyFromSrcToTgt();
 
+			// create the counter offer record
 			CounterOffer counterOffer = new CounterOffer(srcUserId, srcOfferId, tgtUserId, tgtOfferId,
 					counterAmtFromSrcToTgt, counterCurrencyFromSrcToTgt);
+			counterOfferService.createCounterOffer(counterOffer);
 
-			String[] emailList = new String[2];
+			// Update the offer status of the party who proposed the counter offer
+			srcOffer.setOfferStatus(Constant.COUNTERMADE);
+			offerService.postOffer(srcOffer);
 
-//			if (Double.compare(offer1.getAmountInUSD(), offer2.getAmountInUSD()) != 0) {
-//				ResponseDTO responseDTO = new ResponseDTO(200, HttpStatus.OK,
-//						"Selected offer amount doesn't match with your offer. Please make another selection.");
-//				return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
-//			}
-//
-//			emailList[0] = userService.getUserByNickname(offer1.getNickname()).getEmailId();
-//			emailList[1] = userService.getUserByNickname(offer2.getNickname()).getEmailId();
-//
-//			offer1.setOfferStatus(Constant.OFFERTRANSACTION);
-//			offer2.setOfferStatus(Constant.OFFERTRANSACTION);
-//
-//			offerService.postOffer(offer1);
-//			offerService.postOffer(offer2);
-//
-//			transaction.setTranStatus(Constant.TRANSACTION_INPROGRESS);
-//
-//			Transaction savedOffer = transactionService.acceptSingleOffer(transaction);
-//			emailUtil.sendEmail(emailList, "Offer accepted", "Offer accepted! Make the payment.");
-//
-			ResponseDTO responseDTO = new ResponseDTO(200, HttpStatus.OK, "You have successfully accepted the offer!");
+			// Send notifications to the two parties
+			String[] srcEmailList = new String[1];
+			String[] tgtEmailList = new String[1];
+			srcEmailList[0] = userService.getUserById(srcUserId).getEmailId();
+			tgtEmailList[0] = userService.getUserById(tgtUserId).getEmailId();
+			String srcNickname = srcOffer.getNickname();
+			String tgtNickname = tgtOffer.getNickname();
+			emailUtil.sendEmail(srcEmailList, "Counter offer sent for offer #" + srcOffer.getId(),
+					"You have successfully proposed a counter offer to user " + tgtNickname + " for an amount of "
+							+ counterAmtFromSrcToTgt + " " + counterCurrencyFromSrcToTgt + "!");
+			emailUtil.sendEmail(tgtEmailList, "Counter offer received for offer #" + tgtOffer.getId(),
+					"You have been proposed a counter offer from user " + srcNickname + " for an amount of "
+							+ counterAmtFromSrcToTgt + " " + counterCurrencyFromSrcToTgt + "!");
+
+			// return response
+			ResponseDTO responseDTO = new ResponseDTO(200, HttpStatus.OK,
+					"Counter offer has been successfully made from user " + srcNickname + " to user " + tgtNickname
+							+ " for an amount of " + counterAmtFromSrcToTgt + " " + counterCurrencyFromSrcToTgt + "!");
 			return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
 		} catch (Exception ex) {
 			ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(500, HttpStatus.INTERNAL_SERVER_ERROR,
