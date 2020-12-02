@@ -42,7 +42,7 @@ class CounterOffer extends Component {
                                         </Row>
                                         <Row>
                                             <Col className="header-bold-auto-matching">Counter Amount(src) to request</Col>
-                                            <Col><input required value={this.state.counterAmtRequest} onChange={(e) => this.setState({ counterAmtRequest: e.target.value })} min={selectedCounterOffer.amountInSrc * 0.9} max={selectedCounterOffer.amountInSrc * 1.1} placeholder={selectedCounterOffer.amountInSrc * 0.9 + " - " + selectedCounterOffer.amountInSrc * 1.1} />{/*selectedCounterOffer.amountInDes*/} {selectedCounterOffer.sourceCurrency}</Col>
+                                            <Col><input required value={this.state.counterAmtRequest} onChange={(e) => this.setState({ counterAmtRequest: e.target.value })} min={selectedCounterOffer.amountInSrc * 0.9} max={selectedCounterOffer.amountInSrc * 1.1} placeholder={(selectedCounterOffer.amountInSrc * 0.9).toFixed(2) + " - " + (selectedCounterOffer.amountInSrc * 1.1).toFixed(2)} />{/*selectedCounterOffer.amountInDes*/} {selectedCounterOffer.sourceCurrency}</Col>
                                         </Row>
                                         <Row>
                                             <Col className="header-bold-auto-matching">Amount(des)</Col>
