@@ -65,14 +65,16 @@ class CounterOffer extends Component {
                                     <Button type="submit" variant="success" onClick={
                                         (e) => {
                                             if (this.props.isCounterSplit) {
-                                                if (parseFloat(this.props.validCounterAmtSplit) === parseFloat(this.state.counterAmtRequest)) {
+                                                console.log(typeof this.props.validCounterAmtSplit);
+                                                if (parseFloat(this.props.validCounterAmtSplit).toFixed(2) == parseFloat(this.state.counterAmtRequest).toFixed(2)) {
                                                     this.props.submitCounterHandle(e, parseFloat(this.state.counterAmtRequest))
                                                 }
                                                 else {
-                                                    toast.error("Requested counter amount can be " + this.props.validCounterAmtSplit + " to matc your offer");
+                                                    e.preventDefault();
+                                                    toast.error("Requested counter amount can be " + this.props.validCounterAmtSplit.toFixed(2) + " to match your offer");
                                                 }
                                             } else {
-                                                if (parseFloat(myOffer.amountInDes) === parseFloat(this.state.counterAmtRequest))
+                                                if (parseFloat(myOffer.amountInDes) == parseFloat(this.state.counterAmtRequest))
                                                     this.props.submitCounterHandle(e, parseFloat(this.state.counterAmtRequest))
                                                 else {
                                                     e.preventDefault();
