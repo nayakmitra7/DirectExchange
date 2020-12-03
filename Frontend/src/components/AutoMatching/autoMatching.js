@@ -193,7 +193,7 @@ class AutoMatching extends Component {
         let withinRange = minBound <= counterAmtFromSrcToTgt && counterAmtFromSrcToTgt <= maxBound;
         if (withinRange) {
             axios
-                .post(address + '/offerMatching/counterOffer', { srcOfferDTO: this.state.myOffer, tgtOfferDTO: this.state.selectedCounterOffer, isCounterSplit: this.state.isCounterSplit, otherOfferDTO: this.state.otherOffer, counterAmtFromSrcToTgt, counterCurrencyFromSrcToTgt: this.state.selectedCounterOffer.sourceCurrency, counterStatus: COUNTEROFFER_OPEN })
+                .post(address + '/offerMatching/counterOffer', { srcOfferDTO: this.state.myOffer, tgtOfferDTO: this.state.selectedCounterOffer, otherOfferDTO: this.state.otherOffer, counterAmtFromSrcToTgt, counterCurrencyFromSrcToTgt: this.state.selectedCounterOffer.sourceCurrency, counterStatus: COUNTEROFFER_OPEN })
                 .then(res => {
                     if (res.status === 200) {
                         toast.success("Counter offer email has been sent to " + this.state.selectedCounterOffer.nickname);

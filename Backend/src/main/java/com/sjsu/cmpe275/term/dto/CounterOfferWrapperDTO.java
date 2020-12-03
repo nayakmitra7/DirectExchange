@@ -4,17 +4,17 @@ public class CounterOfferWrapperDTO {
 	private Long counterOfferId;
 	private OfferDto srcOfferDTO;// srcOfferDTO
 	private OfferDto tgtOfferDTO;// tgtOfferDTO
-	private boolean isCounterSplit;
+	private Boolean isCounterSplit;// isCounterSplit
 	private OfferDto otherOfferDTO;
 	private Double counterAmtFromSrcToTgt;// counterAmtFromSrcToTgt
 	private String counterCurrencyFromSrcToTgt;// counterCurrencyFromSrcToTgt
 	private int counterStatus;
 
-	public CounterOfferWrapperDTO(Long counterOfferId,OfferDto srcOfferDTO, OfferDto tgtOfferDTO, boolean isCounterSplit,
+	public CounterOfferWrapperDTO(OfferDto srcOfferDTO, OfferDto tgtOfferDTO, Boolean isCounterSplit,
 			OfferDto otherOfferDTO, Double counterAmtFromSrcToTgt, String counterCurrencyFromSrcToTgt,
 			int counterStatus) {
 		super();
-		this.counterOfferId=counterOfferId;
+//		this.counterOfferId = counterOfferId;
 		this.srcOfferDTO = srcOfferDTO;
 		this.tgtOfferDTO = tgtOfferDTO;
 		this.isCounterSplit = isCounterSplit;
@@ -28,15 +28,15 @@ public class CounterOfferWrapperDTO {
 		return counterOfferId;
 	}
 
-	public void setCounterOfferId(Long id) {
+	public void setCounterOfferId(Long counterOfferId) {
 		this.counterOfferId = counterOfferId;
 	}
 
-	public boolean isCounterSplit() {
+	public Boolean isCounterSplit() {
 		return isCounterSplit;
 	}
 
-	public void setCounterSplit(boolean isCounterSplit) {
+	public void setCounterSplit(Boolean isCounterSplit) {
 		this.isCounterSplit = isCounterSplit;
 	}
 
