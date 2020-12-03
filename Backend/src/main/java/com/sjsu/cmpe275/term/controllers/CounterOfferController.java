@@ -55,6 +55,7 @@ public class CounterOfferController {
 			Offer tgtOffer = objectMapper.convertValue(counterOfferWrapperDTO.getTgtOfferDTO(), Offer.class);
 			Double counterAmtFromSrcToTgt = counterOfferWrapperDTO.getCounterAmtFromSrcToTgt();
 			String counterCurrencyFromSrcToTgt = counterOfferWrapperDTO.getCounterCurrencyFromSrcToTgt();
+			int counterStatus = counterOfferWrapperDTO.getCounterStatus();
 
 			// Collect data for creating record in CounterOffer model
 			Long srcUserId = srcOffer.getUserId();
@@ -64,7 +65,7 @@ public class CounterOfferController {
 
 			// create the counter offer record
 			CounterOffer counterOffer = new CounterOffer(srcUserId, srcOfferId, tgtUserId, tgtOfferId,
-					counterAmtFromSrcToTgt, counterCurrencyFromSrcToTgt);
+					counterAmtFromSrcToTgt, counterCurrencyFromSrcToTgt, counterStatus);
 			counterOfferService.createCounterOffer(counterOffer);
 
 			// Update the offer status of the party who proposed the counter offer
@@ -98,7 +99,7 @@ public class CounterOfferController {
 
 	}
 
-	@RequestMapping(value = "/offerMatching/receivedCounterOffers/{userId}", method = RequestMethod.GET, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/offerMatching/receivedCounterOffers/{userId}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public ResponseEntity<List<CounterOfferWrapperDTO>> getReceivedCounterOffers(@PathVariable Long userId) {
 		try {
@@ -116,8 +117,9 @@ public class CounterOfferController {
 				});
 				Double counterAmtFromSrcToTgt = co.getCounterAmtFromSrcToTgt();
 				String currencyAmtFromSrcToTgt = co.getCounterCurrencyFromSrcToTgt();
+				int counterStatus = co.getCounterStatus();
 				CounterOfferWrapperDTO cowDTO = new CounterOfferWrapperDTO(srcOfferDto, tgtOfferDto,
-						counterAmtFromSrcToTgt, currencyAmtFromSrcToTgt);
+						counterAmtFromSrcToTgt, currencyAmtFromSrcToTgt, counterStatus);
 				counterOfferWrapperDTO.add(cowDTO);
 
 			}
@@ -131,7 +133,7 @@ public class CounterOfferController {
 		}
 	}
 
-	@RequestMapping(value = "/offerMatching/proposedCounterOffers/{userId}", method = RequestMethod.GET, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/offerMatching/proposedCounterOffers/{userId}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public ResponseEntity<List<CounterOfferWrapperDTO>> getProposedCounterOffers(@PathVariable Long userId) {
 		try {
@@ -149,8 +151,9 @@ public class CounterOfferController {
 				});
 				Double counterAmtFromSrcToTgt = co.getCounterAmtFromSrcToTgt();
 				String currencyAmtFromSrcToTgt = co.getCounterCurrencyFromSrcToTgt();
+				int counterStatus = co.getCounterStatus();
 				CounterOfferWrapperDTO cowDTO = new CounterOfferWrapperDTO(srcOfferDto, tgtOfferDto,
-						counterAmtFromSrcToTgt, currencyAmtFromSrcToTgt);
+						counterAmtFromSrcToTgt, currencyAmtFromSrcToTgt, counterStatus);
 				counterOfferWrapperDTO.add(cowDTO);
 
 			}
@@ -163,4 +166,5 @@ public class CounterOfferController {
 			throw new GenericException(errorResponseDTO);
 		}
 	}
+
 }

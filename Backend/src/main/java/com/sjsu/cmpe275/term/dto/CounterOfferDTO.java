@@ -8,6 +8,15 @@ public class CounterOfferDTO {
 	private Long tgtOfferId;
 	private Double counterAmtFromSrcToTgt;
 	private String counterCurrencyFromSrcToTgt;
+	private String counterStatus;
+
+	public String getCounterStatus() {
+		return counterStatus;
+	}
+
+	public void setCounterStatus(String counterStatus) {
+		this.counterStatus = counterStatus;
+	}
 
 	public CounterOfferDTO(Long srcUserId, Long srcOfferId, Long tgtUserId, Long tgtOfferId,
 			Double counterAmtFromSrcToTgt, String counterCurrencyFromSrcToTgt) {

@@ -1,10 +1,8 @@
 package com.sjsu.cmpe275.term.controllers;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.stream.Collectors;
@@ -49,7 +47,7 @@ public class OfferMatchingController {
 
 			Offer offer = offerService.getOfferById(id);
 			OfferDto offerDto = objectMapper.convertValue(offer, OfferDto.class);
-			if(offer.getOfferStatus() != 1) {
+			if (offer.getOfferStatus() != 1) {
 				return new ResponseEntity<OfferMatchingDTO>(new OfferMatchingDTO(), HttpStatus.OK);
 			}
 			Double min = offer.getAmountInUSD() - 0.1 * offer.getAmountInUSD();
@@ -94,14 +92,14 @@ public class OfferMatchingController {
 		}
 
 	}
-	
+
 	@RequestMapping(value = "/offerMatching/split/{id}", method = RequestMethod.GET)
 	@ResponseBody
 	public ResponseEntity<List<OfferMatchingDTO>> getSplitMatchingOffer(@PathVariable Long id) {
 		try {
 
 			Offer offer = offerService.getOfferById(id);
-			if(!offer.getSplitOfferAllowed() || offer.getOfferStatus() != 1) {
+			if (!offer.getSplitOfferAllowed() || offer.getOfferStatus() != 1) {
 				return new ResponseEntity<List<OfferMatchingDTO>>(new ArrayList<OfferMatchingDTO>(), HttpStatus.OK);
 			}
 			OfferDto offerDto = objectMapper.convertValue(offer, OfferDto.class);
@@ -112,18 +110,17 @@ public class OfferMatchingController {
 			cal.set(Calendar.SECOND, 0);
 			cal.set(Calendar.MILLISECOND, 0);
 			Date todayDate = cal.getTime();
-			List<Offer> matchedOffersA = offerMatchingService.getSplitMatchingOfferContendersA(offer.getId(), offer.getUserId(),
-					todayDate, offer.getAmountInUSD());
+			List<Offer> matchedOffersA = offerMatchingService.getSplitMatchingOfferContendersA(offer.getId(),
+					offer.getUserId(), todayDate, offer.getAmountInUSD());
 			List<OfferDto> matchedOffersDtosA = matchedOffersA.stream()
 					.map(matchedOffer -> objectMapper.convertValue(matchedOffer, OfferDto.class))
 					.collect(Collectors.toList());
-			
-			List<Offer> matchedOffersTarget = offerMatchingService.getSplitMatchingOfferContendersTarget(offer.getId(), offer.getUserId(),
-					todayDate,offer.getAmountInUSD());
+
+			List<Offer> matchedOffersTarget = offerMatchingService.getSplitMatchingOfferContendersTarget(offer.getId(),
+					offer.getUserId(), todayDate, offer.getAmountInUSD());
 			List<OfferDto> matchedOffersDtosTarget = matchedOffersTarget.stream()
 					.map(matchedOffer -> objectMapper.convertValue(matchedOffer, OfferDto.class))
 					.collect(Collectors.toList());
-
 
 //			List<Offer> matchedOffersPart = offerMatchingService.getSplitMatchingOfferContendersPart(offer.getId(), offer.getUserId(),todayDate,offer.getAmountInUSD());
 //			List<OfferDto> matchedOffersDtosPart = matchedOffersPart.stream()
@@ -139,34 +136,40 @@ public class OfferMatchingController {
 				}
 
 			});
-			Double maxA =  1.1 * offerDto.getAmountInUSD();
-			Double minA =  0.9 * offerDto.getAmountInUSD();
+			Double maxA = 1.1 * offerDto.getAmountInUSD();
+			Double minA = 0.9 * offerDto.getAmountInUSD();
 			for (int i = 0; i < matchedOffersDtosA.size(); i++) {
-				for(int j = i+1; j < matchedOffersDtosA.size(); j++) {
-					Double BplusC = matchedOffersDtosA.get(i).getAmountInUSD() + matchedOffersDtosA.get(j).getAmountInUSD();
-					if( BplusC <= maxA && BplusC >= minA) {
+				for (int j = i + 1; j < matchedOffersDtosA.size(); j++) {
+					Double BplusC = matchedOffersDtosA.get(i).getAmountInUSD()
+							+ matchedOffersDtosA.get(j).getAmountInUSD();
+					if (BplusC <= maxA && BplusC >= minA) {
 						List<OfferDto> offers = new ArrayList<>();
 						offers.add(matchedOffersDtosA.get(i));
 						offers.add(matchedOffersDtosA.get(j));
-						SortingHelperDTO2 sortingHelperDTO2 = new SortingHelperDTO2(offerDto, offers, Math.abs(BplusC-offerDto.getAmountInUSD()));
+						SortingHelperDTO2 sortingHelperDTO2 = new SortingHelperDTO2(offerDto, offers,
+								Math.abs(BplusC - offerDto.getAmountInUSD()));
 						minHeap.add(sortingHelperDTO2);
 					}
 				}
 			}
 			for (int i = 0; i < matchedOffersDtosTarget.size(); i++) {
 				OfferDto targetOfferDto = matchedOffersDtosTarget.get(i);
-				List<Offer> matchedOffersContendersLesserThanTarget = offerMatchingService.getSplitMatchingOfferContendersLesserThanTarget(targetOfferDto.getId(), offerDto.getUserId(), targetOfferDto.getUserId(), cal.getTime(), targetOfferDto.getAmountInUSD());
-				List<OfferDto> matchedOffersContendersLesserThanTargetDtos = matchedOffersContendersLesserThanTarget.stream()
-						.map(matchedOffer -> objectMapper.convertValue(matchedOffer, OfferDto.class))
+				List<Offer> matchedOffersContendersLesserThanTarget = offerMatchingService
+						.getSplitMatchingOfferContendersLesserThanTarget(targetOfferDto.getId(), offerDto.getUserId(),
+								cal.getTime(), targetOfferDto.getAmountInUSD());
+				List<OfferDto> matchedOffersContendersLesserThanTargetDtos = matchedOffersContendersLesserThanTarget
+						.stream().map(matchedOffer -> objectMapper.convertValue(matchedOffer, OfferDto.class))
 						.collect(Collectors.toList());
-				for(int j = 0; j < matchedOffersContendersLesserThanTarget.size(); j++) {
-					Double BminusC = targetOfferDto.getAmountInUSD() - matchedOffersContendersLesserThanTargetDtos.get(j).getAmountInUSD();
+				for (int j = 0; j < matchedOffersContendersLesserThanTarget.size(); j++) {
+					Double BminusC = targetOfferDto.getAmountInUSD()
+							- matchedOffersContendersLesserThanTargetDtos.get(j).getAmountInUSD();
 					Double A = offerDto.getAmountInUSD();
-					if( BminusC >= 0.9*A && BminusC <= 1.1*A) {
+					if (BminusC >= 0.9 * A && BminusC <= 1.1 * A) {
 						List<OfferDto> offers = new ArrayList<>();
 						offers.add(matchedOffersContendersLesserThanTargetDtos.get(j));
 						offers.add(offerDto);
-						SortingHelperDTO2 sortingHelperDTO2 = new SortingHelperDTO2(matchedOffersDtosTarget.get(i),offers, Math.abs(BminusC-A));
+						SortingHelperDTO2 sortingHelperDTO2 = new SortingHelperDTO2(matchedOffersDtosTarget.get(i),
+								offers, Math.abs(BminusC - A));
 						minHeap.add(sortingHelperDTO2);
 					}
 				}
@@ -175,7 +178,8 @@ public class OfferMatchingController {
 			List<OfferMatchingDTO> offerMatchingDtosList = new ArrayList<OfferMatchingDTO>();
 			while (!minHeap.isEmpty()) {
 				SortingHelperDTO2 sortingHelperDTO2 = minHeap.poll();
-				OfferMatchingDTO matchingDTO = new OfferMatchingDTO(sortingHelperDTO2.getOffer(), sortingHelperDTO2.getOffers());
+				OfferMatchingDTO matchingDTO = new OfferMatchingDTO(sortingHelperDTO2.getOffer(),
+						sortingHelperDTO2.getOffers());
 				offerMatchingDtosList.add(matchingDTO);
 			}
 
@@ -189,5 +193,3 @@ public class OfferMatchingController {
 	}
 
 }
-
-

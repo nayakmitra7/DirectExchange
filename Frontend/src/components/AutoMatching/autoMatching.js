@@ -7,7 +7,7 @@ import axios from 'axios';
 import Card from 'react-bootstrap/Card'
 import { toast } from 'react-toastify';
 import './autoMatching.css';
-import { address } from '../../js/helper/constant';
+import { address, COUNTEROFFER_OPEN } from '../../js/helper/constant';
 import Tabs from 'react-bootstrap/Tabs'
 import Tab from 'react-bootstrap/Tab'
 import Accordion from 'react-bootstrap/Accordion'
@@ -52,12 +52,12 @@ class AutoMatching extends Component {
     }
     componentDidMount() {
         axios.get(address + '/offerMatching/single/' + this.state.offerId).then((response) => {
-            if (response.status == 200) {
+            if (response.status == 200 && response.data.offer) {
                 console.log(response.data)
                 this.setState({ singleOfferList: response.data, offerExists: 1, offerSrcAmount: response.data.offer.amountInSrc, sourceAmountChange: response.data.offer.amountInSrc, offer1: response.data.offer, myOffer: response.data.offer })
             }
         }).catch(error => {
-            toast.error("Internal error has occured", { position: 'top-center', autoClose: false })
+            toast.error("Internal error has occured 1", { position: 'top-center', autoClose: false })
         })
         axios.get(address + '/offerMatching/split/' + this.state.offerId).then((response) => {
             if (response.status == 200) {
@@ -65,7 +65,7 @@ class AutoMatching extends Component {
                 this.setState({ splitOfferList: response.data, offerExists: 1 })
             }
         }).catch(error => {
-            toast.error("Internal error has occured", { position: 'top-center', autoClose: false })
+            toast.error("Internal error has occured 2", { position: 'top-center', autoClose: false })
         })
     }
     handleClose = () => {
@@ -192,10 +192,11 @@ class AutoMatching extends Component {
         let withinRange = minBound <= counterAmtFromSrcToTgt && counterAmtFromSrcToTgt <= maxBound;
         if (withinRange) {
             axios
-                .post(address + '/offerMatching/counterOffer', { srcOfferDTO: this.state.myOffer, tgtOfferDTO: this.state.selectedCounterOffer, counterAmtFromSrcToTgt, counterCurrencyFromSrcToTgt: this.state.selectedCounterOffer.sourceCurrency })
+                .post(address + '/offerMatching/counterOffer', { srcOfferDTO: this.state.myOffer, tgtOfferDTO: this.state.selectedCounterOffer, counterAmtFromSrcToTgt, counterCurrencyFromSrcToTgt: this.state.selectedCounterOffer.sourceCurrency, counterStatus: COUNTEROFFER_OPEN })
                 .then(res => {
                     if (res.status === 200) {
                         toast.success("Counter offer email has been sent to " + this.state.selectedCounterOffer.nickname);
+                        this.setState({ singleOfferList: [], splitOfferList: [], counterModal: false })
                     }
                 })
                 .catch(err => {
@@ -204,6 +205,7 @@ class AutoMatching extends Component {
         } else {
             toast.error("Amount entered must be within the mentioned range");
         }
+
     }
 
     render() {
@@ -288,7 +290,7 @@ class AutoMatching extends Component {
                 </ListGroup.Item>
 
             )
-            if (element.offer.id == this.state.userId) {
+            if (element.offer.userId == this.state.userId) { //A=B+C
                 innerSplit.push(<Row className="margin-top-1-auto-matching">
                     <Col md="5"></Col>
                     {sumDest == element.offer.amountInSrc && <Col md="1.5">
@@ -299,10 +301,18 @@ class AutoMatching extends Component {
                     </Col>}
 
                     <Col md="2">
-                        <Button size="sm" onClick={() => { this.setState({ myOffer: element.offer }); this.counterModalOpen(element.matchingOffer[0].amountInSrc > element.matchingOffer[1].amountInSrc ? element.matchingOffer[0] : element.matchingOffer[1]) }}> Counter Offer</Button>
+                        <Button size="sm"
+                            onClick={() => {
+                                this.setState({
+                                    myOffer: element.offer,
+                                    isCounterSplit: true,
+                                    currentCounterDiff: element.offer.amountInDes - (element.matchingOffer[0].amountInSrc + element.matchingOffer[1].amountInSrc)
+                                });
+                                this.counterModalOpen(element.matchingOffer[0].amountInSrc > element.matchingOffer[1].amountInSrc ? element.matchingOffer[0] : element.matchingOffer[1])
+                            }}> Counter Offer</Button>
                     </Col>
                 </Row>)
-            } else {
+            } else { //A+B=C //C-B
                 innerSplit.push(<Row className="margin-top-1-auto-matching">
                     <Col md="5"></Col>
                     {sumSource == element.offer.amountInDes && <Col md="1.5">
@@ -313,7 +323,27 @@ class AutoMatching extends Component {
                     </Col>}
 
                     <Col md="2">
-                        <Button size="sm" onClick={() => { this.setState({ myOffer: element.offer }); this.counterModalOpen(element.matchingOffer[0].amountInSrc > element.matchingOffer[1].amountInSrc ? element.matchingOffer[0] : element.matchingOffer[1]) }}> Counter Offer</Button>
+                        <Button size="sm"
+                            onClick={() => {
+                                let myOffer = element.matchingOffer.filter(o => o.userId == localStorage.getItem("id"))
+                                let otherOffer = element.matchingOffer.filter(o => o.userId != localStorage.getItem("id"))
+                                console.log(myOffer.amountInDes, element.offer.amountInSrc, otherOffer.amountInDes)
+                                this.setState({
+                                    myOffer: myOffer[0],
+                                    isCounterSplit: true,
+                                    currentCounterDiff: myOffer[0].amountInDes - (element.offer.amountInSrc - otherOffer[0].amountInDes)
+                                });
+                                this.counterModalOpen(element.offer);
+                            }}> Counter Offer</Button>
+                        {/* <Button size="sm"
+                            onClick={() => {
+                                this.setState({
+                                    myOffer: element.offer,
+                                    isCounterSplit: true,
+                                    currentCounterDiff: element.offer.amountInDes - (element.matchingOffer[0].amountInSrc + element.matchingOffer[1].amountInSrc)
+                                });
+                                this.counterModalOpen(element.matchingOffer[0].amountInSrc > element.matchingOffer[1].amountInSrc ? element.matchingOffer[0] : element.matchingOffer[1])
+                            }}> Counter Offer</Button> */}
                     </Col>
                 </Row>)
             }
@@ -540,12 +570,15 @@ class AutoMatching extends Component {
                         <Button variant="success" onClick={this.acceptModalSplit} >Accept offer</Button>
                     </Modal.Footer>
                 </Modal>}
+                {console.log(this.state.selectedCounterOffer.amountInSrc, "||", this.state.currentCounterDiff)}
                 <CounterOffer
                     myOffer={this.state.myOffer}
                     selectedCounterOffer={this.state.selectedCounterOffer}
                     counterModal={this.state.counterModal}
                     counterModalClose={this.counterModalClose}
                     submitCounterHandle={this.submitCounterHandle}
+                    isCounterSplit={this.state.isCounterSplit || false}
+                    validCounterAmtSplit={parseFloat(this.state.selectedCounterOffer.amountInSrc) + parseFloat(this.state.currentCounterDiff)}
                 />
             </div>
         )

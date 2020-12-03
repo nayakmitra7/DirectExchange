@@ -100,6 +100,24 @@ public class OfferController {
 		return new ResponseEntity<List<OfferDto>>(offerdto, HttpStatus.OK);
 
 	}
+	
+	@RequestMapping(value = "/offer/{userId}", method = RequestMethod.GET, produces = "application/json")
+	@ResponseBody
+	public ResponseEntity<List<OfferDto>> getOfferList(@PathVariable Long userId) {
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		Date todayDate = cal.getTime();
+		List<Offer> offers = offerService.getOffer(userId, todayDate);
+
+		List<OfferDto> offerdto = objectMapper.convertValue(offers, new TypeReference<List<OfferDto>>() {
+		});
+		return new ResponseEntity<List<OfferDto>>(offerdto, HttpStatus.OK);
+
+	}
+	
 
 	@RequestMapping(value = "/offer/{userId}/open", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
