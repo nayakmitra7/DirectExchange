@@ -1,5 +1,6 @@
 package com.sjsu.cmpe275.term.controllers;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,14 +17,17 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sjsu.cmpe275.term.dto.CounterOfferDTO;
 import com.sjsu.cmpe275.term.dto.CounterOfferWrapperDTO;
 import com.sjsu.cmpe275.term.dto.ErrorResponseDTO;
 import com.sjsu.cmpe275.term.dto.OfferDto;
 import com.sjsu.cmpe275.term.dto.ResponseDTO;
 import com.sjsu.cmpe275.term.exceptions.GenericException;
 import com.sjsu.cmpe275.term.models.CounterOffer;
+import com.sjsu.cmpe275.term.models.ExchangeRate;
 import com.sjsu.cmpe275.term.models.Offer;
 import com.sjsu.cmpe275.term.service.counterOffer.CounterOfferService;
+import com.sjsu.cmpe275.term.service.exrate.ExRateService;
 import com.sjsu.cmpe275.term.service.offer.OfferService;
 import com.sjsu.cmpe275.term.service.user.UserService;
 import com.sjsu.cmpe275.term.utils.Constant;
@@ -43,6 +47,10 @@ public class CounterOfferController {
 	private ObjectMapper objectMapper;
 	@Autowired
 	private EmailUtility emailUtil;
+	@Autowired
+	ExRateService exRateService;
+
+	private static DecimalFormat df2 = new DecimalFormat("#.##");
 
 	@RequestMapping(value = "/offerMatching/counterOffer", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
@@ -196,6 +204,210 @@ public class CounterOfferController {
 					ex.getMessage());
 			throw new GenericException(errorResponseDTO);
 		}
+	}
+
+	@RequestMapping(value = "/counterOffer/accept", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
+	@ResponseBody
+	public ResponseEntity<ResponseDTO> acceptCounterOffer(@RequestBody CounterOfferDTO counterOfferDTO) {
+		try {
+
+			// Get required data from body
+			Long id = counterOfferDTO.getId();
+			Long srcUserId = counterOfferDTO.getSrcUserId();
+			Long srcOfferId = counterOfferDTO.getSrcOfferId();
+			Long tgtUserId = counterOfferDTO.getTgtUserId();
+			Long tgtOfferId = counterOfferDTO.getTgtOfferId();
+			Long otherUserId = counterOfferDTO.getOtherUserId();
+			Long otherOfferId = counterOfferDTO.getOtherOfferId();
+			boolean isCounterSplit = otherOfferId == null ? false : true;
+			Double counterAmtFromSrcToTgt = counterOfferDTO.getCounterAmtFromSrcToTgt();
+//			String counterCurrencyFromSrcToTgt = counterOfferDTO.getCounterCurrencyFromSrcToTgt();
+//			int counterStatus = counterOfferDTO.getCounterStatus();
+
+			// Form the email list of selected party
+			String[] emailList;
+			if (isCounterSplit) {
+				emailList = new String[3];
+				emailList[0] = userService.getUserById(srcUserId).getEmailId();
+				emailList[1] = userService.getUserById(tgtUserId).getEmailId();
+				emailList[2] = userService.getUserById(otherUserId).getEmailId();
+			} else {
+				emailList = new String[2];
+				emailList[0] = userService.getUserById(srcUserId).getEmailId();
+				emailList[1] = userService.getUserById(tgtUserId).getEmailId();
+			}
+
+			// Accept the selected counter offer
+			CounterOffer co = counterOfferService.getById(id);
+			co.setCounterStatus(Constant.COUNTER_ACCEPTED);
+			counterOfferService.update(co);
+			// Move the accepted to in_transaction in Offer table
+			Offer srcAcceptOffer = offerService.getOfferById(srcOfferId);
+			srcAcceptOffer.setOfferStatus(Constant.OFFERTRANSACTION);
+			offerService.postOffer(srcAcceptOffer);
+			Offer tgtAcceptOffer = offerService.getOfferById(tgtOfferId);
+			tgtAcceptOffer.setOfferStatus(Constant.OFFERTRANSACTION);
+			tgtAcceptOffer.setAmountInSrc(counterAmtFromSrcToTgt);
+			String srcCurr = tgtAcceptOffer.getSourceCurrency();
+			String tgtCurr = tgtAcceptOffer.getDestinationCurrency();
+			getDesAmt(tgtAcceptOffer, counterAmtFromSrcToTgt, srcCurr, tgtCurr);
+			offerService.postOffer(tgtAcceptOffer);
+
+			if (isCounterSplit) {
+				Offer otherAcceptOffer = offerService.getOfferById(otherOfferId);
+				otherAcceptOffer.setOfferStatus(Constant.OFFERTRANSACTION);
+				offerService.postOffer(otherAcceptOffer);
+			}
+
+			// Reject the remaining counter request along with updating the rejected's offer
+			// status to open
+			List<CounterOffer> cos = counterOfferService.getCounterOffersByTgt(tgtOfferId);
+			for (CounterOffer c : cos) {
+				if (c.getCounterStatus() != Constant.COUNTER_ACCEPTED) {
+					if (tgtOfferId == c.getTgtOfferId()) {
+						c.setCounterStatus(Constant.COUNTER_REJECTED);
+					} else {
+						c.setCounterStatus(Constant.COUNTER_ABORTED);
+					}
+					counterOfferService.update(c);
+
+					if (tgtOfferId != c.getSrcOfferId()) {
+						Offer srcRejectOffer = offerService.getOfferById(c.getSrcOfferId());
+						srcRejectOffer.setOfferStatus(Constant.OFFEROPEN);
+						offerService.postOffer(srcRejectOffer);
+					}
+
+					if (c.isCounterSplit() && tgtOfferId != c.getOtherOfferId()) {
+						Offer otherRejectOffer = offerService.getOfferById(c.getTgtOfferId());
+						otherRejectOffer.setOfferStatus(Constant.OFFEROPEN);
+						offerService.postOffer(otherRejectOffer);
+					}
+				}
+			}
+
+			if (!isCounterSplit)
+				emailUtil.sendEmail(emailList, "Counter offer accepted",
+						"Counter Offer is in transaction for offer #" + srcOfferId + " and #" + tgtOfferId);
+			else
+				emailUtil.sendEmail(emailList, "Counter offer accepted", "Counter Offer is in transaction for offer #"
+						+ srcOfferId + ", #" + tgtOfferId + " and " + otherOfferId);
+
+			// return response
+			ResponseDTO responseDTO = new ResponseDTO(200, HttpStatus.OK,
+					"Counter offer has been successfully accepted");
+			return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
+		} catch (Exception ex) {
+			ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(500, HttpStatus.INTERNAL_SERVER_ERROR,
+					ex.getMessage());
+			throw new GenericException(errorResponseDTO);
+		}
+
+	}
+
+	@RequestMapping(value = "/counterOffer/reject", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
+	@ResponseBody
+	public ResponseEntity<ResponseDTO> rejectCounterOffer(@RequestBody CounterOfferDTO counterOfferDTO) {
+		try {
+			// Get required data from body
+			Long id = counterOfferDTO.getId();
+			Long srcUserId = counterOfferDTO.getSrcUserId();
+			Long srcOfferId = counterOfferDTO.getSrcOfferId();
+			Long tgtUserId = counterOfferDTO.getTgtUserId();
+			Long tgtOfferId = counterOfferDTO.getTgtOfferId();
+			Long otherUserId = counterOfferDTO.getOtherUserId();
+			Long otherOfferId = counterOfferDTO.getOtherOfferId();
+			boolean isCounterSplit = otherOfferId == null ? false : true;
+
+			// Form the email list of selected party
+			String[] emailList;
+			if (isCounterSplit) {
+				emailList = new String[3];
+				emailList[0] = userService.getUserById(srcUserId).getEmailId();
+				emailList[1] = userService.getUserById(tgtUserId).getEmailId();
+				emailList[2] = userService.getUserById(otherUserId).getEmailId();
+			} else {
+				emailList = new String[2];
+				emailList[0] = userService.getUserById(srcUserId).getEmailId();
+				emailList[1] = userService.getUserById(tgtUserId).getEmailId();
+			}
+
+			// Reject the selected counter offer
+			CounterOffer co = counterOfferService.getById(id);
+			co.setCounterStatus(Constant.COUNTER_REJECTED);
+			counterOfferService.update(co);
+			// Move the accepted to open in Offer table
+			Offer srcAcceptOffer = offerService.getOfferById(srcOfferId);
+			srcAcceptOffer.setOfferStatus(Constant.OFFEROPEN);
+			offerService.postOffer(srcAcceptOffer);
+			if (isCounterSplit) {
+				Offer otherAcceptOffer = offerService.getOfferById(otherOfferId);
+				otherAcceptOffer.setOfferStatus(Constant.OFFEROPEN);
+				offerService.postOffer(otherAcceptOffer);
+			}
+
+			// return response
+			ResponseDTO responseDTO = new ResponseDTO(200, HttpStatus.OK,
+					"Counter offer has been successfully rejected");
+			return new ResponseEntity<ResponseDTO>(responseDTO, HttpStatus.OK);
+		} catch (Exception ex) {
+			ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(500, HttpStatus.INTERNAL_SERVER_ERROR,
+					ex.getMessage());
+			throw new GenericException(errorResponseDTO);
+		}
+
+	}
+
+	public void getDesAmt(Offer offer, Double amt, String srcCur, String destCur) {
+		String sCur = null;
+
+		switch (srcCur) {
+
+		case ("Dollar"):
+			sCur = "USD";
+			break;
+		case ("Rupee"):
+			sCur = "INR";
+			break;
+		case ("Yuan"):
+			sCur = "RMB";
+			break;
+		case ("Euro"):
+			sCur = "EUR";
+			break;
+		case ("Pound"):
+			sCur = "GBP";
+			break;
+
+		}
+
+		ExchangeRate exRate = exRateService.getRate(sCur);
+
+		double usdAmt = Double.parseDouble(df2.format(exRate.getUsdRate() * amt));
+		offer.setAmountInUSD(usdAmt);
+
+		Double destAmt = 0.00;
+
+		switch (destCur) {
+
+		case ("Dollar"):
+			destAmt = exRate.getUsdRate() * amt;
+			break;
+		case ("Rupee"):
+			destAmt = exRate.getInrRate() * amt;
+			break;
+		case ("Yuan"):
+			destAmt = exRate.getRmbRate() * amt;
+			break;
+		case ("Euro"):
+			destAmt = exRate.getEurRate() * amt;
+			break;
+		case ("Pound"):
+			destAmt = exRate.getGbpRate() * amt;
+			break;
+
+		}
+		destAmt = Double.parseDouble(df2.format(destAmt));
+		offer.setAmountInDes(destAmt);
 	}
 
 }
