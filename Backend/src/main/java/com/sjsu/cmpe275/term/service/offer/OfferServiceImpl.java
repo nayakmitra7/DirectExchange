@@ -24,10 +24,15 @@ public class OfferServiceImpl implements OfferService {
 
 	
 	@Override
-	public Offer getOfferById(Long offerId) {
-		// TODO Auto-generated method stub
-		return offerRepository.findById(offerId).orElse(null);
+	public Offer getOfferById(Long id) {
+		Offer offer = offerRepository.findById(id).orElse(null);
+		return offerRepository.getOne(id);
 	}
+//	@Override
+//	public Offer getOfferById1(String id) {
+//		Offer offer = offerRepository.getOfferById1(id);
+//		return offer;
+//	}
 	@Override
 	public Offer postOffer(Offer offer) {
 		// TODO Auto-generated method stub
