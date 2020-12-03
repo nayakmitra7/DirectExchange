@@ -16,7 +16,8 @@ public interface OfferRepository extends JpaRepository<Offer, Long>{
 	@Query("Select o1 from Offer o1 where o1.expirationDate >= :expirationDate and o1.userId = :userId and o1.offerStatus=:offerStatus")
 	List<Offer> getOwnOfferById(@Param("userId")Long userId, @Param("expirationDate") Date expirationDate,@Param("offerStatus")int offerStatus);
 	
-	@Query("Select o1 from Offer o1 where o1.expirationDate >= :expirationDate and o1.offerStatus != :offerStatus and o1.userId = :userId ")
-	List<Offer> getCloseOfferById(@Param("userId")Long userId, @Param("expirationDate") Date expirationDate,@Param("offerStatus")int offerStatus);
+	@Query("Select o1 from Offer o1 where o1.userId = :userId and (o1.expirationDate < :expirationDate or o1.offerStatus in (:offerExpired,:offerFulFiled))")
+	List<Offer> getCloseOfferById(@Param("userId")Long userId, @Param("expirationDate") Date expirationDate,@Param("offerExpired") int offerExpired,@Param("offerFulFiled") int offerFulFiled);
+	
 	
 }

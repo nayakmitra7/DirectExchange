@@ -9,11 +9,14 @@ import Accordion from "react-bootstrap/Accordion";
 import ListGroup from "react-bootstrap/ListGroup";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import Button from "react-bootstrap/esm/Button";
+import Modal from "./Modal";
 class InTransactionOffer extends Component {
   state = {
     navarr: ["black", "black", "rgb(0, 106, 255)", "black", "black"],
     singleOfferList: [],
     splitOfferList: [],
+    open: false,
   };
   componentWillMount() {
     this.getInTransactionOrders();
@@ -30,33 +33,54 @@ class InTransactionOffer extends Component {
       for (let i = 0; i < transactionlist.data.length; i++) {
         let splitOffer = {};
         let singleOffer = {};
+        // console.log(transactionlist.data[i]);
         if (transactionlist.data[i].offerId3 !== null) {
           splitOffer = await axios.get(`${address}/transaction/offer/${transactionlist.data[i].offerId1}
           /${transactionlist.data[i].offerId2}/${transactionlist.data[i].offerId3}`);
+          //   splitOffer.data = {
+          //     ...splitOffer.data,
+          //     id: transactionlist.data[i].id,
+          //   };
+          splitOffer.data[3] = transactionlist.data[i].id;
+          //   console.log(splitOffer.data);
           splitOfferList.push(splitOffer.data);
         } else {
           singleOffer = await axios.get(`${address}/transaction/offer/${transactionlist.data[i].offerId1}
         /${transactionlist.data[i].offerId2}`);
+          singleOffer.data[2] = transactionlist.data[i].id;
+          //   console.log(singleOffer.data);
           singleOfferList.push(singleOffer.data);
         }
-
-        // await axios.get(
-        //     `${address}/transaction/offer/${}`
-        //   );
       }
       Promise.all(splitOfferList).then(() => {
-        console.log(splitOfferList);
+        //console.log(splitOfferList);
         this.setState({ splitOfferList });
       });
       Promise.all(singleOfferList).then(() => {
-        console.log(singleOfferList);
+        //console.log(singleOfferList);
         this.setState({ singleOfferList });
       });
     } catch (error) {
       toast.error("Internal Error Occurred");
     }
   }
+  handleClickOpen = (offer) => {
+    this.setState({ offerToBeConfirmed: offer });
+    //console.log(offer);
+    this.setState({ value: offer.amountInSrc });
+    this.setState({ open: true });
+  };
+  handleClose = () => {
+    this.setState({ open: false });
+  };
 
+  confirmAction = (e) => {
+    e.preventDefault();
+
+    console.log("in confirming", this.state.offerToBeConfirmed);
+
+    this.handleClose();
+  };
   render() {
     let { singleOfferList, splitOfferList } = this.state;
     let id = parseInt(localStorage.getItem("id"));
@@ -67,14 +91,26 @@ class InTransactionOffer extends Component {
       singleOfferUpdated = [],
       splitOfferUpdated = [];
     singleOfferList.map((offerarr) => {
-      console.log(localStorage.getItem("id"));
+      // console.log(localStorage.getItem("id"));
       mySingleOffer = offerarr.filter((offer) => offer.userId === id);
+      mySingleOffer[0] = {
+        ...mySingleOffer[0],
+        transactionid: offerarr[2],
+      };
+      //   console.log(mySingleOffer);
       otherSingleOffers = offerarr.filter((offer) => offer.userId !== id);
+      otherSingleOffers.pop();
       singleOfferUpdated.push({ mySingleOffer, otherSingleOffers });
     });
     splitOfferList.map((offerarr) => {
       mySplitOffer = offerarr.filter((offer) => offer.userId === id);
+      mySplitOffer[0] = {
+        ...mySplitOffer[0],
+        transactionid: offerarr[3],
+      };
+      //   console.log(mySplitOffer);
       otherSplitOffers = offerarr.filter((offer) => offer.userId !== id);
+      otherSplitOffers.pop();
       splitOfferUpdated.push({ mySplitOffer, otherSplitOffers });
     });
     console.log(splitOfferUpdated);
@@ -105,6 +141,16 @@ class InTransactionOffer extends Component {
                       <Col>Amount(src)</Col>
                       <Col>Country(src)</Col>
                       <Col>Exp Date</Col>
+                      <Col>
+                        <Button
+                          onClick={() =>
+                            this.handleClickOpen(offerarr.mySingleOffer[0])
+                          }
+                          className="btn btn-primary"
+                        >
+                          Pay Now
+                        </Button>
+                      </Col>
                     </Row>
                     <Row>
                       <Col>#{offerarr.mySingleOffer[0].id}</Col>
@@ -120,6 +166,7 @@ class InTransactionOffer extends Component {
                       </Col>
                       <Col>{offerarr.mySingleOffer[0].sourceCountry}</Col>
                       <Col>{offerarr.mySingleOffer[0].expirationDate}</Col>
+                      <Col></Col>
                     </Row>
                   </div>
                 </ListGroup.Item>
@@ -165,7 +212,7 @@ class InTransactionOffer extends Component {
             
           </Accordion.Toggle> */}
         </Card>
-        <Row align="center">
+        <Row align="center" className="my-4">
           <Col>
             <h3>Split Matches</h3>
           </Col>
@@ -187,6 +234,16 @@ class InTransactionOffer extends Component {
                       <Col>Amount(src)</Col>
                       <Col>Country(src)</Col>
                       <Col>Exp Date</Col>
+                      <Col>
+                        <Button
+                          className="btn btn-primary"
+                          onClick={() =>
+                            this.handleClickOpen(offerarr.mySplitOffer[0])
+                          }
+                        >
+                          Pay Now
+                        </Button>
+                      </Col>
                     </Row>
                     <Row>
                       <Col>#{offerarr.mySplitOffer[0].id}</Col>
@@ -202,6 +259,7 @@ class InTransactionOffer extends Component {
                       </Col>
                       <Col>{offerarr.mySplitOffer[0].sourceCountry}</Col>
                       <Col>{offerarr.mySplitOffer[0].expirationDate}</Col>
+                      <Col></Col>
                     </Row>
                   </div>
                 </ListGroup.Item>
@@ -243,6 +301,14 @@ class InTransactionOffer extends Component {
             
           </Accordion.Toggle> */}
         </Card>
+        <Modal
+          open={this.state.open}
+          handleClose={this.handleClose}
+          dialogtext="You are transfering below mentioned amount. Please Confirm"
+          confirmButtonText="Confirm Payment"
+          value={this.state.value}
+          confirmAction={this.confirmAction}
+        />
       </div>
     );
   }

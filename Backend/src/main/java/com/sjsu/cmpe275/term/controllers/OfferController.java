@@ -120,7 +120,7 @@ public class OfferController {
 
 	@RequestMapping(value = "/offer/{userId}/close", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
-	public ResponseEntity<List<OfferDto>> getCloseOfferById() {
+	public ResponseEntity<List<OfferDto>> getCloseOfferById(@PathVariable Long userId) {
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.HOUR_OF_DAY, 0);
 		cal.set(Calendar.MINUTE, 0);
@@ -128,7 +128,7 @@ public class OfferController {
 		cal.set(Calendar.MILLISECOND, 0);
 		Date todayDate = cal.getTime();
 
-		List<Offer> offers = offerService.getCloseOfferById(1L, todayDate, Constant.OFFEROPEN);
+		List<Offer> offers = offerService.getCloseOfferById(userId, todayDate);
 
 		List<OfferDto> offerdto = objectMapper.convertValue(offers, new TypeReference<List<OfferDto>>() {
 		});
