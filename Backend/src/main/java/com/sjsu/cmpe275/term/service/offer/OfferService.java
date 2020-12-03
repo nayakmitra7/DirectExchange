@@ -14,6 +14,6 @@ public interface OfferService {
 //	public Page<Offer> getOffer(int pagenumber, int limit, String sourcecurrencyamount, String destinationcountry, String sourcecurrency, String destinationcurrency);
 	public Offer getOfferById(Long offerId);
 	public List<Offer> getOwnOfferById(Long userId, Date todayDate, int OpenOffer);
-	public List<Offer> getCloseOfferById(Long userId, Date todayDate, int offerStatus);
+	public List<Offer> getCloseOfferById(Long userId, Date todayDate);
 
 }
