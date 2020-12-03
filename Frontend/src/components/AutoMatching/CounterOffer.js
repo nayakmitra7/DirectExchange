@@ -65,7 +65,6 @@ class CounterOffer extends Component {
                                     <Button type="submit" variant="success" onClick={
                                         (e) => {
                                             if (this.props.isCounterSplit) {
-                                                console.log(typeof this.props.validCounterAmtSplit);
                                                 if (parseFloat(this.props.validCounterAmtSplit).toFixed(2) == parseFloat(this.state.counterAmtRequest).toFixed(2)) {
                                                     this.props.submitCounterHandle(e, parseFloat(this.state.counterAmtRequest))
                                                 }

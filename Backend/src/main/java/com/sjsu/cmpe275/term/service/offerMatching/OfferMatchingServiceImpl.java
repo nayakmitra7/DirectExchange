@@ -39,9 +39,9 @@ public class OfferMatchingServiceImpl implements OfferMatchingService {
 	}
 	@Override
 	public List<Offer> getSplitMatchingOfferContendersLesserThanTarget(Long targetOfferId, Long userId,
-			Long targetUserId, Date expirationDate, Double targetAmount) {
+			 Date expirationDate, Double targetAmount) {
 		// TODO Auto-generated method stub
-		return offerMatchingRepository.findSplitMatchingOfferContendersLesserThanTarget(targetOfferId, userId, targetUserId, expirationDate, targetAmount);
+		return offerMatchingRepository.findSplitMatchingOfferContendersLesserThanTarget(targetOfferId, userId, expirationDate, targetAmount);
 	}
 
 	

@@ -52,12 +52,12 @@ class AutoMatching extends Component {
     }
     componentDidMount() {
         axios.get(address + '/offerMatching/single/' + this.state.offerId).then((response) => {
-            if (response.status == 200) {
+            if (response.status == 200 && response.data.offer) {
                 console.log(response.data)
                 this.setState({ singleOfferList: response.data, offerExists: 1, offerSrcAmount: response.data.offer.amountInSrc, sourceAmountChange: response.data.offer.amountInSrc, offer1: response.data.offer, myOffer: response.data.offer })
             }
         }).catch(error => {
-            toast.error("Internal error has occured", { position: 'top-center', autoClose: false })
+            toast.error("Internal error has occured 1", { position: 'top-center', autoClose: false })
         })
         axios.get(address + '/offerMatching/split/' + this.state.offerId).then((response) => {
             if (response.status == 200) {
@@ -65,7 +65,7 @@ class AutoMatching extends Component {
                 this.setState({ splitOfferList: response.data, offerExists: 1 })
             }
         }).catch(error => {
-            toast.error("Internal error has occured", { position: 'top-center', autoClose: false })
+            toast.error("Internal error has occured 2", { position: 'top-center', autoClose: false })
         })
     }
     handleClose = () => {
@@ -290,7 +290,7 @@ class AutoMatching extends Component {
                 </ListGroup.Item>
 
             )
-            if (element.offer.id == this.state.userId) {
+            if (element.offer.userId == this.state.userId) { //A=B+C
                 innerSplit.push(<Row className="margin-top-1-auto-matching">
                     <Col md="5"></Col>
                     {sumDest == element.offer.amountInSrc && <Col md="1.5">
@@ -312,7 +312,7 @@ class AutoMatching extends Component {
                             }}> Counter Offer</Button>
                     </Col>
                 </Row>)
-            } else {
+            } else { //A+B=C //C-B
                 innerSplit.push(<Row className="margin-top-1-auto-matching">
                     <Col md="5"></Col>
                     {sumSource == element.offer.amountInDes && <Col md="1.5">
@@ -325,13 +325,25 @@ class AutoMatching extends Component {
                     <Col md="2">
                         <Button size="sm"
                             onClick={() => {
+                                let myOffer = element.matchingOffer.filter(o => o.userId == localStorage.getItem("id"))
+                                let otherOffer = element.matchingOffer.filter(o => o.userId != localStorage.getItem("id"))
+                                console.log(myOffer.amountInDes, element.offer.amountInSrc, otherOffer.amountInDes)
+                                this.setState({
+                                    myOffer: myOffer[0],
+                                    isCounterSplit: true,
+                                    currentCounterDiff: myOffer[0].amountInDes - (element.offer.amountInSrc - otherOffer[0].amountInDes)
+                                });
+                                this.counterModalOpen(element.offer);
+                            }}> Counter Offer</Button>
+                        {/* <Button size="sm"
+                            onClick={() => {
                                 this.setState({
                                     myOffer: element.offer,
                                     isCounterSplit: true,
                                     currentCounterDiff: element.offer.amountInDes - (element.matchingOffer[0].amountInSrc + element.matchingOffer[1].amountInSrc)
                                 });
-                                this.counterModalOpen(element.matchingOffer[0].amountInSrc > element.matchingOffer[1].amountInSrc ? element.matchingOffer[0] : element.matchingOffer[1]);
-                            }}> Counter Offer</Button>
+                                this.counterModalOpen(element.matchingOffer[0].amountInSrc > element.matchingOffer[1].amountInSrc ? element.matchingOffer[0] : element.matchingOffer[1])
+                            }}> Counter Offer</Button> */}
                     </Col>
                 </Row>)
             }
