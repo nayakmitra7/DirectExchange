@@ -53,6 +53,10 @@ public class CounterOfferController {
 			// Get required data from body
 			Offer srcOffer = objectMapper.convertValue(counterOfferWrapperDTO.getSrcOfferDTO(), Offer.class);
 			Offer tgtOffer = objectMapper.convertValue(counterOfferWrapperDTO.getTgtOfferDTO(), Offer.class);
+			boolean isCounterSplit = counterOfferWrapperDTO.isCounterSplit();
+			Offer otherOffer = null;
+			if (isCounterSplit)
+				otherOffer = objectMapper.convertValue(counterOfferWrapperDTO.getOtherOfferDTO(), Offer.class);
 			Double counterAmtFromSrcToTgt = counterOfferWrapperDTO.getCounterAmtFromSrcToTgt();
 			String counterCurrencyFromSrcToTgt = counterOfferWrapperDTO.getCounterCurrencyFromSrcToTgt();
 			int counterStatus = counterOfferWrapperDTO.getCounterStatus();
@@ -62,15 +66,21 @@ public class CounterOfferController {
 			Long srcOfferId = srcOffer.getId();
 			Long tgtUserId = tgtOffer.getUserId();
 			Long tgtOfferId = tgtOffer.getId();
+			Long otherUserId = otherOffer != null ? otherOffer.getUserId() : null;
+			Long otherOfferId = otherOffer != null ? otherOffer.getId() : null;
 
 			// create the counter offer record
-			CounterOffer counterOffer = new CounterOffer(srcUserId, srcOfferId, tgtUserId, tgtOfferId,
-					counterAmtFromSrcToTgt, counterCurrencyFromSrcToTgt, counterStatus);
+			CounterOffer counterOffer = new CounterOffer(srcUserId, srcOfferId, tgtUserId, tgtOfferId, isCounterSplit,
+					otherUserId, otherOfferId, counterAmtFromSrcToTgt, counterCurrencyFromSrcToTgt, counterStatus);
 			counterOfferService.createCounterOffer(counterOffer);
 
 			// Update the offer status of the party who proposed the counter offer
 			srcOffer.setOfferStatus(Constant.COUNTERMADE);
 			offerService.postOffer(srcOffer);
+			if (otherOffer != null) {
+				otherOffer.setOfferStatus(Constant.COUNTERMADE);
+				offerService.postOffer(otherOffer);
+			}
 
 			// Send notifications to the two parties
 			String[] srcEmailList = new String[1];
@@ -115,11 +125,19 @@ public class CounterOfferController {
 				Offer tgtOffer = offerService.getOfferById(co.getTgtOfferId());
 				OfferDto tgtOfferDto = objectMapper.convertValue(tgtOffer, new TypeReference<OfferDto>() {
 				});
+				boolean isCounterSplit = co.isCounterSplit();
+
+				OfferDto otherOfferDto = null;
+				if (isCounterSplit) {
+					Offer otherOffer = offerService.getOfferById(co.getOtherOfferId());
+					otherOfferDto = objectMapper.convertValue(otherOffer, new TypeReference<OfferDto>() {
+					});
+				}
 				Double counterAmtFromSrcToTgt = co.getCounterAmtFromSrcToTgt();
 				String currencyAmtFromSrcToTgt = co.getCounterCurrencyFromSrcToTgt();
 				int counterStatus = co.getCounterStatus();
-				CounterOfferWrapperDTO cowDTO = new CounterOfferWrapperDTO(srcOfferDto, tgtOfferDto,
-						counterAmtFromSrcToTgt, currencyAmtFromSrcToTgt, counterStatus);
+				CounterOfferWrapperDTO cowDTO = new CounterOfferWrapperDTO(co.getId(), srcOfferDto, tgtOfferDto,
+						isCounterSplit, otherOfferDto, counterAmtFromSrcToTgt, currencyAmtFromSrcToTgt, counterStatus);
 				counterOfferWrapperDTO.add(cowDTO);
 
 			}
@@ -149,11 +167,19 @@ public class CounterOfferController {
 				Offer tgtOffer = offerService.getOfferById(co.getTgtOfferId());
 				OfferDto tgtOfferDto = objectMapper.convertValue(tgtOffer, new TypeReference<OfferDto>() {
 				});
+				boolean isCounterSplit = co.isCounterSplit();
+
+				OfferDto otherOfferDto = null;
+				if (isCounterSplit) {
+					Offer otherOffer = offerService.getOfferById(co.getOtherOfferId());
+					otherOfferDto = objectMapper.convertValue(otherOffer, new TypeReference<OfferDto>() {
+					});
+				}
 				Double counterAmtFromSrcToTgt = co.getCounterAmtFromSrcToTgt();
 				String currencyAmtFromSrcToTgt = co.getCounterCurrencyFromSrcToTgt();
 				int counterStatus = co.getCounterStatus();
-				CounterOfferWrapperDTO cowDTO = new CounterOfferWrapperDTO(srcOfferDto, tgtOfferDto,
-						counterAmtFromSrcToTgt, currencyAmtFromSrcToTgt, counterStatus);
+				CounterOfferWrapperDTO cowDTO = new CounterOfferWrapperDTO(co.getId(), srcOfferDto, tgtOfferDto,
+						isCounterSplit, otherOfferDto, counterAmtFromSrcToTgt, currencyAmtFromSrcToTgt, counterStatus);
 				counterOfferWrapperDTO.add(cowDTO);
 
 			}

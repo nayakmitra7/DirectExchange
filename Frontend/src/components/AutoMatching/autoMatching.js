@@ -38,7 +38,8 @@ class AutoMatching extends Component {
             spinner: false,
             offer2: '',
             offer1: '',
-            list: []
+            list: [],
+            isCounterSplit: false
         }
         this.acceptSplit = this.acceptSplit.bind(this);
         this.accept = this.accept.bind(this);
@@ -192,7 +193,7 @@ class AutoMatching extends Component {
         let withinRange = minBound <= counterAmtFromSrcToTgt && counterAmtFromSrcToTgt <= maxBound;
         if (withinRange) {
             axios
-                .post(address + '/offerMatching/counterOffer', { srcOfferDTO: this.state.myOffer, tgtOfferDTO: this.state.selectedCounterOffer, counterAmtFromSrcToTgt, counterCurrencyFromSrcToTgt: this.state.selectedCounterOffer.sourceCurrency, counterStatus: COUNTEROFFER_OPEN })
+                .post(address + '/offerMatching/counterOffer', { srcOfferDTO: this.state.myOffer, tgtOfferDTO: this.state.selectedCounterOffer, isCounterSplit: this.state.isCounterSplit, otherOfferDTO: this.state.otherOffer, counterAmtFromSrcToTgt, counterCurrencyFromSrcToTgt: this.state.selectedCounterOffer.sourceCurrency, counterStatus: COUNTEROFFER_OPEN })
                 .then(res => {
                     if (res.status === 200) {
                         toast.success("Counter offer email has been sent to " + this.state.selectedCounterOffer.nickname);
@@ -303,12 +304,24 @@ class AutoMatching extends Component {
                     <Col md="2">
                         <Button size="sm"
                             onClick={() => {
+                                let myOffer = element.offer;
+                                let otherOffer = null;
+                                let selectedCounterOffer = null;
+                                if (element.matchingOffer[0].amountInSrc > element.matchingOffer[1].amountInSrc) {
+                                    selectedCounterOffer = element.matchingOffer[0];
+                                    otherOffer = element.matchingOffer[1];
+                                } else {
+                                    selectedCounterOffer = element.matchingOffer[1];
+                                    otherOffer = element.matchingOffer[0];
+                                }
+
                                 this.setState({
-                                    myOffer: element.offer,
+                                    myOffer,
                                     isCounterSplit: true,
+                                    otherOffer,
                                     currentCounterDiff: element.offer.amountInDes - (element.matchingOffer[0].amountInSrc + element.matchingOffer[1].amountInSrc)
                                 });
-                                this.counterModalOpen(element.matchingOffer[0].amountInSrc > element.matchingOffer[1].amountInSrc ? element.matchingOffer[0] : element.matchingOffer[1])
+                                this.counterModalOpen(selectedCounterOffer)
                             }}> Counter Offer</Button>
                     </Col>
                 </Row>)
@@ -330,6 +343,7 @@ class AutoMatching extends Component {
                                 console.log(myOffer.amountInDes, element.offer.amountInSrc, otherOffer.amountInDes)
                                 this.setState({
                                     myOffer: myOffer[0],
+                                    otherOffer: otherOffer[0],
                                     isCounterSplit: true,
                                     currentCounterDiff: myOffer[0].amountInDes - (element.offer.amountInSrc - otherOffer[0].amountInDes)
                                 });
