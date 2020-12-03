@@ -24,6 +24,13 @@ public class CounterOffer {
 	@Column(name = "tgtOfferId", nullable = false)
 	private Long tgtOfferId;
 
+	@Column(name = "isCounterSplit", nullable = false)
+	private boolean isCounterSplit;
+	@Column(name = "otherUserId")
+	private Long otherUserId;
+	@Column(name = "otherOfferId")
+	private Long otherOfferId;
+
 	@Column(name = "counterAmtFromSrcToTgt", nullable = false)
 	private Double counterAmtFromSrcToTgt;
 	@Column(name = "counterCurrencyFromSrcToTgt", nullable = false)
@@ -31,25 +38,57 @@ public class CounterOffer {
 	@Column(name = "counterStatus", nullable = false)
 	private int counterStatus;
 
-	public CounterOffer() {}
-	public CounterOffer(Long srcUserId, Long srcOfferId, Long tgtUserId, Long tgtOfferId, Double counterAmtFromSrcToTgt,
-			String counterCurrencyFromSrcToTgt,int counterStatus) {
+	public CounterOffer() {
+	}
+
+	public CounterOffer(Long srcUserId, Long srcOfferId, Long tgtUserId, Long tgtOfferId, boolean isCounterSplit,
+			Long otherUserId, Long otherOfferId, Double counterAmtFromSrcToTgt, String counterCurrencyFromSrcToTgt,
+			int counterStatus) {
 		super();
 		this.srcUserId = srcUserId;
 		this.srcOfferId = srcOfferId;
 		this.tgtUserId = tgtUserId;
 		this.tgtOfferId = tgtOfferId;
+		this.isCounterSplit = isCounterSplit;
+		this.otherUserId = otherUserId;
+		this.otherOfferId = otherOfferId;
 		this.counterAmtFromSrcToTgt = counterAmtFromSrcToTgt;
 		this.counterCurrencyFromSrcToTgt = counterCurrencyFromSrcToTgt;
-		this.counterStatus=counterStatus;
+		this.counterStatus = counterStatus;
+	}
+
+	public boolean isCounterSplit() {
+		return isCounterSplit;
+	}
+
+	public void setCounterSplit(boolean isCounterSplit) {
+		this.isCounterSplit = isCounterSplit;
+	}
+
+	public Long getOtherUserId() {
+		return otherUserId;
+	}
+
+	public void setOtherUserId(Long otherUserId) {
+		this.otherUserId = otherUserId;
+	}
+
+	public Long getOtherOfferId() {
+		return otherOfferId;
+	}
+
+	public void setOtherOfferId(Long otherOfferId) {
+		this.otherOfferId = otherOfferId;
 	}
 
 	public int getCounterStatus() {
 		return counterStatus;
 	}
+
 	public void setCounterStatus(int counterStatus) {
 		this.counterStatus = counterStatus;
 	}
+
 	public Long getId() {
 		return id;
 	}

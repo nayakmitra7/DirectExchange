@@ -43,7 +43,7 @@ class BrowseOffer extends Component {
   }
 
   async getOffers() {
-    const offers = await axios.get(`${address}/offer`);
+    const offers = await axios.get(`${address}/offer/`+localStorage.getItem("id"));
     this.setState({ offers: offers.data });
     // });
     this.setState({ count: offers.data.length });
