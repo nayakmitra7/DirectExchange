@@ -21,6 +21,9 @@ public class CounterOfferDTO {
 		this.counterStatus = counterStatus;
 	}
 
+	public CounterOfferDTO() {
+	}
+
 	public CounterOfferDTO(Long id, Long srcUserId, Long srcOfferId, Long tgtUserId, Long tgtOfferId,
 			boolean isCounterSplit, Long otherUserId, Long otherOfferId, Double counterAmtFromSrcToTgt,
 			String counterCurrencyFromSrcToTgt, int counterStatus) {
