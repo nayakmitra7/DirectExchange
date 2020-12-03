@@ -8,7 +8,8 @@ import { toast } from "react-toastify";
 import { address, COUNTEROFFER_OPEN } from "../../js/helper/constant";
 import Select from "react-select";
 import CounterOffer from "../AutoMatching/CounterOffer"
-
+import Modal from "react-bootstrap/Modal";
+import Spinner from "react-bootstrap/Spinner";
 class OfferModal extends Component {
   state = {
     modalShow: "none",
@@ -47,9 +48,31 @@ class OfferModal extends Component {
     // console.log(offeroptions)
 
   }
+  accept = (offer2) => {
+
+    if (Math.round(offer2.amountInDes) == Math.round(this.props.offer.amountInSrc) && offer2.destinationCurrency == this.props.offer.sourceCurrency) {
+      this.setState({ spinner: true });
+      let data = { isSplit: false, offerId1: this.props.offer.id, offerId2: offer2.id, offerUserId1: this.props.offer.userId, offerUserId2: offer2.userId }
+      axios.post(address + "/twoPartyTransaction", data).then((response) => {
+        if (response.status == 200) {
+          this.setState({ spinner: false })
+          toast.success("Your offer has now entered in transaction mode");
+          setTimeout(() => {
+            window.location.reload()
+          }, 3000);
+
+        }
+      }).catch((error) => {
+        toast.error("Internal Error Occured");
+      })
+    } else {
+      toast.error("The source and destination amounts are unequal")
+    }
+
+  }
   //Kena
   counterModalOpen = (selectedCounterOffer) => {
-    console.log("counter open")
+   
     this.setState({ counterModal: true, selectedCounterOffer })
   }
   counterModalClose = () => {
@@ -67,6 +90,7 @@ class OfferModal extends Component {
         .then(res => {
           if (res.status === 200) {
             toast.success("Counter offer email has been sent to " + this.state.selectedCounterOffer.nickname);
+            
           }
         })
         .catch(err => {
@@ -175,7 +199,7 @@ class OfferModal extends Component {
                 />
               </div>
               <div className="d-flex justify-content-center mt-3 p-3">
-                <button className="btn btn-success mx-2">Accept Offer</button>
+                <button className="btn btn-success mx-2" onClick={() => { this.setState({ myOffer: this.state.selectedOption.value }); this.accept(this.state.selectedOption.value) }}>Accept Offer</button>
 
                 {this.props.offer.counterOfferAllowed === true ? (
                   <button className="btn btn-danger mx-2" onClick={() => { this.setState({ myOffer: this.state.selectedOption.value }); this.counterModalOpen(this.props.offer) }}>Counter Offer</button>
@@ -186,6 +210,22 @@ class OfferModal extends Component {
             </div>
           </div>
         </div>
+        <Modal show={this.state.spinner} size="sm" centered>
+
+          <Modal.Body>
+            <Row>
+              <Col></Col>
+              <Col><div>
+                <Spinner animation="border" role="status">
+                  <span className="sr-only">Loading...</span>
+                </Spinner>
+              </div ></Col>
+              <Col></Col>
+            </Row>
+
+          </Modal.Body>
+
+        </Modal>
         <CounterOffer
           myOffer={this.state.myOffer}
           selectedCounterOffer={this.state.selectedCounterOffer}
