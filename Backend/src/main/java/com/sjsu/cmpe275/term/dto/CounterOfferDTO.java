@@ -11,19 +11,19 @@ public class CounterOfferDTO {
 	private Long otherOfferId;
 	private Double counterAmtFromSrcToTgt;
 	private String counterCurrencyFromSrcToTgt;
-	private String counterStatus;
+	private int counterStatus;
 
-	public String getCounterStatus() {
+	public int getCounterStatus() {
 		return counterStatus;
 	}
 
-	public void setCounterStatus(String counterStatus) {
+	public void setCounterStatus(int counterStatus) {
 		this.counterStatus = counterStatus;
 	}
 
 	public CounterOfferDTO(Long id, Long srcUserId, Long srcOfferId, Long tgtUserId, Long tgtOfferId,
 			boolean isCounterSplit, Long otherUserId, Long otherOfferId, Double counterAmtFromSrcToTgt,
-			String counterCurrencyFromSrcToTgt, String counterStatus) {
+			String counterCurrencyFromSrcToTgt, int counterStatus) {
 		super();
 		this.id = id;
 		this.srcUserId = srcUserId;
