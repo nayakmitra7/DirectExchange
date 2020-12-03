@@ -6,6 +6,8 @@ import { address } from "../../js/helper/constant";
 import { Button, Card, ListGroup } from "react-bootstrap";
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import { toast } from 'react-toastify';
+
 class CounterReceived extends Component {
   constructor() {
     super();
@@ -33,6 +35,36 @@ class CounterReceived extends Component {
       return "Aborted";
     }
   }
+  acceptCounter = (e,counterObject) =>{
+      e.preventDefault();
+      let data ={"id": counterObject.counterOfferId,"srcUserId":counterObject.srcOfferDTO.userId,"srcOfferId":counterObject.srcOfferDTO.id,"tgtUserId":counterObject.tgtOfferDTO.userId,"tgtOfferId":counterObject.tgtOfferDTO.id,"otherUserId":counterObject.otherOfferDTO && counterObject.otherOfferDTO.userId,"otherOfferId":counterObject.otherOfferDTO && counterObject.otherOfferDTO.id,"counterAmtFromSrcToTgt":counterObject.counterAmtFromSrcToTgt,"counterCurrencyFromSrcToTgt":counterObject.counterCurrencyFromSrcToTgt,"counterStatus":counterObject.counterStatus}
+      console.log(data)
+      Axios.put(address+'/counterOffer/accept', data).then((response) =>{
+        if(response.status == 200){
+          toast.success("You have successfully accepted the counter offer !")
+          setTimeout(() => {
+            window.location.reload()
+          }, 3000);
+        } 
+      }).catch((err) =>{
+        toast.error("Internal Error Occurred")
+      })
+  }
+  rejectCounter = (e,counterObject) =>{
+    e.preventDefault();
+    let data ={"id": counterObject.counterOfferId,"srcUserId":counterObject.srcOfferDTO.userId,"srcOfferId":counterObject.srcOfferDTO.id,"tgtUserId":counterObject.tgtOfferDTO.userId,"tgtOfferId":counterObject.tgtOfferDTO.id,"otherUserId":counterObject.otherOfferDTO && counterObject.otherOfferDTO.userId,"otherOfferId":counterObject.otherOfferDTO && counterObject.otherOfferDTO.id,"counterAmtFromSrcToTgt":counterObject.counterAmtFromSrcToTgt,"counterCurrencyFromSrcToTgt":counterObject.counterCurrencyFromSrcToTgt,"counterStatus":counterObject.counterStatus}
+    console.log(data)
+    Axios.put(address+'/counterOffer/reject', data).then((response) =>{
+      if(response.status == 200){
+        toast.success("You have rejected the counter offer !");
+        setTimeout(() => {
+          window.location.reload()
+        }, 3000);
+      } 
+    }).catch((err) =>{
+      toast.error("Internal Error Occurred")
+    })
+  }
   render() {
     let inner = []
     let warning = "warning";
@@ -43,8 +75,8 @@ class CounterReceived extends Component {
           <ListGroup.Item >
             <Row className="margin-bottom-offer">
               <Col md={4}><u><strong>Proposed Amount </strong></u> :{element.counterAmtFromSrcToTgt} {element.counterCurrencyFromSrcToTgt}</Col>
-              {element.counterStatus == 0 && <Col md ={2}><Button style={{ marginBottom: '1%' }} size="sm" variant="success">Accept Offer</Button></Col>}
-              {element.counterStatus == 0 && <Col md ={2}><Button size="sm" variant="danger">Reject  Offer</Button></Col>}
+              {element.counterStatus == 0 && <Col md ={2}><Button style={{ marginBottom: '1%' }} size="sm" variant="success" onClick={(e) => this.acceptCounter(e,element)}>Accept Offer</Button></Col>}
+              {element.counterStatus == 0 && <Col md ={2}><Button size="sm" variant="danger" onClick={(e) => this.rejectCounter(e,element)}>Reject  Offer</Button></Col>}
               {element.counterStatus != 0 && <Col><u><strong>Status </strong></u> :{this.getStatus(element.counterStatus)}</Col>}
             </Row>
           </ListGroup.Item>
