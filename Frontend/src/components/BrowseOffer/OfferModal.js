@@ -72,7 +72,7 @@ class OfferModal extends Component {
   }
   //Kena
   counterModalOpen = (selectedCounterOffer) => {
-   
+
     this.setState({ counterModal: true, selectedCounterOffer })
   }
   counterModalClose = () => {
@@ -90,7 +90,7 @@ class OfferModal extends Component {
         .then(res => {
           if (res.status === 200) {
             toast.success("Counter offer email has been sent to " + this.state.selectedCounterOffer.nickname);
-            
+
           }
         })
         .catch(err => {
