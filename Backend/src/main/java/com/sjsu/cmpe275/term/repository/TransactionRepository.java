@@ -20,5 +20,11 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>{
 	@Query("Select o1 from Offer o1 where o1.id in (:offerId1,:offerId2,:offerId3)")
 	List<Offer> getSplitOfferByTransaction(@Param("offerId1") Long offerId1,@Param("offerId2") Long offerId2,@Param("offerId3") Long offerId3);
 	
-
+//	@Query("update CounterOffer set counterStatus = 3 where id in (select id from CounterOffer where srcOfferId=:offerId or tgtOfferId=:offerId or otherOfferId=:offerId ) and counterStatus = 0")
+//	List<Offer> updateCounterOfferStatusOnAccept(@Param("offerId") Long offerId);
+//	
+//	@Query("update offer set offer_status = 1 where (id in (select src_offer_id as id from counter_offer where src_offer_id=:offerId or tgt_offer_id=:offerId or other_offer_id=:offerId ) or id in (select tgt_offer_id as id from counter_offer where src_offer_id=:offerId or tgt_offer_id=:offerId or other_offer_id=:offerId) or id in (select other_offer_id as id from counter_offer where src_offer_id=:offerId or tgt_offer_id=:offerId or other_offer_id=:offerId)) and id != :offerId and offer_status = 5")
+//	List<Offer> updateOfferStatusOnAccept(@Param("offerId") Long offerId);
+	
 }
+

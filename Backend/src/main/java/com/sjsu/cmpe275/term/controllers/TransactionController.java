@@ -25,6 +25,7 @@ import com.sjsu.cmpe275.term.exceptions.GenericException;
 import com.sjsu.cmpe275.term.models.Offer;
 import com.sjsu.cmpe275.term.models.Transaction;
 import com.sjsu.cmpe275.term.models.User;
+import com.sjsu.cmpe275.term.service.counterOffer.CounterOfferService;
 import com.sjsu.cmpe275.term.service.offer.OfferService;
 import com.sjsu.cmpe275.term.service.transaction.TransactionService;
 import com.sjsu.cmpe275.term.service.user.UserService;
@@ -43,6 +44,9 @@ public class TransactionController {
 
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+	CounterOfferService counterOfferService;
 
 	@Autowired
 	private ObjectMapper objectMapper;
