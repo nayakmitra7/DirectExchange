@@ -10,13 +10,14 @@ class NavigationBar extends Component {
         localStorage.clear();
     }
     render() {
+        let message ="Hi, "+ localStorage.getItem("nickname");
         return (
             <Navbar expand="lg" bg="dark" variant="dark">
                 <Navbar.Brand href="/home">DirectExchange</Navbar.Brand>
                 <Navbar.Collapse id="responsive-navbar-nav">
                     <Nav className="mr-auto"></Nav>
                     <Nav>
-                        <NavDropdown title="My Services">
+                        <NavDropdown title={message}>
                             <NavDropdown.Item href="">My Offers</NavDropdown.Item>
                             <NavDropdown.Item href="/sendMessage">Send a message</NavDropdown.Item>
                             <NavDropdown.Divider />
