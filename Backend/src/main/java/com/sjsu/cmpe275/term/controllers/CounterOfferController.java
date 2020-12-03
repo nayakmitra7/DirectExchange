@@ -99,7 +99,7 @@ public class CounterOfferController {
 
 	}
 
-	@RequestMapping(value = "/offerMatching/receivedCounterOffers/{userId}", method = RequestMethod.GET, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/offerMatching/receivedCounterOffers/{userId}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public ResponseEntity<List<CounterOfferWrapperDTO>> getReceivedCounterOffers(@PathVariable Long userId) {
 		try {
@@ -133,7 +133,7 @@ public class CounterOfferController {
 		}
 	}
 
-	@RequestMapping(value = "/offerMatching/proposedCounterOffers/{userId}", method = RequestMethod.GET, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/offerMatching/proposedCounterOffers/{userId}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public ResponseEntity<List<CounterOfferWrapperDTO>> getProposedCounterOffers(@PathVariable Long userId) {
 		try {
