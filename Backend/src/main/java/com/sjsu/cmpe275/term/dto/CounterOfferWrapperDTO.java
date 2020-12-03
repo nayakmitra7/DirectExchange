@@ -5,14 +5,24 @@ public class CounterOfferWrapperDTO {
 	private OfferDto tgtOfferDTO;// tgtOfferDTO
 	private Double counterAmtFromSrcToTgt;// counterAmtFromSrcToTgt
 	private String counterCurrencyFromSrcToTgt;// counterCurrencyFromSrcToTgt
+	private int counterStatus;
 
 	public CounterOfferWrapperDTO(OfferDto srcOfferDTO, OfferDto tgtOfferDTO, Double counterAmtFromSrcToTgt,
-			String counterCurrencyFromSrcToTgt) {
+			String counterCurrencyFromSrcToTgt,int counterStatus) {
 		super();
 		this.srcOfferDTO = srcOfferDTO;
 		this.tgtOfferDTO = tgtOfferDTO;
 		this.counterAmtFromSrcToTgt = counterAmtFromSrcToTgt;
 		this.counterCurrencyFromSrcToTgt = counterCurrencyFromSrcToTgt;
+		this.counterStatus=counterStatus;
+	}
+
+	public int getCounterStatus() {
+		return counterStatus;
+	}
+
+	public void setCounterStatus(int counterStatus) {
+		this.counterStatus = counterStatus;
 	}
 
 	CounterOfferWrapperDTO() {

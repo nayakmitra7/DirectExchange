@@ -5,7 +5,7 @@ import Col from "react-bootstrap/Col";
 import ListGroup from "react-bootstrap/ListGroup";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { address } from "../../js/helper/constant";
+import { address, COUNTEROFFER_OPEN } from "../../js/helper/constant";
 import Select from "react-select";
 import CounterOffer from "../AutoMatching/CounterOffer"
 
@@ -63,7 +63,7 @@ class OfferModal extends Component {
     let withinRange = minBound <= counterAmtFromSrcToTgt && counterAmtFromSrcToTgt <= maxBound;
     if (withinRange) {
       axios
-        .post(address + '/offerMatching/counterOffer', { srcOfferDTO: this.state.myOffer, tgtOfferDTO: this.state.selectedCounterOffer, counterAmtFromSrcToTgt, counterCurrencyFromSrcToTgt: this.state.selectedCounterOffer.sourceCurrency })
+        .post(address + '/offerMatching/counterOffer', { srcOfferDTO: this.state.myOffer, tgtOfferDTO: this.state.selectedCounterOffer, counterAmtFromSrcToTgt, counterCurrencyFromSrcToTgt: this.state.selectedCounterOffer.sourceCurrency, counterStatus: COUNTEROFFER_OPEN })
         .then(res => {
           if (res.status === 200) {
             toast.success("Counter offer email has been sent to " + this.state.selectedCounterOffer.nickname);
