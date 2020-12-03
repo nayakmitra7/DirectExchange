@@ -7,7 +7,7 @@ import axios from 'axios';
 import Card from 'react-bootstrap/Card'
 import { toast } from 'react-toastify';
 import './autoMatching.css';
-import { address } from '../../js/helper/constant';
+import { address, COUNTEROFFER_OPEN } from '../../js/helper/constant';
 import Tabs from 'react-bootstrap/Tabs'
 import Tab from 'react-bootstrap/Tab'
 import Accordion from 'react-bootstrap/Accordion'
@@ -192,7 +192,7 @@ class AutoMatching extends Component {
         let withinRange = minBound <= counterAmtFromSrcToTgt && counterAmtFromSrcToTgt <= maxBound;
         if (withinRange) {
             axios
-                .post(address + '/offerMatching/counterOffer', { srcOfferDTO: this.state.myOffer, tgtOfferDTO: this.state.selectedCounterOffer, counterAmtFromSrcToTgt, counterCurrencyFromSrcToTgt: this.state.selectedCounterOffer.sourceCurrency })
+                .post(address + '/offerMatching/counterOffer', { srcOfferDTO: this.state.myOffer, tgtOfferDTO: this.state.selectedCounterOffer, counterAmtFromSrcToTgt, counterCurrencyFromSrcToTgt: this.state.selectedCounterOffer.sourceCurrency, counterStatus: COUNTEROFFER_OPEN })
                 .then(res => {
                     if (res.status === 200) {
                         toast.success("Counter offer email has been sent to " + this.state.selectedCounterOffer.nickname);
@@ -313,7 +313,15 @@ class AutoMatching extends Component {
                     </Col>}
 
                     <Col md="2">
-                        <Button size="sm" onClick={() => { this.setState({ myOffer: element.offer }); this.counterModalOpen(element.matchingOffer[0].amountInSrc > element.matchingOffer[1].amountInSrc ? element.matchingOffer[0] : element.matchingOffer[1]) }}> Counter Offer</Button>
+                        <Button size="sm"
+                            onClick={() => {
+                                this.setState({
+                                    myOffer: element.offer,
+                                    isCounterSplit: true,
+                                    currentCounterDiff: element.offer.amountInDes - element.matchingOffer[0].amountInSrc + element.matchingOffer[1].amountInSrc
+                                });
+                                this.counterModalOpen(element.matchingOffer[0].amountInSrc > element.matchingOffer[1].amountInSrc ? element.matchingOffer[0] : element.matchingOffer[1]);
+                            }}> Counter Offer</Button>
                     </Col>
                 </Row>)
             }
@@ -546,6 +554,8 @@ class AutoMatching extends Component {
                     counterModal={this.state.counterModal}
                     counterModalClose={this.counterModalClose}
                     submitCounterHandle={this.submitCounterHandle}
+                    isCounterSplit={this.state.isCounterSplit || false}
+                    validCounterAmtSplit={this.state.selectedCounterOffer.amountInSrc + this.state.currentCounterDiff}
                 />
             </div>
         )

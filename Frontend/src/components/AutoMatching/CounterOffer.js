@@ -7,6 +7,7 @@ import Form from 'react-bootstrap/Form';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import { toast } from 'react-toastify';
 
 class CounterOffer extends Component {
     state = {}
@@ -61,7 +62,27 @@ class CounterOffer extends Component {
                                 </Row>
                                 <div align="right">
                                     <Button variant="secondary" onClick={this.props.counterModalClose} className="mr-2 mt-3">Close</Button>
-                                    <Button type="submit" variant="success" onClick={(e) => this.props.submitCounterHandle(e, parseFloat(this.state.counterAmtRequest))} className="mt-3">Counter offer</Button>
+                                    <Button type="submit" variant="success" onClick={
+                                        (e) => {
+                                            if (this.props.isCounterSplit) {
+                                                if (parseFloat(this.props.validCounterAmtSplit) === parseFloat(this.state.counterAmtRequest)) {
+                                                    this.props.submitCounterHandle(e, parseFloat(this.state.counterAmtRequest))
+                                                }
+                                                else {
+                                                    toast.error("Requested counter amount can be " + this.props.validCounterAmtSplit + " to matc your offer");
+                                                }
+                                            } else {
+                                                if (parseFloat(myOffer.amountInDes) === parseFloat(this.state.counterAmtRequest))
+                                                    this.props.submitCounterHandle(e, parseFloat(this.state.counterAmtRequest))
+                                                else {
+                                                    e.preventDefault();
+                                                    toast.error("Requested counter amount can be " + myOffer.amountInDes + " to match your offer");
+                                                }
+                                            }
+
+
+                                        }
+                                    } className="mt-3">Counter offer</Button>
                                 </div>
                             </Form>
                         </Modal.Body>
