@@ -74,11 +74,15 @@ class InTransactionOffer extends Component {
     this.setState({ open: false });
   };
 
-  confirmAction = (e) => {
+  confirmAction = async (e) => {
     e.preventDefault();
 
     console.log("in confirming", this.state.offerToBeConfirmed);
-
+    await axios.put(
+      `${address}/transaction/offer/receivemoney/${this.state.offerToBeConfirmed.transactionid}/${this.state.offerToBeConfirmed.id}`,
+      {}
+    );
+    this.getInTransactionOrders();
     this.handleClose();
   };
   render() {
@@ -142,14 +146,20 @@ class InTransactionOffer extends Component {
                       <Col>Country(src)</Col>
                       <Col>Exp Date</Col>
                       <Col>
-                        <Button
-                          onClick={() =>
-                            this.handleClickOpen(offerarr.mySingleOffer[0])
-                          }
-                          className="btn btn-primary"
-                        >
-                          Pay Now
-                        </Button>
+                        {offerarr.mySingleOffer[0].offerStatus == 4 ? (
+                          <i style={{ color: "green", fontSize: "16px" }}>
+                            Payment Transferred
+                          </i>
+                        ) : (
+                          <Button
+                            onClick={() =>
+                              this.handleClickOpen(offerarr.mySingleOffer[0])
+                            }
+                            className="btn btn-primary"
+                          >
+                            Pay Now
+                          </Button>
+                        )}
                       </Col>
                     </Row>
                     <Row>
@@ -181,6 +191,17 @@ class InTransactionOffer extends Component {
                         <Col>Amount(src)</Col>
                         <Col>Country(src)</Col>
                         <Col>Exp Date</Col>
+                        <Col>
+                          {offerarr.otherSingleOffers[0].offerStatus == 4 ? (
+                            <i style={{ fontSize: "16px", color: "blue" }}>
+                              Payment Received
+                            </i>
+                          ) : (
+                            <i style={{ fontSize: "16px", color: "crimson" }}>
+                              Payment Awaiting!
+                            </i>
+                          )}
+                        </Col>
                       </Row>
                       <Row>
                         <Col>#{offerarr.otherSingleOffers[0].id}</Col>
@@ -200,6 +221,7 @@ class InTransactionOffer extends Component {
                         <Col>
                           {offerarr.otherSingleOffers[0].expirationDate}
                         </Col>
+                        <Col></Col>
                       </Row>
                     </ListGroup.Item>
                   </ListGroup>
@@ -235,14 +257,20 @@ class InTransactionOffer extends Component {
                       <Col>Country(src)</Col>
                       <Col>Exp Date</Col>
                       <Col>
-                        <Button
-                          className="btn btn-primary"
-                          onClick={() =>
-                            this.handleClickOpen(offerarr.mySplitOffer[0])
-                          }
-                        >
-                          Pay Now
-                        </Button>
+                        {offerarr.mySplitOffer[0].offerStatus == 4 ? (
+                          <i style={{ color: "green", fontSize: "16px" }}>
+                            Payment Transferred
+                          </i>
+                        ) : (
+                          <Button
+                            className="btn btn-primary"
+                            onClick={() =>
+                              this.handleClickOpen(offerarr.mySplitOffer[0])
+                            }
+                          >
+                            Pay Now
+                          </Button>
+                        )}
                       </Col>
                     </Row>
                     <Row>
@@ -275,6 +303,17 @@ class InTransactionOffer extends Component {
                           <Col>Amount(src)</Col>
                           <Col>Country(src)</Col>
                           <Col>Exp Date</Col>
+                          <Col>
+                            {offer.offerStatus == 4 ? (
+                              <i style={{ fontSize: "16px", color: "blue" }}>
+                                Payment Received
+                              </i>
+                            ) : (
+                              <i style={{ fontSize: "16px", color: "crimson" }}>
+                                Payment Awaiting !
+                              </i>
+                            )}
+                          </Col>
                         </Row>
                         <Row>
                           <Col>#{offer.id}</Col>
@@ -288,6 +327,7 @@ class InTransactionOffer extends Component {
                           </Col>
                           <Col>{offer.sourceCountry}</Col>
                           <Col>{offer.expirationDate}</Col>
+                          <Col></Col>
                         </Row>
                       </ListGroup.Item>
                     </ListGroup>

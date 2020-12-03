@@ -1,5 +1,7 @@
 package com.sjsu.cmpe275.term.controllers;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,7 @@ import com.sjsu.cmpe275.term.dto.TransactionDTO;
 import com.sjsu.cmpe275.term.exceptions.GenericException;
 import com.sjsu.cmpe275.term.models.Offer;
 import com.sjsu.cmpe275.term.models.Transaction;
+import com.sjsu.cmpe275.term.models.User;
 import com.sjsu.cmpe275.term.service.offer.OfferService;
 import com.sjsu.cmpe275.term.service.transaction.TransactionService;
 import com.sjsu.cmpe275.term.service.user.UserService;
@@ -243,13 +246,41 @@ public class TransactionController {
 					) {
 				//update transaction and offer status as fulfiled
 				if(!transaction.getIsSplit()) {
+					String[] emailList = new String[2];
+					
+					emailList[0] = transaction.getOfferEmailId1();
+					emailList[1] = transaction.getOfferEmailId2();
+				
 					updatedTransaction = transactionService.updateTransactionStatusForTwoOffers(transactionId,transaction.getOfferId1(),transaction.getOfferId2());
+					User user1 = userService.getUserByEmailId(transaction.getOfferEmailId1());
+					User user2 = userService.getUserByEmailId(transaction.getOfferEmailId2());
+					emailUtil.sendEmail(emailList, "Offer accepted", "Offer accepted! Make the payment.");
 
 				}
 				else {
 					if(updatedTransaction.getOfferIdStatus3()==4) {
+						Calendar cal = Calendar.getInstance();
+						cal.set(Calendar.HOUR_OF_DAY, 0);
+						cal.set(Calendar.MINUTE, 0);
+						cal.set(Calendar.SECOND, 0);
+						cal.set(Calendar.MILLISECOND, 0);
+						Date todayDate = cal.getTime();
+						String[] emailList = new String[3];
+						
+						emailList[0] = transaction.getOfferEmailId1();
+						emailList[1] = transaction.getOfferEmailId2();
+						emailList[2] = transaction.getOfferEmailId3();
+
 					updatedTransaction = transactionService.updateTransactionStatusForThreeOffers(transactionId,transaction.getOfferId1(),transaction.getOfferId2()
 							,transaction.getOfferId3());
+					User user1 = userService.getUserByEmailId(transaction.getOfferEmailId1());
+					User user2 = userService.getUserByEmailId(transaction.getOfferEmailId2());
+					User user3 = userService.getUserByEmailId(transaction.getOfferEmailId3());
+				//	Offer offer1=
+//					emailUtil.sendEmail(emailList, "Transaction Complete", "All the parties have transfered the money.\r\n"+user1.getNickname() +"Transfered"+transaction.get
+							
+//							);
+
 					}
 					}
 			}
