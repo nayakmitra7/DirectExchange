@@ -28,4 +28,24 @@ public class CounterOfferServiceImpl implements CounterOfferService {
 		return counterOfferRepository.getProposedCounterOffers(userId);
 	}
 
+	@Override
+	public List<CounterOffer> getCounterOffersByTgt(Long offerId) {
+		return counterOfferRepository.getCounterOffersByTgt(offerId);
+	}
+
+	@Override
+	public List<CounterOffer> getCounterOffersBySrc(Long offerId) {
+		return counterOfferRepository.getCounterOffersBySrc(offerId);
+	}
+
+	@Override
+	public CounterOffer getById(Long id) {
+		return counterOfferRepository.findById(id).orElse(null);
+	}
+
+	@Override
+	public void update(CounterOffer co) {
+		counterOfferRepository.save(co);
+	}
+
 }

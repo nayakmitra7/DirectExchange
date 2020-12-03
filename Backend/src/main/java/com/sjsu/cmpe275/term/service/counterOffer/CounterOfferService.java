@@ -8,6 +8,14 @@ public interface CounterOfferService {
 	public void createCounterOffer(CounterOffer counterOffer);
 
 	public List<CounterOffer> getReceivedCounterOffers(Long userId);
-	
+
 	public List<CounterOffer> getProposedCounterOffers(Long userId);
+
+	public List<CounterOffer> getCounterOffersByTgt(Long offerId);
+
+	public List<CounterOffer> getCounterOffersBySrc(Long offerId);
+
+	public CounterOffer getById(Long id);
+
+	public void update(CounterOffer co);
 }
