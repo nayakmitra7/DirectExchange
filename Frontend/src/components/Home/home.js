@@ -6,19 +6,20 @@ import Navbar from '../Navbar/navbar';
 import { toast } from 'react-toastify';
 class Home extends Component {
 
-    componentDidMount(){
-        toast.success("Welcome!")
+    componentDidMount() {
+        if (localStorage.getItem("nickname") == null)
+            window.location.reload()
     }
     render() {
         return (
             <div>
-            <Navbar></Navbar>
-            <Container>
-                <Row>
-                    <Col></Col>
-                </Row>
+                <Navbar></Navbar>
+                <Container>
+                    <Row>
+                        <Col></Col>
+                    </Row>
 
-            </Container>
+                </Container>
             </div>
         )
     }
