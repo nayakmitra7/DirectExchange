@@ -215,7 +215,7 @@ public class CounterOfferController {
 			Long id = counterOfferDTO.getId();
 			Long srcUserId = counterOfferDTO.getSrcUserId();
 			Long srcOfferId = counterOfferDTO.getSrcOfferId();
-			Long tgtUserId = counterOfferDTO.getTgtOfferId();
+			Long tgtUserId = counterOfferDTO.getTgtUserId();
 			Long tgtOfferId = counterOfferDTO.getTgtOfferId();
 			Long otherUserId = counterOfferDTO.getOtherUserId();
 			Long otherOfferId = counterOfferDTO.getOtherOfferId();
@@ -243,10 +243,10 @@ public class CounterOfferController {
 			counterOfferService.update(co);
 			// Move the accepted to in_transaction in Offer table
 			Offer srcAcceptOffer = offerService.getOfferById(srcOfferId);
-			srcAcceptOffer.setOfferStatus(Constant.TRANSACTION_INPROGRESS);
+			srcAcceptOffer.setOfferStatus(Constant.OFFERTRANSACTION);
 			offerService.postOffer(srcAcceptOffer);
 			Offer tgtAcceptOffer = offerService.getOfferById(tgtOfferId);
-			tgtAcceptOffer.setOfferStatus(Constant.TRANSACTION_INPROGRESS);
+			tgtAcceptOffer.setOfferStatus(Constant.OFFERTRANSACTION);
 			tgtAcceptOffer.setAmountInSrc(counterAmtFromSrcToTgt);
 			String srcCurr = tgtAcceptOffer.getSourceCurrency();
 			String tgtCurr = tgtAcceptOffer.getDestinationCurrency();
@@ -255,7 +255,7 @@ public class CounterOfferController {
 
 			if (isCounterSplit) {
 				Offer otherAcceptOffer = offerService.getOfferById(otherOfferId);
-				otherAcceptOffer.setOfferStatus(Constant.TRANSACTION_INPROGRESS);
+				otherAcceptOffer.setOfferStatus(Constant.OFFERTRANSACTION);
 				offerService.postOffer(otherAcceptOffer);
 			}
 
@@ -312,7 +312,7 @@ public class CounterOfferController {
 			Long id = counterOfferDTO.getId();
 			Long srcUserId = counterOfferDTO.getSrcUserId();
 			Long srcOfferId = counterOfferDTO.getSrcOfferId();
-			Long tgtUserId = counterOfferDTO.getTgtOfferId();
+			Long tgtUserId = counterOfferDTO.getTgtUserId();
 			Long tgtOfferId = counterOfferDTO.getTgtOfferId();
 			Long otherUserId = counterOfferDTO.getOtherUserId();
 			Long otherOfferId = counterOfferDTO.getOtherOfferId();
