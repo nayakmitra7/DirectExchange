@@ -20,19 +20,60 @@ class CounterMade extends Component {
 
     Axios.get(address + '/offerMatching/proposedCounterOffers/' + this.state.userId).then((response) => {
       this.setState({ offers: response.data });
+      console.log(response.data)
     })
   }
-
+  getStatus = (status) => {
+    if (status == 0) {
+      return "Open";
+    } else if (status == 1) {
+      return "Accepted";
+    } else if (status == 2) {
+      return "Rejected";
+    } else {
+      return "Aborted";
+    }
+  }
+  
   render() {
     let inner = []
     let warning = "warning";
     let primary = ""
     this.state.offers.forEach((element) => {
-      console.log(element.srcOfferDTO.id )
+
       inner.push(<Card className="margin-left-right-offer margin-bottom-offer-1">
         <ListGroup>
-          <ListGroup.Item variant={element.srcOfferDTO.userId == this.state.userId ? warning:primary}>
-            <Row className="margin-bottom-offer"><u><strong>My proposed offer:</strong></u></Row>
+          <ListGroup.Item>
+            <Row className="margin-bottom-offer">
+              <Col><u><strong>Proposed To </strong></u> :{element.tgtOfferDTO.nickname}</Col>
+              <Col><u><strong>Proposed Amount </strong></u> :{element.counterAmtFromSrcToTgt} {element.counterCurrencyFromSrcToTgt}</Col>
+              <Col><u><strong>Status </strong></u> :{this.getStatus(element.counterStatus)}</Col>
+
+              </Row>
+          </ListGroup.Item>
+          <ListGroup.Item variant="warning">
+            <Row className="margin-bottom-offer"><u><strong>Original Offer (which was countered):</strong></u></Row>
+            <Row className="header-bold-auto-matching ">
+              <Col>Offer ID</Col>
+              <Col>Username</Col>
+              <Col>Country(des)</Col>
+              <Col>Amount(des)</Col>
+              <Col>Amount(src)</Col>
+              <Col>Country(src)</Col>
+              <Col>Exp Date</Col>
+            </Row>
+            <Row>
+              <Col>#{element.tgtOfferDTO.id}</Col>
+              <Col>{element.tgtOfferDTO.nickname}</Col>
+              <Col>{element.tgtOfferDTO.destinationCountry}</Col>
+              <Col>{element.tgtOfferDTO.amountInDes} {element.tgtOfferDTO.destinationCurrency}</Col>
+              <Col>{element.tgtOfferDTO.amountInSrc} {element.tgtOfferDTO.sourceCurrency}</Col>
+              <Col>{element.tgtOfferDTO.sourceCountry}</Col>
+              <Col>{element.tgtOfferDTO.expirationDate}</Col>
+            </Row>
+          </ListGroup.Item>
+          <ListGroup.Item >
+            <Row className="margin-bottom-offer"><u><strong>My Current offer:</strong></u></Row>
             <Row className="header-bold-auto-matching ">
               <Col>Offer ID</Col>
               <Col>Username</Col>
@@ -53,8 +94,9 @@ class CounterMade extends Component {
               <Col>{element.srcOfferDTO.expirationDate}</Col>
             </Row>
           </ListGroup.Item>
-          <ListGroup.Item>
-          <Row className="margin-bottom-offer"><u><strong>Proposed To:</strong></u></Row>
+
+          {element.otherOfferDTO && <ListGroup.Item>
+            <Row className="margin-bottom-offer"><u><strong>Third Party:</strong></u></Row>
             <Row className="header-bold-auto-matching ">
               <Col>Offer ID</Col>
               <Col>Username</Col>
@@ -65,16 +107,15 @@ class CounterMade extends Component {
               <Col>Exp Date</Col>
             </Row>
             <Row>
-              <Col>#{element.tgtOfferDTO.id}</Col>
-              <Col>{element.tgtOfferDTO.nickname}</Col>
-              <Col>{element.tgtOfferDTO.destinationCountry}</Col>
-              <Col>{element.tgtOfferDTO.amountInDes} {element.tgtOfferDTO.destinationCurrency}</Col>
-              <Col>{element.tgtOfferDTO.amountInSrc} {element.tgtOfferDTO.sourceCurrency}</Col>
-              <Col>{element.tgtOfferDTO.sourceCountry}</Col>
-              <Col>{element.tgtOfferDTO.expirationDate}</Col>
+              <Col>#{element.otherOfferDTO.id}</Col>
+              <Col>{element.otherOfferDTO.nickname}</Col>
+              <Col>{element.otherOfferDTO.destinationCountry}</Col>
+              <Col>{element.otherOfferDTO.amountInDes} {element.otherOfferDTO.destinationCurrency}</Col>
+              <Col>{element.otherOfferDTO.amountInSrc} {element.otherOfferDTO.sourceCurrency}</Col>
+              <Col>{element.otherOfferDTO.sourceCountry}</Col>
+              <Col>{element.otherOfferDTO.expirationDate}</Col>
             </Row>
-          </ListGroup.Item>
-
+          </ListGroup.Item>}
         </ListGroup>
       </Card>)
     })
