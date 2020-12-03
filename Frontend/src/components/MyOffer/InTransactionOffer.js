@@ -11,12 +11,15 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/esm/Button";
 import Modal from "./Modal";
+import Modal1 from "react-bootstrap/Modal";
+import { Spinner } from "react-bootstrap";
 class InTransactionOffer extends Component {
   state = {
     navarr: ["black", "black", "rgb(0, 106, 255)", "black", "black"],
     singleOfferList: [],
     splitOfferList: [],
     open: false,
+    spinner: false,
   };
   componentWillMount() {
     this.getInTransactionOrders();
@@ -76,14 +79,19 @@ class InTransactionOffer extends Component {
 
   confirmAction = async (e) => {
     e.preventDefault();
-
+    this.handleClose();
+    this.setState({ spinner: true });
     console.log("in confirming", this.state.offerToBeConfirmed);
     await axios.put(
       `${address}/transaction/offer/receivemoney/${this.state.offerToBeConfirmed.transactionid}/${this.state.offerToBeConfirmed.id}`,
       {}
     );
+    this.setState({ spinner: false });
+    toast.success("Your payment has been transfered");
+    setTimeout(() => {
+      window.location.reload();
+    }, 2000);
     this.getInTransactionOrders();
-    this.handleClose();
   };
   render() {
     let { singleOfferList, splitOfferList } = this.state;
@@ -121,8 +129,24 @@ class InTransactionOffer extends Component {
     console.log(singleOfferUpdated);
     return (
       <div>
+        <Modal1 show={this.state.spinner} size="sm" centered>
+          <Modal1.Body>
+            <Row>
+              <Col></Col>
+              <Col>
+                <div>
+                  <Spinner animation="border" role="status">
+                    <span className="sr-only">Loading...</span>
+                  </Spinner>
+                </div>
+              </Col>
+              <Col></Col>
+            </Row>
+          </Modal1.Body>
+        </Modal1>
         <Navbar></Navbar>
         <MyOfferHeader navarr={this.state.navarr}></MyOfferHeader>
+
         <Row align="center">
           <Col>
             <h3>Single Matches</h3>
