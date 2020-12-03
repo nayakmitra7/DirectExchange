@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.sjsu.cmpe275.term.models.Offer;
 import com.sjsu.cmpe275.term.repository.OfferRepository;
+import com.sjsu.cmpe275.term.utils.Constant;
 
 @Service
 public class OfferServiceImpl implements OfferService {
@@ -83,8 +84,8 @@ public class OfferServiceImpl implements OfferService {
 		return offerRepository.getOwnOfferById(userId,todayDate,openOffer);
 	}
 	@Override
-	public List<Offer> getCloseOfferById(Long userId, Date todayDate, int offerStatus) {
+	public List<Offer> getCloseOfferById(Long userId, Date todayDate) {
 		
-		return offerRepository.getCloseOfferById(userId,todayDate,offerStatus);
+		return offerRepository.getCloseOfferById(userId,todayDate,Constant.OFFEREXPIRED,Constant.OFFERFULFILED);
 	}
 }

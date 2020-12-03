@@ -19,5 +19,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>{
 
 	@Query("Select o1 from Offer o1 where o1.id in (:offerId1,:offerId2,:offerId3)")
 	List<Offer> getSplitOfferByTransaction(@Param("offerId1") Long offerId1,@Param("offerId2") Long offerId2,@Param("offerId3") Long offerId3);
+	
 
 }

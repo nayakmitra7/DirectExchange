@@ -162,17 +162,16 @@ public class TransactionController {
 		}
 
 	}
-	
-	
+
 	@RequestMapping(value = "/transaction/offer/{offerId1}/{offerId2}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
-	public ResponseEntity<List<OfferDto>> getSingleOfferByTransaction(@PathVariable("offerId1") Long offerId1,@PathVariable("offerId2") Long offerId2) {
+	public ResponseEntity<List<OfferDto>> getSingleOfferByTransaction(@PathVariable("offerId1") Long offerId1,
+			@PathVariable("offerId2") Long offerId2) {
 		try {
-			List<Offer> offers = transactionService.getSingleOfferByTransaction(offerId1,offerId2);
+			List<Offer> offers = transactionService.getSingleOfferByTransaction(offerId1, offerId2);
 
-			List<OfferDto> offerList = objectMapper.convertValue(offers,
-					new TypeReference<List<OfferDto>>() {
-					});
+			List<OfferDto> offerList = objectMapper.convertValue(offers, new TypeReference<List<OfferDto>>() {
+			});
 			return new ResponseEntity<List<OfferDto>>(offerList, HttpStatus.OK);
 		} catch (Exception ex) {
 			ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(500, HttpStatus.INTERNAL_SERVER_ERROR,
@@ -181,19 +180,82 @@ public class TransactionController {
 		}
 
 	}
-	
-	
-	@RequestMapping(value = "/transaction/offer/{offerId1}/{offerId2}//{offerId3}", method = RequestMethod.GET, produces = "application/json")
-	@ResponseBody
-	public ResponseEntity<List<OfferDto>> getSplitOfferByTransaction(@PathVariable("offerId1") Long offerId1,@PathVariable("offerId2") Long offerId2,
-			@PathVariable("offerId3") Long offerId3) {
-		try {
-			List<Offer> offers = transactionService.getSplitOfferByTransaction(offerId1,offerId2,offerId3);
 
-			List<OfferDto> offerList = objectMapper.convertValue(offers,
-					new TypeReference<List<OfferDto>>() {
-					});
+	@RequestMapping(value = "/transaction/offer/{offerId1}/{offerId2}/{offerId3}", method = RequestMethod.GET, produces = "application/json")
+	@ResponseBody
+	public ResponseEntity<List<OfferDto>> getSplitOfferByTransaction(@PathVariable("offerId1") Long offerId1,
+			@PathVariable("offerId2") Long offerId2, @PathVariable("offerId3") Long offerId3) {
+		try {
+			List<Offer> offers = transactionService.getSplitOfferByTransaction(offerId1, offerId2, offerId3);
+
+			List<OfferDto> offerList = objectMapper.convertValue(offers, new TypeReference<List<OfferDto>>() {
+			});
 			return new ResponseEntity<List<OfferDto>>(offerList, HttpStatus.OK);
+		} catch (Exception ex) {
+			ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(500, HttpStatus.INTERNAL_SERVER_ERROR,
+					ex.getMessage());
+			throw new GenericException(errorResponseDTO);
+		}
+
+	}
+
+	@RequestMapping(value = "/transaction/offer/receivemoney/{transactionId}/{offerId}", method = RequestMethod.PUT, produces = "application/json")
+	@ResponseBody
+	public ResponseEntity<TransactionDTO> updateTransactionComplete(@PathVariable("transactionId") Long transactionId,
+			@PathVariable("offerId") Long offerId) {
+		try {
+
+			Transaction transaction = transactionService.getTransaction(transactionId);
+			
+//			Transaction transaction = transactionService.updateTransactionStatusforOneOffer(transactionId,offerId);
+			Transaction updatedTransaction=null;
+			if (transaction.getIsSplit()) {
+				if (transaction.getOfferId1() == offerId) {
+					updatedTransaction = transactionService.updateOfferIdStatus1(transactionId,offerId);
+				}
+				else if (transaction.getOfferId2() == offerId) {
+					updatedTransaction = transactionService.updateOfferIdStatus2(transactionId,offerId);
+				}
+				else if(transaction.getOfferId3() == offerId){
+					updatedTransaction = transactionService.updateOfferIdStatus3(transactionId,offerId);
+				}
+				else {
+					ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(404, HttpStatus.NOT_FOUND,
+							"Offer id"+offerId+" not available in the transaction");
+					throw new GenericException(errorResponseDTO);
+				}
+			}
+			else {
+				if (transaction.getOfferId1() == offerId) {
+					updatedTransaction = transactionService.updateOfferIdStatus1(transactionId,offerId);
+				}
+				else if(transaction.getOfferId2() == offerId) {
+					updatedTransaction = transactionService.updateOfferIdStatus2(transactionId,offerId);
+				}
+				else {
+					ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(404, HttpStatus.NOT_FOUND,
+							"Offer id"+offerId+" not available in the transaction");
+					throw new GenericException(errorResponseDTO);
+				}
+			}
+			
+			if(updatedTransaction.getOfferIdStatus1()==4&&updatedTransaction.getOfferIdStatus2()==4
+					) {
+				//update transaction and offer status as fulfiled
+				if(!transaction.getIsSplit()) {
+					updatedTransaction = transactionService.updateTransactionStatusForTwoOffers(transactionId,transaction.getOfferId1(),transaction.getOfferId2());
+
+				}
+				else {
+					if(updatedTransaction.getOfferIdStatus3()==4) {
+					updatedTransaction = transactionService.updateTransactionStatusForThreeOffers(transactionId,transaction.getOfferId1(),transaction.getOfferId2()
+							,transaction.getOfferId3());
+					}
+					}
+			}
+
+			TransactionDTO transactionresponse = objectMapper.convertValue(updatedTransaction,TransactionDTO.class);
+			 return new ResponseEntity<TransactionDTO>(transactionresponse, HttpStatus.OK);
 		} catch (Exception ex) {
 			ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(500, HttpStatus.INTERNAL_SERVER_ERROR,
 					ex.getMessage());

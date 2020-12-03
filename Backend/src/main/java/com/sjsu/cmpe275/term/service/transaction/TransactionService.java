@@ -12,6 +12,12 @@ public interface TransactionService {
 	public List<Transaction> getInTransactionData(Long userId);
 	public List<Offer> getSingleOfferByTransaction(Long offerId1, Long offerId2);
 	public List<Offer> getSplitOfferByTransaction(Long offerId1, Long offerId2, Long offerId3);
+	public Transaction getTransaction(Long transactionId);
+	public Transaction updateOfferIdStatus1(Long transactionId, Long offerId);
+	public Transaction updateOfferIdStatus2(Long transactionId, Long offerId);
+	public Transaction updateOfferIdStatus3(Long transactionId, Long offerId);
+	public Transaction updateTransactionStatusForTwoOffers(Long transactionId, Long offerId1, Long offerId2);
+	public Transaction updateTransactionStatusForThreeOffers(Long transactionId, Long offerId1, Long offerId2, Long offerId3);
 	
 	
 }

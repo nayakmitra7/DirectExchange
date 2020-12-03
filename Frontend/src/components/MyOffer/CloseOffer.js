@@ -22,7 +22,7 @@ class CloseOffer extends Component {
   componentDidMount() {
     //change the id of user after kena complete
     axios
-      .get(`${address}/offer/1/close`)
+      .get(`${address}/offer/${localStorage.getItem("id")}/close`)
       .then((response) => {
         console.log(response.data);
         this.setState({ closeOffers: response.data });
