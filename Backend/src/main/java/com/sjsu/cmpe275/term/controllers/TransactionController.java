@@ -250,12 +250,35 @@ public class TransactionController {
 					
 					emailList[0] = transaction.getOfferEmailId1();
 					emailList[1] = transaction.getOfferEmailId2();
-				
+				System.out.println(emailList[0]+"  "+emailList[1]);
 					updatedTransaction = transactionService.updateTransactionStatusForTwoOffers(transactionId,transaction.getOfferId1(),transaction.getOfferId2());
 					User user1 = userService.getUserByEmailId(transaction.getOfferEmailId1());
 					User user2 = userService.getUserByEmailId(transaction.getOfferEmailId2());
-					emailUtil.sendEmail(emailList, "Offer accepted", "Offer accepted! Make the payment.");
-
+					Offer offer1= offerService.getOfferById(transaction.getOfferId1());
+					Offer offer2= offerService.getOfferById(transaction.getOfferId2());
+//					emailUtil.sendEmail(emailList, "Transaction Complete", "All the parties have transfered the money.\r\n"+user1.getNickname() +
+//							"Transfered"+offer1.getAmountInSrc()+" "+offer1.getSourceCurrency()+"\r\n"+
+//							user2.getNickname() +
+//							"Transfered"+offer2.getAmountInSrc()+" "+offer2.getSourceCurrency()+"\r\n"
+//							);
+					//emailUtil.sendEmail(emailList, "Transaction Complete", "Transaction Complete");
+					String user1emailtext="All the parties have transfered the money.\r\n"+user1.getNickname() +
+							" has Transfered "+offer1.getAmountInSrc()+" "+offer1.getSourceCurrency()+"\r\n"+
+							user2.getNickname() +
+							" has Transfered "+offer2.getAmountInSrc()+" "+offer2.getSourceCurrency()+"\r\n"+
+							
+							"\r\n You received "+ (offer1.getAmountInDes()-(offer1.getAmountInDes()*0.05))+" "+offer1.getDestinationCurrency()+" after service fee";
+					String user2emailtext="All the parties have transfered the money.\r\n"+user1.getNickname() +
+							" has Transfered "+offer1.getAmountInSrc()+" "+offer1.getSourceCurrency()+"\r\n"+
+							user2.getNickname() +
+							" has Transfered "+offer2.getAmountInSrc()+" "+offer2.getSourceCurrency()+"\r\n"+
+							
+							"\r\n You received "+ (offer2.getAmountInDes()-(offer2.getAmountInDes()*0.05))+" "+offer2.getDestinationCurrency()+" after service fee";
+					String emailList1[]= {user1.getEmailId()};
+					String emailList2[]= {user2.getEmailId()};
+					
+					emailUtil.sendEmail(emailList1,"Transaction Complete",user1emailtext);
+					emailUtil.sendEmail(emailList2,"Transaction Complete",user2emailtext);
 				}
 				else {
 					if(updatedTransaction.getOfferIdStatus3()==4) {
@@ -276,12 +299,54 @@ public class TransactionController {
 					User user1 = userService.getUserByEmailId(transaction.getOfferEmailId1());
 					User user2 = userService.getUserByEmailId(transaction.getOfferEmailId2());
 					User user3 = userService.getUserByEmailId(transaction.getOfferEmailId3());
-				//	Offer offer1=
-//					emailUtil.sendEmail(emailList, "Transaction Complete", "All the parties have transfered the money.\r\n"+user1.getNickname() +"Transfered"+transaction.get
-							
-//							);
+					Offer offer1= offerService.getOfferById(transaction.getOfferId1());
+					Offer offer3= offerService.getOfferById(transaction.getOfferId3());
+					Offer offer2= offerService.getOfferById(transaction.getOfferId2());
 
-					}
+//					emailUtil.sendEmail(emailList, "Transaction Complete", "All the parties have transfered the money.\r\n"+user1.getNickname() +
+//							"Transfered "+offer1.getAmountInSrc()+" "+offer1.getSourceCurrency()+"\r\n"+
+//							user2.getNickname() +
+//							"Transfered "+offer2.getAmountInSrc()+" "+offer2.getSourceCurrency()+"\r\n"+
+//							user3.getNickname() +
+//							"Transfered "+offer3.getAmountInSrc()+" "+offer3.getSourceCurrency()+"\r\n"
+//							
+//							);
+					String user1emailtext="All the parties have transfered the money.\r\n"+user1.getNickname() +
+							" has Transfered "+offer1.getAmountInSrc()+" "+offer1.getSourceCurrency()+"\r\n"+
+							user2.getNickname() +
+							" has Transfered "+offer2.getAmountInSrc()+" "+offer2.getSourceCurrency()+"\r\n"+
+							user3.getNickname() +
+							" has Transfered "+offer3.getAmountInSrc()+" "+offer3.getSourceCurrency()+"\r\n"+
+							"\r\n You received "+ (offer1.getAmountInDes()-(offer1.getAmountInDes()*0.05))+" "+offer1.getDestinationCurrency()+" after service fee";
+					String user2emailtext="All the parties have transfered the money.\r\n"+user1.getNickname() +
+							" has Transfered "+offer1.getAmountInSrc()+" "+offer1.getSourceCurrency()+"\r\n"+
+							user2.getNickname() +
+							" has Transfered "+offer2.getAmountInSrc()+" "+offer2.getSourceCurrency()+"\r\n"+
+							user3.getNickname() +
+							" has Transfered "+offer3.getAmountInSrc()+" "+offer3.getSourceCurrency()+"\r\n"+
+							"\r\n You received "+ (offer2.getAmountInDes()-(offer2.getAmountInDes()*0.05))+" "+offer2.getDestinationCurrency()+" after service fee";
+					String user3emailtext="All the parties have transfered the money.\r\n"+user1.getNickname() +
+							" has Transfered "+offer1.getAmountInSrc()+" "+offer1.getSourceCurrency()+"\r\n"+
+							user2.getNickname() +
+							" has Transfered "+offer2.getAmountInSrc()+" "+offer2.getSourceCurrency()+"\r\n"+
+							user3.getNickname() +
+							" has Transfered "+offer3.getAmountInSrc()+" "+offer3.getSourceCurrency()+"\r\n"+
+							"\r\n You received "+ (offer3.getAmountInDes()-(offer3.getAmountInDes()*0.05))+" "+offer3.getDestinationCurrency()+" after service fee";
+					
+					
+					String emailList1[]= {user1.getEmailId()};
+					String emailList2[]= {user2.getEmailId()};
+					String emailList3[]= {user3.getEmailId()};
+					
+					emailUtil.sendEmail(emailList1,"Transaction Complete",user1emailtext);
+					emailUtil.sendEmail(emailList2,"Transaction Complete",user2emailtext);
+					emailUtil.sendEmail(emailList3,"Transaction Complete",user3emailtext);
+
+//					System.out.println(user1emailtext);
+//					System.out.println(user2emailtext);
+//					System.out.println(user3emailtext);
+
+		}
 					}
 			}
 

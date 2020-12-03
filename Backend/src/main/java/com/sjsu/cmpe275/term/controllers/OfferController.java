@@ -100,6 +100,21 @@ public class OfferController {
 		return new ResponseEntity<List<OfferDto>>(offerdto, HttpStatus.OK);
 
 	}
+//	@RequestMapping(value = "/offer/offer{offerId}", method = RequestMethod.GET, produces = "application/json")
+//	@ResponseBody
+//	public ResponseEntity<OfferDto> getOfferById() {
+//		try {
+//		Offer offer = offerService.getOfferById(1L);
+//
+//		OfferDto offerdto = objectMapper.convertValue(offer, OfferDto.class);
+//		return new ResponseEntity<OfferDto>(offerdto, HttpStatus.OK);
+//		}
+//		catch(Exception ex) {
+//			ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(500, HttpStatus.INTERNAL_SERVER_ERROR,
+//					ex.getMessage());
+//			throw new GenericException(errorResponseDTO);
+//		}
+//	}
 	
 	@RequestMapping(value = "/offer/{userId}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
