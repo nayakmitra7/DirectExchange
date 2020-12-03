@@ -163,6 +163,8 @@ class BrowseOffer extends Component {
     this.setState({ destinationAmountFilter: "empty" });
     document.getElementById("sourceamount").value = "";
     document.getElementById("desamount").value = "";
+    this.setState({ selectedSourceCurrencyOption: null });
+    this.setState({ selectedDesCurrencyOption: null });
 
     this.setState({ sourceAmountFilter: "empty" });
     this.getOffers();
