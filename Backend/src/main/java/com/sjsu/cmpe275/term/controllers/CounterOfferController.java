@@ -26,9 +26,11 @@ import com.sjsu.cmpe275.term.exceptions.GenericException;
 import com.sjsu.cmpe275.term.models.CounterOffer;
 import com.sjsu.cmpe275.term.models.ExchangeRate;
 import com.sjsu.cmpe275.term.models.Offer;
+import com.sjsu.cmpe275.term.models.Transaction;
 import com.sjsu.cmpe275.term.service.counterOffer.CounterOfferService;
 import com.sjsu.cmpe275.term.service.exrate.ExRateService;
 import com.sjsu.cmpe275.term.service.offer.OfferService;
+import com.sjsu.cmpe275.term.service.transaction.TransactionService;
 import com.sjsu.cmpe275.term.service.user.UserService;
 import com.sjsu.cmpe275.term.utils.Constant;
 import com.sjsu.cmpe275.term.utils.EmailUtility;
@@ -49,6 +51,8 @@ public class CounterOfferController {
 	private EmailUtility emailUtil;
 	@Autowired
 	ExRateService exRateService;
+	@Autowired
+	TransactionService transactionService;
 
 	private static DecimalFormat df2 = new DecimalFormat("#.##");
 
@@ -252,11 +256,37 @@ public class CounterOfferController {
 			String tgtCurr = tgtAcceptOffer.getDestinationCurrency();
 			getDesAmt(tgtAcceptOffer, counterAmtFromSrcToTgt, srcCurr, tgtCurr);
 			offerService.postOffer(tgtAcceptOffer);
-
+			Offer otherAcceptOffer = null;
 			if (isCounterSplit) {
-				Offer otherAcceptOffer = offerService.getOfferById(otherOfferId);
+				otherAcceptOffer = offerService.getOfferById(otherOfferId);
 				otherAcceptOffer.setOfferStatus(Constant.OFFERTRANSACTION);
 				offerService.postOffer(otherAcceptOffer);
+			}
+
+			// Add record in transaction table
+			Transaction t = new Transaction();
+			t.setIsSplit(false);
+			if (isCounterSplit) {
+				t.setIsSplit(true);
+				t.setOfferId3(otherOfferId);
+				t.setOfferUserId3(otherUserId);
+				t.setOfferEmailId3(emailList[2]);
+				t.setOfferIdStatus3(otherAcceptOffer.getOfferStatus());
+			}
+			t.setOfferId1(srcOfferId);
+			t.setOfferId2(tgtOfferId);
+			t.setOfferUserId1(srcUserId);
+			t.setOfferUserId2(tgtUserId);
+			t.setOfferEmailId1(emailList[0]);
+			t.setOfferEmailId2(emailList[1]);
+			t.setTranStatus(Constant.TRANSACTION_INPROGRESS);
+			t.setOfferIdStatus1(srcAcceptOffer.getOfferStatus());
+			t.setOfferIdStatus2(tgtAcceptOffer.getOfferStatus());
+
+			if (!isCounterSplit) {
+				transactionService.acceptSingleOffer(t);
+			} else {
+				transactionService.acceptSplitOffer(t);
 			}
 
 			// Reject the remaining counter request along with updating the rejected's offer
