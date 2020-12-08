@@ -138,6 +138,18 @@ public class TransactionServiceImpl implements TransactionService {
 		return transactionRepository.save(transaction);
 	}
 
+	@Override
+	public List<Transaction> getTransactionHistory(Long userId) {
+	
+		return transactionRepository.getTransactionHistory(userId);
+	}
+
+	@Override
+	public List<Transaction> getAbortedTransactionHistory(Long userId) {
+		
+		return transactionRepository.getAbortedTransactionHistory(userId);
+	}
+
 //	@Override
 //	public void updateDependantOffersOnAccept(Long offerId) {
 //		

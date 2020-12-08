@@ -26,5 +26,12 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>{
 //	@Query("update offer set offer_status = 1 where (id in (select src_offer_id as id from counter_offer where src_offer_id=:offerId or tgt_offer_id=:offerId or other_offer_id=:offerId ) or id in (select tgt_offer_id as id from counter_offer where src_offer_id=:offerId or tgt_offer_id=:offerId or other_offer_id=:offerId) or id in (select other_offer_id as id from counter_offer where src_offer_id=:offerId or tgt_offer_id=:offerId or other_offer_id=:offerId)) and id != :offerId and offer_status = 5")
 //	List<Offer> updateOfferStatusOnAccept(@Param("offerId") Long offerId);
 	
+	@Query("Select t1 from Transaction t1 where (t1.offerUserId1 = :userId or t1.offerUserId2 = :userId or t1.offerUserId3 = :userId) and t1.tranStatus=2")
+	List<Transaction> getTransactionHistory(@Param("userId") Long userId);
+
+	@Query("Select t1 from Transaction t1 where (t1.offerUserId1 = :userId or t1.offerUserId2 = :userId or t1.offerUserId3 = :userId) and t1.tranStatus=3")
+	List<Transaction> getAbortedTransactionHistory(Long userId);
+
+	
 }
 

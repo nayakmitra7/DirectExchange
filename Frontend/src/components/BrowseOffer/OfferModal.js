@@ -7,15 +7,19 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { address, COUNTEROFFER_OPEN } from "../../js/helper/constant";
 import Select from "react-select";
-import CounterOffer from "../AutoMatching/CounterOffer"
+import CounterOffer from "../AutoMatching/CounterOffer";
 import Modal from "react-bootstrap/Modal";
 import Spinner from "react-bootstrap/Spinner";
+import StarRatings from "react-star-ratings";
+import { Link } from "react-router-dom";
+
 class OfferModal extends Component {
   state = {
     modalShow: "none",
     myOffer: {},
     selectedCounterOffer: {},
-    counterModal: false
+    counterModal: false,
+    url: "",
   };
 
   handleChange = (selectedOption) => {
@@ -23,6 +27,11 @@ class OfferModal extends Component {
     console.log(selectedOption);
   };
 
+  // changeRating(newRating, name) {
+  //   this.setState({
+  //     rating: newRating,
+  //   });
+  // }
   //WARNING! To be deprecated in React v17. Use componentDidMount instead.
   componentWillMount() {
     const offeroptions = [];
@@ -33,11 +42,18 @@ class OfferModal extends Component {
         this.setState({ openOffers: response.data }, () => {
           //console.log(this.state.openOffers)
           this.state.openOffers.map((offer) =>
-            offeroptions.push({ label: offer.id + " - Offer Amount(Des): " + offer.amountInDes + " " + offer.destinationCurrency, value: offer })
-
+            offeroptions.push({
+              label:
+                offer.id +
+                " - Offer Amount(Des): " +
+                offer.amountInDes +
+                " " +
+                offer.destinationCurrency,
+              value: offer,
+            })
           );
         });
-        this.setState({ offeroptions })
+        this.setState({ offeroptions });
       })
       .catch((error) => {
         toast.error(error, {
@@ -46,63 +62,83 @@ class OfferModal extends Component {
         });
       });
     // console.log(offeroptions)
-
+    this.setState({ url: `/offer/history/${this.props.offer.userId}` });
   }
   accept = (offer2) => {
-
-    if (Math.round(offer2.amountInDes) == Math.round(this.props.offer.amountInSrc) && offer2.destinationCurrency == this.props.offer.sourceCurrency) {
+    if (
+      Math.round(offer2.amountInDes) ==
+        Math.round(this.props.offer.amountInSrc) &&
+      offer2.destinationCurrency == this.props.offer.sourceCurrency
+    ) {
       this.setState({ spinner: true });
-      let data = { isSplit: false, offerId1: this.props.offer.id, offerId2: offer2.id, offerUserId1: this.props.offer.userId, offerUserId2: offer2.userId }
-      axios.post(address + "/twoPartyTransaction", data).then((response) => {
-        if (response.status == 200) {
-          this.setState({ spinner: false })
-          toast.success("Your offer has now entered in transaction mode");
-          setTimeout(() => {
-            window.location.reload()
-          }, 3000);
-
-        }
-      }).catch((error) => {
-        toast.error("Internal Error Occured");
-      })
-    } else {
-      toast.error("The source and destination amounts are unequal")
-    }
-
-  }
-  //Kena
-  counterModalOpen = (selectedCounterOffer) => {
-
-    this.setState({ counterModal: true, selectedCounterOffer })
-  }
-  counterModalClose = () => {
-    this.setState({ counterModal: false })
-  }
-  submitCounterHandle = async (e, counterAmtFromSrcToTgt) => {
-    e.preventDefault();
-    console.log("In submitCounterOffer")
-    let minBound = this.state.selectedCounterOffer.amountInSrc * 0.9;
-    let maxBound = this.state.selectedCounterOffer.amountInSrc * 1.1;
-    let withinRange = minBound <= counterAmtFromSrcToTgt && counterAmtFromSrcToTgt <= maxBound;
-    if (withinRange) {
+      let data = {
+        isSplit: false,
+        offerId1: this.props.offer.id,
+        offerId2: offer2.id,
+        offerUserId1: this.props.offer.userId,
+        offerUserId2: offer2.userId,
+      };
       axios
-        .post(address + '/offerMatching/counterOffer', { srcOfferDTO: this.state.myOffer, tgtOfferDTO: this.state.selectedCounterOffer, counterAmtFromSrcToTgt, counterCurrencyFromSrcToTgt: this.state.selectedCounterOffer.sourceCurrency, counterStatus: COUNTEROFFER_OPEN })
-        .then(res => {
-          if (res.status === 200) {
-            toast.success("Counter offer email has been sent to " + this.state.selectedCounterOffer.nickname);
-
+        .post(address + "/twoPartyTransaction", data)
+        .then((response) => {
+          if (response.status == 200) {
+            this.setState({ spinner: false });
+            toast.success("Your offer has now entered in transaction mode");
+            setTimeout(() => {
+              window.location.reload();
+            }, 3000);
           }
         })
-        .catch(err => {
-          toast.error("Error in making the counter offer");
+        .catch((error) => {
+          toast.error("Internal Error Occured");
+        });
+    } else {
+      toast.error("The source and destination amounts are unequal");
+    }
+  };
+  //Kena
+  counterModalOpen = (selectedCounterOffer) => {
+    this.setState({ counterModal: true, selectedCounterOffer });
+  };
+  counterModalClose = () => {
+    this.setState({ counterModal: false });
+  };
+  submitCounterHandle = async (e, counterAmtFromSrcToTgt) => {
+    e.preventDefault();
+    console.log("In submitCounterOffer");
+    let minBound = this.state.selectedCounterOffer.amountInSrc * 0.9;
+    let maxBound = this.state.selectedCounterOffer.amountInSrc * 1.1;
+    let withinRange =
+      minBound <= counterAmtFromSrcToTgt && counterAmtFromSrcToTgt <= maxBound;
+    if (withinRange) {
+      axios
+        .post(address + "/offerMatching/counterOffer", {
+          srcOfferDTO: this.state.myOffer,
+          tgtOfferDTO: this.state.selectedCounterOffer,
+          counterAmtFromSrcToTgt,
+          counterCurrencyFromSrcToTgt: this.state.selectedCounterOffer
+            .sourceCurrency,
+          counterStatus: COUNTEROFFER_OPEN,
         })
+        .then((res) => {
+          if (res.status === 200) {
+            toast.success(
+              "Counter offer email has been sent to " +
+                this.state.selectedCounterOffer.nickname
+            );
+          }
+        })
+        .catch((err) => {
+          toast.error("Error in making the counter offer");
+        });
     } else {
       toast.error("Amount entered must be within the mentioned range");
     }
-
-  }
+  };
 
   render() {
+    localStorage.setItem("visitId", this.props.offer.userId);
+
     return (
       <div>
         <div
@@ -126,7 +162,17 @@ class OfferModal extends Component {
               <div align="center" className="p-3">
                 <h1>John's Offer Details</h1>
               </div>
-
+              <div>
+                <Link to={this.state.url}>
+                  <StarRatings
+                    rating={this.state.rating}
+                    starRatedColor="blue"
+                    changeRating={this.changeRating}
+                    numberOfStars={6}
+                    name="rating"
+                  />
+                </Link>
+              </div>
               {/* <Table striped borderless hover variant="dark">
                 <tr className="p-3">
                   <td className="td_element">Source Country</td>
@@ -155,6 +201,7 @@ class OfferModal extends Component {
                   </td>
                 </tr>
               </Table> */}
+
               <ListGroup.Item
                 variant="dark"
                 className="list-group-style-offermodal"
@@ -186,45 +233,61 @@ class OfferModal extends Component {
               </ListGroup.Item>
               <div className="mt-5">
                 <label style={{ fontWeight: "bold" }}>
-                  Select your offer for which you want to accept or counter the offer
+                  Select your offer for which you want to accept or counter the
+                  offer
                 </label>
                 <Select
                   value={
-                    this.state.selectedOption
-                      ? this.state.selectedOption
-                      : ""
+                    this.state.selectedOption ? this.state.selectedOption : ""
                   }
                   onChange={this.handleChange}
                   options={this.state.offeroptions}
                 />
               </div>
               <div className="d-flex justify-content-center mt-3 p-3">
-                <button className="btn btn-success mx-2" onClick={() => { this.setState({ myOffer: this.state.selectedOption.value }); this.accept(this.state.selectedOption.value) }}>Accept Offer</button>
+                <button
+                  className="btn btn-success mx-2"
+                  onClick={() => {
+                    this.setState({ myOffer: this.state.selectedOption.value });
+                    this.accept(this.state.selectedOption.value);
+                  }}
+                >
+                  Accept Offer
+                </button>
 
                 {this.props.offer.counterOfferAllowed === true ? (
-                  <button className="btn btn-danger mx-2" onClick={() => { this.setState({ myOffer: this.state.selectedOption.value }); this.counterModalOpen(this.props.offer) }}>Counter Offer</button>
+                  <button
+                    className="btn btn-danger mx-2"
+                    onClick={() => {
+                      this.setState({
+                        myOffer: this.state.selectedOption.value,
+                      });
+                      this.counterModalOpen(this.props.offer);
+                    }}
+                  >
+                    Counter Offer
+                  </button>
                 ) : (
-                    ""
-                  )}
+                  ""
+                )}
               </div>
             </div>
           </div>
         </div>
         <Modal show={this.state.spinner} size="sm" centered>
-
           <Modal.Body>
             <Row>
               <Col></Col>
-              <Col><div>
-                <Spinner animation="border" role="status">
-                  <span className="sr-only">Loading...</span>
-                </Spinner>
-              </div ></Col>
+              <Col>
+                <div>
+                  <Spinner animation="border" role="status">
+                    <span className="sr-only">Loading...</span>
+                  </Spinner>
+                </div>
+              </Col>
               <Col></Col>
             </Row>
-
           </Modal.Body>
-
         </Modal>
         <CounterOffer
           myOffer={this.state.myOffer}

@@ -169,6 +169,42 @@ public class TransactionController {
 		}
 
 	}
+	
+	@RequestMapping(value = "/offer/history/{userId}", method = RequestMethod.GET, produces = "application/json")
+	@ResponseBody
+	public ResponseEntity<List<TransactionDTO>> getTransactionHistory(@PathVariable("userId") Long userId) {
+		try {
+			List<Transaction> transaction = transactionService.getTransactionHistory(userId);
+
+			List<TransactionDTO> transactionList = objectMapper.convertValue(transaction,
+					new TypeReference<List<TransactionDTO>>() {
+					});
+			return new ResponseEntity<List<TransactionDTO>>(transactionList, HttpStatus.OK);
+		} catch (Exception ex) {
+			ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(500, HttpStatus.INTERNAL_SERVER_ERROR,
+					ex.getMessage());
+			throw new GenericException(errorResponseDTO);
+		}
+
+	}
+	
+	@RequestMapping(value = "/offer/abort/history/{userId}", method = RequestMethod.GET, produces = "application/json")
+	@ResponseBody
+	public ResponseEntity<List<TransactionDTO>> getAbortedTransactionHistory(@PathVariable("userId") Long userId) {
+		try {
+			List<Transaction> transaction = transactionService.getAbortedTransactionHistory(userId);
+
+			List<TransactionDTO> transactionList = objectMapper.convertValue(transaction,
+					new TypeReference<List<TransactionDTO>>() {
+					});
+			return new ResponseEntity<List<TransactionDTO>>(transactionList, HttpStatus.OK);
+		} catch (Exception ex) {
+			ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(500, HttpStatus.INTERNAL_SERVER_ERROR,
+					ex.getMessage());
+			throw new GenericException(errorResponseDTO);
+		}
+
+	}
 
 	@RequestMapping(value = "/transaction/offer/{offerId1}/{offerId2}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody

@@ -30,5 +30,9 @@ public interface TransactionService {
 	public Transaction updateTransactionStatusForThreeOffers(Long transactionId, Long offerId1, Long offerId2,
 			Long offerId3);
 
+	public List<Transaction> getTransactionHistory(Long userId);
+
+	public List<Transaction> getAbortedTransactionHistory(Long userId);
+
 //	public void updateDependantOffersOnAccept(Long offerId);
 }
