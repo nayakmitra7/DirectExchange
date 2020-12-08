@@ -25,8 +25,7 @@ class BrowseOffer extends Component {
     country: [],
     countryarr: [],
     offers: [],
-    page: "1",
-    limit: "5",
+    limit: 10,
     count: "",
     page: 1,
     paginationOffers: [],
@@ -73,6 +72,7 @@ class BrowseOffer extends Component {
         });
       }
     );
+    this.applyFilter();
   }
 
   getPage() {
@@ -105,10 +105,10 @@ class BrowseOffer extends Component {
     });
     this.setState({ countryarr });
   }
-  handlePageChange(pageNumber) {
-    console.log(`active page is ${pageNumber}`);
-    this.setState({ page: pageNumber });
-  }
+  // handlePageChange(pageNumber) {
+  //   console.log(`active page is ${pageNumber}`);
+  //   this.setState({ page: pageNumber });
+  // }
   handleSourceCountryChange = (selectedSourceCurrencyOption) => {
     this.setState({ selectedSourceCurrencyOption });
     console.log(selectedSourceCurrencyOption.label);
@@ -123,7 +123,21 @@ class BrowseOffer extends Component {
   };
   applyFilter = () => {
     let paginationOffers = this.state.offers;
+    let {
+      selectedSourceCurrencyOption,
+      selectedDesCurrencyOption,
+      destinationAmountFilter,
+      sourceAmountFilter,
+    } = this.state;
 
+    if (
+      sourceAmountFilter === "empty" &&
+      destinationAmountFilter === "empty" &&
+      selectedDesCurrencyOption === "empty" &&
+      selectedSourceCurrencyOption === "empty"
+    ) {
+      return;
+    }
     if (this.state.selectedSourceCurrencyOption != "empty") {
       paginationOffers = paginationOffers.filter(
         (offer) =>
@@ -156,6 +170,14 @@ class BrowseOffer extends Component {
     this.setState({ count: paginationOffers.length }, () => {
       this.setState({ paginationOffers }, () => {
         this.getPage();
+        console.log("kidan", this.state.paginationOffers);
+        this.setState({
+          paginationOffers: this.state.paginationOffers.slice(
+            parseInt((this.state.page - 1) * this.state.limit),
+            parseInt((this.state.page - 1) * this.state.limit) +
+              parseInt(this.state.limit)
+          ),
+        });
       });
     });
   };
@@ -163,8 +185,8 @@ class BrowseOffer extends Component {
     this.setState({ destinationAmountFilter: "empty" });
     document.getElementById("sourceamount").value = "";
     document.getElementById("desamount").value = "";
-    this.setState({ selectedSourceCurrencyOption: null });
-    this.setState({ selectedDesCurrencyOption: null });
+    this.setState({ selectedSourceCurrencyOption: "empty" });
+    this.setState({ selectedDesCurrencyOption: "empty" });
 
     this.setState({ sourceAmountFilter: "empty" });
     this.getOffers();
