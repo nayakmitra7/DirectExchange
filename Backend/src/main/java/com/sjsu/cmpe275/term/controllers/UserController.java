@@ -1,6 +1,5 @@
 package com.sjsu.cmpe275.term.controllers;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sjsu.cmpe275.term.dto.CountryDto;
+import com.sjsu.cmpe275.term.dto.AccountDTO;
 import com.sjsu.cmpe275.term.dto.ErrorResponseDTO;
 import com.sjsu.cmpe275.term.dto.MessageDTO;
 import com.sjsu.cmpe275.term.dto.ResponseDTO;
@@ -27,11 +26,9 @@ import com.sjsu.cmpe275.term.dto.UserAccountDTO;
 import com.sjsu.cmpe275.term.dto.UserDTO;
 import com.sjsu.cmpe275.term.exceptions.GenericException;
 import com.sjsu.cmpe275.term.models.Account;
-import com.sjsu.cmpe275.term.models.Country;
 import com.sjsu.cmpe275.term.models.User;
 import com.sjsu.cmpe275.term.service.account.AccountService;
 import com.sjsu.cmpe275.term.service.user.UserService;
-import com.sjsu.cmpe275.term.utils.EmailUtility;
 
 @RestController
 @CrossOrigin
@@ -44,7 +41,6 @@ public class UserController {
 	private ObjectMapper objectMapper;
 	@Autowired
 	private JavaMailSender emailSender;
-	
 
 	@RequestMapping(value = "/user/{emailId}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
@@ -83,12 +79,14 @@ public class UserController {
 				throw new GenericException(errorResponseDTO);
 			}
 			User newUser = userService.createUser(user);
-//			account1.setUser(newUser);
-//			account2.setUser(newUser);
-			List<Account> accounts=new ArrayList<>();
-			accounts.add(accountService.createAccount(account1));
-			accounts.add(accountService.createAccount(account2));
-			newUser.setAccount(accounts);
+			account1.setUserId(newUser.getId());
+			account2.setUserId(newUser.getId());
+			accountService.createAccount(account1);
+			accountService.createAccount(account2);
+//			List<Account> accounts = new ArrayList<>();
+//			accounts.add(accountService.createAccount(account1));
+//			accounts.add(accountService.createAccount(account2));
+//			newUser.setAccount(accounts);
 			UserDTO userDTO1 = objectMapper.convertValue(newUser, new TypeReference<UserDTO>() {
 			});
 			return new ResponseEntity<UserDTO>(userDTO1, HttpStatus.OK);
@@ -100,17 +98,17 @@ public class UserController {
 		}
 
 	}
+
 	@RequestMapping(value = "/user/messaging/{id}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public ResponseEntity<List<UserDTO>> getBusinessUsers(@PathVariable("id") Long userId) {
 		List<User> user = userService.getBusinessUsers(userId);
-		List<UserDTO> userDTOs = user
-				  .stream()
-				  .map(element -> objectMapper.convertValue(element, UserDTO.class))
-				  .collect(Collectors.toList());
+		List<UserDTO> userDTOs = user.stream().map(element -> objectMapper.convertValue(element, UserDTO.class))
+				.collect(Collectors.toList());
 		return new ResponseEntity<List<UserDTO>>(userDTOs, HttpStatus.OK);
 
 	}
+
 	@RequestMapping(value = "/user/messaging/send", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
 	public ResponseEntity<ResponseDTO> sendMessage(@RequestBody MessageDTO messageDTO) {
@@ -125,4 +123,25 @@ public class UserController {
 
 	}
 
+	@RequestMapping(value = "/user/account", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	@ResponseBody
+	public ResponseEntity<ResponseDTO> createAccount(@RequestBody AccountDTO accountDTO) {
+
+		Account newAccount = objectMapper.convertValue(accountDTO, Account.class);
+		accountService.createAccount(newAccount);
+
+		return new ResponseEntity<ResponseDTO>(new ResponseDTO(200, HttpStatus.OK, "Account posted"), HttpStatus.OK);
+
+	}
+
+	@RequestMapping(value = "/user/account/{userId}", method = RequestMethod.GET, produces = "application/json")
+	@ResponseBody
+	public ResponseEntity<List<AccountDTO>> getAccounts(@PathVariable("userId") Long userId) {
+		List<Account> accounts = accountService.getAccounts(userId);
+		List<AccountDTO> accountDTOs = accounts.stream()
+				.map(element -> objectMapper.convertValue(element, AccountDTO.class)).collect(Collectors.toList());
+
+		return new ResponseEntity<List<AccountDTO>>(accountDTOs, HttpStatus.OK);
+
+	}
 }

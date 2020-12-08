@@ -19,6 +19,7 @@ class NavigationBar extends Component {
                     <Nav>
                         <NavDropdown title={message}>
                             <NavDropdown.Item href="">My Offers</NavDropdown.Item>
+                            <NavDropdown.Item href={"/accounts/"+localStorage.getItem("id")}>My Accounts</NavDropdown.Item>
                             <NavDropdown.Item href="/sendMessage">Send a message</NavDropdown.Item>
                             <NavDropdown.Divider />
                             <NavDropdown.Item href="/auth" onClick={this.handleLogout}>Log Out</NavDropdown.Item>

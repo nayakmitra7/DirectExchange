@@ -12,8 +12,9 @@ import InTransactionOffer from "./MyOffer/InTransactionOffer";
 import CounterReceived from "./MyOffer/CounterReceived";
 import CounterMade from "./MyOffer/CounterMade";
 import SendMessage from "./SendMessage/SendMessgae";
-
+import Account from "./Account/Account";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+
 //Create a Main Component
 class Main extends Component {
   render() {
@@ -34,7 +35,7 @@ class Main extends Component {
           <Route path="/myOffer/counterreceived" component={CounterReceived} />
           <Route path="/myOffer/countermade" component={CounterMade} />
           <Route path="/sendMessage" component={SendMessage} />
-
+          <Route path="/accounts/:userId" component={Account} />
           {/* </Switch> */}
         </div>
       </Router>
