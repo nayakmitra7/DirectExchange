@@ -422,6 +422,7 @@ class AutoMatching extends Component {
             <Card>
                 <Accordion.Toggle as={Card.Header} eventKey="0" className="gray-auto-matching">
                     <ListGroup.Item variant="secondary" className="list-group-style-auto-matching ">
+                        <Row className="margin-bottom-offer"><u><strong>My selected Offer:</strong></u></Row>
                         <Row className="header-bold-auto-matching ">
                             <Col>Offer ID</Col>
                             <Col>Username</Col>
@@ -444,6 +445,7 @@ class AutoMatching extends Component {
                 <Accordion.Collapse eventKey="0">
                     <Card.Body>
                         <ListGroup variant="flush">
+                            <ListGroup.Item><Row className="margin-bottom-offer"><strong>List of matching offers:</strong></Row></ListGroup.Item>
                             {inner}
                         </ListGroup>
                     </Card.Body>
