@@ -15,7 +15,9 @@ import SendMessage from "./SendMessage/SendMessgae";
 import OfferHistory from "./OtherOffer/OfferHistory";
 import OfferAbortedHistory from "./OtherOffer/OfferAbortedHistroy";
 
+import Account from "./Account/Account";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+
 //Create a Main Component
 class Main extends Component {
   render() {
@@ -42,6 +44,7 @@ class Main extends Component {
             component={OfferAbortedHistory}
           />
 
+          <Route path="/accounts/:userId" component={Account} />
           {/* </Switch> */}
         </div>
       </Router>

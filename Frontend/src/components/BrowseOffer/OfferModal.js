@@ -13,6 +13,7 @@ import Spinner from "react-bootstrap/Spinner";
 import StarRatings from "react-star-ratings";
 import { Link } from "react-router-dom";
 
+import ReactStars from 'react-stars';
 class OfferModal extends Component {
   state = {
     modalShow: "none",
@@ -214,6 +215,7 @@ class OfferModal extends Component {
                   <Col>Amount(src)</Col>
                   <Col>Country(src)</Col>
                   <Col>Exp Date</Col>
+                  <Col>Reputation</Col>
                 </Row>
                 <Row>
                   <Col>#{this.props.offer.id}</Col>
@@ -229,6 +231,7 @@ class OfferModal extends Component {
                   </Col>
                   <Col>{this.props.offer.sourceCountry}</Col>
                   <Col>{this.props.offer.expirationDate}</Col>
+                  <Col onClick={()=>{alert("hi")}}><ReactStars count={5} size={18} color2={'#ffd700'} value={4} edit={false} /></Col>
                 </Row>
               </ListGroup.Item>
               <div className="mt-5">

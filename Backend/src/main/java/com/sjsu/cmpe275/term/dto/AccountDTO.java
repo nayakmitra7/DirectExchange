@@ -10,9 +10,10 @@ public class AccountDTO {
 	private String ownerAddress;
 	private String primaryCurrency;
 	private String transactionType;
+	private Long userId;
 
 	public AccountDTO(Long id, String bankName, String countryName, String accountNumber, String ownerName,
-			String ownerAddress, String primaryCurrency, String transactionType) {
+			String ownerAddress, String primaryCurrency, String transactionType, Long userId) {
 		super();
 		this.id = id;
 		this.bankName = bankName;
@@ -22,9 +23,18 @@ public class AccountDTO {
 		this.ownerAddress = ownerAddress;
 		this.primaryCurrency = primaryCurrency;
 		this.transactionType = transactionType;
+		this.userId = userId;
 	}
 
 	public AccountDTO() {
+	}
+
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 
 	public Long getId() {

@@ -1,17 +1,11 @@
 package com.sjsu.cmpe275.term.models;
 
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 
 @Entity
 @Table(name = "USER")
@@ -27,8 +21,8 @@ public class User {
 	private String nickname;
 //	@JsonInclude(JsonInclude.Include.NON_NULL)
 //	@JsonIgnoreProperties({ "user" })
-	@OneToMany
-	private List<Account> accounts;
+//	@OneToMany
+//	private List<Account> accounts;
 
 	public User(Long id, String emailId, String nickname) {
 		super();
@@ -64,12 +58,12 @@ public class User {
 		this.nickname = nickname;
 	}
 
-	public List<Account> getAccount() {
-		return accounts;
-	}
-
-	public void setAccount(List<Account> accounts) {
-		this.accounts = accounts;
-	}
+//	public List<Account> getAccount() {
+//		return accounts;
+//	}
+//
+//	public void setAccount(List<Account> accounts) {
+//		this.accounts = accounts;
+//	}
 
 }

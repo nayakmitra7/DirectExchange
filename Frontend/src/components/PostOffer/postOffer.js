@@ -29,7 +29,8 @@ class PostOffer extends Component {
             expirationDate: '',
             userId: parseInt(localStorage.getItem("id")),
             exchangeRateList: [],
-            countries: [],
+            senderCountries: [],
+            receiverCountries: [],
             count: 0,
             nickname: localStorage.getItem("nickname")
         }
@@ -46,22 +47,25 @@ class PostOffer extends Component {
         if (!this.state.hasMetRequirement) {
             toast.error("Please enroll atleast 2 bank accounts to avail the service !", { position: 'top-center', autoClose: false });
         } else {
-            axios.get(address + '/country').then((response) => {
-                this.setState({ countries: response.data });
+            axios.get(address + '/country/sender/'+this.state.userId).then((response) => {
+                this.setState({ senderCountries: response.data });
+            });
+            axios.get(address + '/country/receiver/'+this.state.userId).then((response) => {
+                this.setState({ receiverCountries: response.data });
             });
         }
     }
 
     populateSourceCountries = () => {
         const countryItem = [];
-        this.state.countries.forEach(element => {
+        this.state.senderCountries.forEach(element => {
             countryItem.push(<option value={element.currency}>{element.country}</option>);
         });
         return countryItem;
     }
     populateDestinationCountries = (value) => {
         const countryItem = [];
-        this.state.countries.forEach(element => {
+        this.state.receiverCountries.forEach(element => {
             if (element.country != (value)) {
                 countryItem.push(<option value={element.currency}>{element.country}</option>);
             }
@@ -74,7 +78,7 @@ class PostOffer extends Component {
         this.setState({ sourceCountry: event.target.options[selectedIndex].text });
         this.setState({ destinationCurrency: '' });
         this.setState({ destinationCountry: '' });
-        this.state.countries.forEach(element => {
+        this.state.senderCountries.forEach(element => {
             if (element.currency == event.target.value) {
                 axios.get(address + '/exchangerate/' + element.symbol).then((response) => {
                     this.setState({ exchangeRateList: response.data })
@@ -149,7 +153,7 @@ class PostOffer extends Component {
 
                                 <Row>
                                     <Col className="margin-left-right-5-post-offer">
-                                        <Form >
+                                        <Form onSubmit={this.postOffer}>
 
                                             <Row>
                                                 <Col>
@@ -172,7 +176,7 @@ class PostOffer extends Component {
                                                 <Col>
                                                     <Form.Group >
                                                         <Form.Label>Amount to Remit</Form.Label>
-                                                        <Form.Control type="number" required onChange={(event) => this.setState({ amount: event.target.valueAsNumber })} />
+                                                        <Form.Control type="number" required onChange={(event) => this.setState({ amount: event.target.valueAsNumber })} step={0.01}/>
                                                         <Form.Text className="text-muted">In source currency</Form.Text>
                                                     </Form.Group>
                                                 </Col>
@@ -241,7 +245,7 @@ class PostOffer extends Component {
                                             <Card.Footer className="card-footer-post-offer">
                                                 <Row>
                                                     <Col></Col>
-                                                    <Col><Button variant="success" size="lg" type="submit" block disabled={!this.state.hasMetRequirement} onClick={this.postOffer}>Post</Button></Col>
+                                                    <Col><Button variant="success" size="lg" type="submit" block disabled={!this.state.hasMetRequirement} >Post</Button></Col>
                                                     <Col></Col>
                                                 </Row>
                                             </Card.Footer>
