@@ -14,6 +14,8 @@ import Typography from "@material-ui/core/Typography";
 import OfferModal from "./OfferModal";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import ReactStars from 'react-stars';
+
 const options = [
   { value: "chocolate", label: "Chocolate" },
   { value: "strawberry", label: "Strawberry" },
@@ -286,26 +288,21 @@ Cards to display offers
                           <Col>ID</Col>
                           <Col>Username</Col>
                           <Col>Country(src)</Col>
-                          <Col>Currency(src)</Col>
-
                           <Col>Amount(src)</Col>
                           <Col>Amount(des)</Col>
                           <Col>Country(des)</Col>
-                          <Col>Currency(des)</Col>
-
                           <Col>ExpDate</Col>
+                          <Col>Reputation</Col>
                         </Row>
                         <Row>
                           <Col>#{offer.id}</Col>
                           <Col>{offer.nickname}</Col>
                           <Col>{offer.sourceCountry}</Col>
-                          <Col>{offer.sourceCurrency}</Col>
-                          <Col>{offer.amountInSrc}</Col>
-                          <Col>{offer.amountInDes}</Col>
-                          <Col>{offer.destinationCountry}</Col>
-                          <Col>{offer.destinationCurrency}</Col>
-
+                          <Col>{offer.amountInSrc} {offer.sourceCurrency}</Col>
+                          <Col>{offer.amountInDes} {offer.destinationCurrency}</Col>
+                          <Col>{offer.destinationCountry} </Col>
                           <Col>{offer.expirationDate}</Col>
+                          <Col><ReactStars count={5} size={24} color2={'#ffd700'} value={4} edit={false}/></Col>
                         </Row>
                       </Card.Body>
                     </Card>

@@ -3,7 +3,6 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Navbar from '../Navbar/navbar';
-import { toast } from 'react-toastify';
 class Home extends Component {
 
     componentDidMount() {
@@ -14,12 +13,11 @@ class Home extends Component {
         return (
             <div>
                 <Navbar></Navbar>
-                <Container>
                     <Row>
-                        <Col></Col>
+                        <Col>
+                            <marquee bgcolor="#66CD00" height="50" scrollamount="12"><div style={{marginTop:'0.5%',fontSize:'25px'}}>Welcome to Direct Exchange!</div></marquee>
+                        </Col>
                     </Row>
-
-                </Container>
             </div>
         )
     }

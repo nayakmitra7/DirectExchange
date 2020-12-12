@@ -20,5 +20,19 @@ public class CountryServiceImpl implements CountryService {
 	public List<Country> getAllCountry() {
 		return countryRepository.findAll();
 	}
+
+
+	@Override
+	public List<Country> getSenderCountry(Long id) {
+		// TODO Auto-generated method stub
+		return countryRepository.findUserSendCountries(id);
+	}
+
+
+	@Override
+	public List<Country> getReceiverCountry(Long id) {
+		// TODO Auto-generated method stub
+		return countryRepository.findUserReceiveCountries(id);
+	}
 	
 }
