@@ -176,7 +176,7 @@ class PostOffer extends Component {
                                                 <Col>
                                                     <Form.Group >
                                                         <Form.Label>Amount to Remit</Form.Label>
-                                                        <Form.Control type="number" required onChange={(event) => this.setState({ amount: event.target.valueAsNumber })} />
+                                                        <Form.Control type="number" required onChange={(event) => this.setState({ amount: event.target.valueAsNumber })} step={0.01}/>
                                                         <Form.Text className="text-muted">In source currency</Form.Text>
                                                     </Form.Group>
                                                 </Col>

@@ -1,6 +1,7 @@
 package com.sjsu.cmpe275.term.controllers;
 
 import java.util.List;
+import java.util.Timer;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sjsu.cmpe275.term.dto.CountryDto;
+import com.sjsu.cmpe275.term.dto.ResponseDTO;
 import com.sjsu.cmpe275.term.models.Country;
 import com.sjsu.cmpe275.term.service.country.CountryServiceImpl;
+import com.sjsu.cmpe275.term.utils.Cron;
 
 @RestController
 @CrossOrigin
@@ -59,4 +62,32 @@ public class CountryController {
 		return new ResponseEntity<List<CountryDto>>(countryDtos, HttpStatus.OK);
 	}
 	
+	//sample code. should be removed later
+	@GetMapping(value = "/cron/{id}")
+	@ResponseBody
+	public ResponseEntity<ResponseDTO> abcd(@PathVariable("id") int id) {
+		new java.util.Timer().schedule( 
+		        new java.util.TimerTask() {
+		            @Override
+		            public void run() {
+		            	System.out.println("hii "+ id);
+		            }
+		        }, 
+		        10000 
+		);
+		return new ResponseEntity<ResponseDTO>(new ResponseDTO(200,HttpStatus.OK,"HII"),HttpStatus.OK);
+		
+//		try {
+//			Thread.sleep(10000);
+//			System.out.println("hii "+ id);
+//		} catch (InterruptedException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		Timer t = new Timer();
+//	     Cron mTask = new Cron(id);
+//	     // This task is scheduled to run every 10 seconds
+//
+//	     t.scheduleAtFixedRate(mTask, 0, 60000);
+	}
 }

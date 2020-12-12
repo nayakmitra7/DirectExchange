@@ -17,7 +17,7 @@ class NavigationBarLanding extends Component {
 
 
             <Navbar expand="lg" bg="dark" variant="dark">
-                <Navbar.Brand href="/home">DirectExchange</Navbar.Brand>
+                <Navbar.Brand href="">DirectExchange</Navbar.Brand>
                 <Nav className="mr-auto">
 
                 </Nav>
