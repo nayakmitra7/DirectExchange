@@ -60,7 +60,6 @@ class CloseOffer extends Component {
                   <Col>Amount(des)</Col>
                   <Col>Amount(src)</Col>
                   <Col>Country(src)</Col>
-                  <Col>Currency(src)</Col>
                   <Col>Exp Date</Col>
                   <Col>Offer Status</Col>
                 </Row>
@@ -68,10 +67,9 @@ class CloseOffer extends Component {
                   <Col>#{offer.id}</Col>
                   <Col>{offer.nickname}</Col>
                   <Col>{offer.destinationCountry}</Col>
-                  <Col>{offer.amountInDes}</Col>
-                  <Col>{offer.amountInSrc}</Col>
+                  <Col>{offer.amountInDes} {offer.destinationCurrency}</Col>
+                  <Col>{offer.amountInSrc} {offer.sourceCurrency}</Col>
                   <Col>{offer.sourceCountry}</Col>
-                  <Col>{offer.sourceCurrency}</Col>
                   <Col>{offer.expirationDate}</Col>
                   {offer.offerStatus == 2 ? (
                     <Col style={{ color: "green" }}>Fulfilled</Col>
