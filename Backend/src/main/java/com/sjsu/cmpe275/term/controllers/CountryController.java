@@ -18,7 +18,6 @@ import com.sjsu.cmpe275.term.dto.CountryDto;
 import com.sjsu.cmpe275.term.dto.ResponseDTO;
 import com.sjsu.cmpe275.term.models.Country;
 import com.sjsu.cmpe275.term.service.country.CountryServiceImpl;
-import com.sjsu.cmpe275.term.utils.Cron;
 
 @RestController
 @CrossOrigin
