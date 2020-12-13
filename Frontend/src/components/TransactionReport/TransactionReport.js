@@ -48,8 +48,9 @@ class TransactionReport extends Component {
                 accessor: "abortedTransactionCount",
             },
             {
-                Header: "Total Amount recieved(in USD)",
+                Header: "Total Remitted Amount(in USD)",
                 accessor: "transferedSum",
+                width: 250
             },
             {
                 Header: "Total Service Fee(in USD)",
