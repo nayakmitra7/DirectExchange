@@ -9,7 +9,7 @@ public class UserDTO {
 	private Long id;
 	private String emailId;
 	private String nickname;
-	private List<Account> accounts;
+//	private List<Account> accounts;
 
 	public UserDTO(Long id, String emailId, String nickname) {
 		super();
@@ -18,13 +18,13 @@ public class UserDTO {
 		this.nickname = nickname;
 	}
 
-	public List<Account> getAccount() {
-		return accounts;
-	}
-
-	public void setAccount(List<Account> accounts) {
-		this.accounts = accounts;
-	}
+//	public List<Account> getAccount() {
+//		return accounts;
+//	}
+//
+//	public void setAccount(List<Account> accounts) {
+//		this.accounts = accounts;
+//	}
 
 	public UserDTO() {
 	}
