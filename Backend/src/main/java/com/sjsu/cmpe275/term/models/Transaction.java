@@ -8,7 +8,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "TRANSACTION")
-public class Transaction {
+public class Transaction extends BaseEntity{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,6 +44,8 @@ public class Transaction {
 	private Long offerUserId3;
 	@Column(name = "tranStatus", nullable = false)
 	private int tranStatus;
+	@Column(name = "createdAt", nullable = false)
+	private int createdAt;
 	
 	public Long getId() {
 		return id;
