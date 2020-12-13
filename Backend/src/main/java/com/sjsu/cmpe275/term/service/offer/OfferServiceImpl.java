@@ -3,7 +3,6 @@ package com.sjsu.cmpe275.term.service.offer;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 
@@ -28,15 +27,6 @@ public class OfferServiceImpl implements OfferService {
 	public Offer getOfferById(Long id) {
 		Offer offer = offerRepository.findById(id).orElse(null);
 		return offerRepository.getOne(id);
-	}
-	
-	@Override
-	public Offer getOfferById1(Long id) {
-			EntityManager em = entityManagerFactory.createEntityManager();
-			Offer offer = em.find(Offer.class, id);
-			em.merge(offer);
-			em.refresh(offer);
-		return offer;
 	}
 //	@Override
 //	public Offer getOfferById1(String id) {

@@ -26,12 +26,10 @@ import com.sjsu.cmpe275.term.exceptions.GenericException;
 import com.sjsu.cmpe275.term.models.CounterOffer;
 import com.sjsu.cmpe275.term.models.ExchangeRate;
 import com.sjsu.cmpe275.term.models.Offer;
-import com.sjsu.cmpe275.term.models.Rating;
 import com.sjsu.cmpe275.term.models.Transaction;
 import com.sjsu.cmpe275.term.service.counterOffer.CounterOfferService;
 import com.sjsu.cmpe275.term.service.exrate.ExRateService;
 import com.sjsu.cmpe275.term.service.offer.OfferService;
-import com.sjsu.cmpe275.term.service.rating.RatingService;
 import com.sjsu.cmpe275.term.service.transaction.TransactionService;
 import com.sjsu.cmpe275.term.service.user.UserService;
 import com.sjsu.cmpe275.term.utils.Constant;
@@ -55,8 +53,6 @@ public class CounterOfferController {
 	ExRateService exRateService;
 	@Autowired
 	TransactionService transactionService;
-	@Autowired
-	RatingService ratingService;
 
 	private static DecimalFormat df2 = new DecimalFormat("#.##");
 
@@ -114,24 +110,7 @@ public class CounterOfferController {
 			emailUtil.sendEmail(tgtEmailList, "Counter offer received for offer #" + tgtOffer.getId(),
 					"You have been proposed a counter offer from user " + srcNickname + " for an amount of "
 							+ counterAmtFromSrcToTgt + " " + counterCurrencyFromSrcToTgt + "!");
-			try {
-			new java.util.Timer().schedule( 
-			        new java.util.TimerTask() {
-			            @Override
-			            public void run() {
-			            	int counterStatus = counterOffer.getCounterStatus();
-			            	if(counterStatus!=Constant.COUNTER_ACCEPTED || counterStatus!=Constant.COUNTER_REJECTED) {
-			            		counterOffer.setCounterStatus(Constant.COUNTER_ABORTED);
-			            		counterOfferService.createCounterOffer(counterOffer);
-			            	}
-			            }
-			        }, 
-			        120000 
-			);
-			}
-			catch(Exception ex) {
-				System.out.println("Exception is coming in Scheduler code of Counter Offer" + ex);
-			}
+
 			// return response
 			ResponseDTO responseDTO = new ResponseDTO(200, HttpStatus.OK,
 					"Counter offer has been successfully made from user " + srcNickname + " to user " + tgtNickname
@@ -306,97 +285,8 @@ public class CounterOfferController {
 
 			if (!isCounterSplit) {
 				transactionService.acceptSingleOffer(t);
-				try {
-				Rating rating1 = ratingService.getRating(srcUserId);
-				Rating rating2 = ratingService.getRating(tgtUserId);
-				
-				
-				rating1.setTotalCount(rating1.getTotalCount()+1);
-				rating2.setTotalCount(rating2.getTotalCount()+1);
-
-				ratingService.createRating(rating1);
-				ratingService.createRating(rating2);
-
-				transactionService.acceptSplitOffer(t);
-				new java.util.Timer().schedule( 
-				        new java.util.TimerTask() {
-				            @Override
-				            public void run() {
-				            	int status = transactionService.getTransaction(t.getId()).getTranStatus();
-				            	if(status != Constant.TRANSACTION_COMPLETED) {
-				            	
-				            	t.setTranStatus(Constant.TRANSACTION_ABORTED);
-				            	transactionService.acceptSingleOffer(t);
-				            	
-				            	int offer1Status = offerService.getOfferById1(srcOfferId).getOfferStatus();
-				            	int offer2Status = offerService.getOfferById1(tgtOfferId).getOfferStatus();
-				 
-				            	
-					            	if(offer1Status != Constant.OFFERTRANSFERRED) {
-					            		rating1.setFaultCount(rating1.getFaultCount()+1);
-					            		ratingService.createRating(rating1);
-					            	}
-					            	if(offer2Status != Constant.OFFERTRANSFERRED) {
-					            		rating2.setFaultCount(rating2.getFaultCount()+1);
-					            		ratingService.createRating(rating2);
-					            	}
-				            	}
-				            }
-				        }, 
-				        120000 
-				);
-				}catch(Exception ex) {
-					System.out.println("Exception is coming in Sceduler code of Counter Offer" + ex);
-				}
 			} else {
 				transactionService.acceptSplitOffer(t);
-				try {
-				Rating rating1 = ratingService.getRating(srcUserId);
-				Rating rating2 = ratingService.getRating(tgtUserId);
-				Rating rating3 = ratingService.getRating(otherUserId);
-				
-				rating1.setTotalCount(rating1.getTotalCount()+1);
-				rating2.setTotalCount(rating2.getTotalCount()+1);
-				rating3.setTotalCount(rating3.getTotalCount()+1);
-				
-				ratingService.createRating(rating1);
-				ratingService.createRating(rating2);
-				ratingService.createRating(rating3);
-				new java.util.Timer().schedule( 
-				        new java.util.TimerTask() {
-				            @Override
-				            public void run() {
-				            	int status = transactionService.getTransaction(t.getId()).getTranStatus();
-				            	if(status != Constant.TRANSACTION_COMPLETED) {
-				            	
-				            	t.setTranStatus(Constant.TRANSACTION_ABORTED);
-				            	transactionService.acceptSingleOffer(t);
-				            	
-				            	int offer1Status = offerService.getOfferById1(srcOfferId).getOfferStatus();
-				            	int offer2Status = offerService.getOfferById1(tgtOfferId).getOfferStatus();
-				            	int offer3Status = offerService.getOfferById1(otherOfferId).getOfferStatus();
-				            	
-					            	if(offer1Status != Constant.OFFERTRANSFERRED) {
-					            		rating1.setFaultCount(rating1.getFaultCount()+1);
-					            		ratingService.createRating(rating1);
-					            	}
-					            	if(offer2Status != Constant.OFFERTRANSFERRED) {
-					            		rating2.setFaultCount(rating2.getFaultCount()+1);
-					            		ratingService.createRating(rating2);
-					            	}
-					            	if(offer3Status != Constant.OFFERTRANSFERRED) {
-					            		rating3.setFaultCount(rating3.getFaultCount()+1);
-					            		ratingService.createRating(rating3);
-					            	}
-				            	}
-				            }
-				        }, 
-				        120000 
-				);
-			}
-				catch(Exception ex) {
-					System.out.println("Exception is coming in Sceduler code of Counter Offer" + ex);
-				}
 			}
 
 			// Reject the remaining counter request along with updating the rejected's offer
