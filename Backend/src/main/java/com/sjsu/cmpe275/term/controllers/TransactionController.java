@@ -1,8 +1,10 @@
 package com.sjsu.cmpe275.term.controllers;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -22,6 +24,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sjsu.cmpe275.term.dto.ErrorResponseDTO;
 import com.sjsu.cmpe275.term.dto.OfferDto;
+import com.sjsu.cmpe275.term.dto.ReportDTO;
 import com.sjsu.cmpe275.term.dto.ResponseDTO;
 import com.sjsu.cmpe275.term.dto.TransactionDTO;
 import com.sjsu.cmpe275.term.exceptions.GenericException;
@@ -404,17 +407,25 @@ public class TransactionController {
 	}
 	@RequestMapping(value = "/transaction/report", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
-	public void getTransactionReport() {
+	public ResponseEntity<List<ReportDTO>> getTransactionReport() {
 		try {
-			
+			List<ReportDTO> reportList = new ArrayList<ReportDTO>();
 			for(int i = 0; i < 12; i++) {
 				LocalDate currentdate = LocalDate.now().minus(i, ChronoUnit.MONTHS);
 				int month = currentdate.getMonthValue();
 				int year = currentdate.getYear();
-				System.out.println(month+" "+year);
+				int completedTransactionCount = transactionService.getCountOfCompletedTransactionPerMonth(year, month);
+				int abortedTransactionCount = transactionService.getCountOfAbortedTransactionPerMonth(year, month);
+				Double transferedSum = transactionService.getSumOfCompletedTransactionPerMonth(year, month);				
+				Double serviceFeeCollected = transferedSum * 0.05;
+				DecimalFormat df = new DecimalFormat("#.##");
+				Double serviceFeeCollected1 = Double.parseDouble(df.format(serviceFeeCollected));
+				ReportDTO reportDTO = new ReportDTO(completedTransactionCount, abortedTransactionCount, year+"", Month.of(month).name(), transferedSum, serviceFeeCollected1);
+				reportList.add(reportDTO);
 			}
-			//return new ResponseEntity<List<OfferDto>>(offerList, HttpStatus.OK);
+			return new ResponseEntity<List<ReportDTO>>(reportList, HttpStatus.OK);
 		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
 			ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(500, HttpStatus.INTERNAL_SERVER_ERROR,
 					ex.getMessage());
 			throw new GenericException(errorResponseDTO);

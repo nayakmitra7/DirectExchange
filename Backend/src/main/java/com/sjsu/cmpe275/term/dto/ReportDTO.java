@@ -4,7 +4,6 @@ package com.sjsu.cmpe275.term.dto;
 
 public class ReportDTO {
 	
-    private Long id;
     private Integer completedTransactionCount;
     private Integer abortedTransactionCount;
     private String year;
@@ -16,10 +15,10 @@ public class ReportDTO {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	public ReportDTO(Long id, Integer completedTransactionCount, Integer abortedTransactionCount, String year,
+	public ReportDTO( Integer completedTransactionCount, Integer abortedTransactionCount, String year,
 			String month, Double transferedSum, Double serviceFeeCollected) {
 		super();
-		this.id = id;
+		
 		this.completedTransactionCount = completedTransactionCount;
 		this.abortedTransactionCount = abortedTransactionCount;
 		this.year = year;
@@ -27,12 +26,7 @@ public class ReportDTO {
 		this.transferedSum = transferedSum;
 		this.serviceFeeCollected = serviceFeeCollected;
 	}
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
+
 	public Integer getCompletedTransactionCount() {
 		return completedTransactionCount;
 	}
