@@ -1,5 +1,11 @@
 package com.sjsu.cmpe275.term.dto;
 
+import java.util.Date;
+
+import javax.persistence.Column;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class TransactionDTO {
 
 	private Long id;
@@ -17,11 +23,22 @@ public class TransactionDTO {
 	private Long offerUserId2;
 	private Long offerUserId3;
 	private int tranStatus;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private Date dataChangeCreatedTime;
+    
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private Date dataChangeLastModifiedTime;
+
+   
 	
-	public TransactionDTO(Long id, Boolean isSplit, Long offerId1, Long offerId2, Long offerId3,
-			int offerIdStatus1, int offerIdStatus2, int offerIdStatus3, String offerEmailId1, 
-			String offerEmailId2, String offerEmailId3, Long offerUserId1, Long offerUserId2, 
-			Long offerUserId3, int tranStatus) {
+	
+
+    
+
+	public TransactionDTO(Long id, Boolean isSplit, Long offerId1, Long offerId2, Long offerId3, int offerIdStatus1,
+			int offerIdStatus2, int offerIdStatus3, String offerEmailId1, String offerEmailId2, String offerEmailId3,
+			Long offerUserId1, Long offerUserId2, Long offerUserId3, int tranStatus, Date dataChangeCreatedTime,
+			Date dataChangeLastModifiedTime) {
 		super();
 		this.id = id;
 		this.isSplit = isSplit;
@@ -38,8 +55,10 @@ public class TransactionDTO {
 		this.offerUserId2 = offerUserId2;
 		this.offerUserId3 = offerUserId3;
 		this.tranStatus = tranStatus;
+		this.dataChangeCreatedTime = dataChangeCreatedTime;
+		this.dataChangeLastModifiedTime = dataChangeLastModifiedTime;
 	}
-	
+
 	public TransactionDTO() {
 	
 	}
@@ -163,5 +182,25 @@ public class TransactionDTO {
 	public void setTranStatus(int tranStatus) {
 		this.tranStatus = tranStatus;
 	}
+
+	public Date getDataChangeCreatedTime() {
+		return dataChangeCreatedTime;
+	}
+
+	public void setDataChangeCreatedTime(Date dataChangeCreatedTime) {
+		this.dataChangeCreatedTime = dataChangeCreatedTime;
+	}
+
+	public Date getDataChangeLastModifiedTime() {
+		return dataChangeLastModifiedTime;
+	}
+
+	public void setDataChangeLastModifiedTime(Date dataChangeLastModifiedTime) {
+		this.dataChangeLastModifiedTime = dataChangeLastModifiedTime;
+	}
+
+	
+
+	
 		
 }

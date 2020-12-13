@@ -1,4 +1,6 @@
 package com.sjsu.cmpe275.term.models;
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -44,8 +46,7 @@ public class Transaction extends BaseEntity{
 	private Long offerUserId3;
 	@Column(name = "tranStatus", nullable = false)
 	private int tranStatus;
-	@Column(name = "createdAt", nullable = false)
-	private int createdAt;
+
 	
 	public Long getId() {
 		return id;
@@ -137,6 +138,7 @@ public class Transaction extends BaseEntity{
 	public void setTranStatus(int tranStatus) {
 		this.tranStatus = tranStatus;
 	}
+
 	
 }
 
