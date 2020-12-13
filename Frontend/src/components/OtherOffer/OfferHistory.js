@@ -178,7 +178,7 @@ class OfferHistory extends Component {
                     </Row>
                   </div>
                 </ListGroup.Item>
-                <Card.Body>
+                <Card.Body className="padding-drop-history">
                   <ListGroup variant="flush">
                     <ListGroup.Item variant="" className="">
                       <Row className="header-bold-auto-matching ">
@@ -270,7 +270,7 @@ class OfferHistory extends Component {
                   </div>
                 </ListGroup.Item>
                 {offerarr.otherSplitOffers.map((offer) => (
-                  <Card.Body>
+                  <Card.Body className="padding-drop-history">
                     <ListGroup variant="flush">
                       <ListGroup.Item variant="" className="">
                         <Row className="header-bold-auto-matching ">
