@@ -37,10 +37,23 @@ class BrowseOffer extends Component {
     sourceAmountFilter: "empty",
     modalShow: "none",
     open: false,
+    ratingList:[{user_id: 1 , fault_count: 0, total_count:0},{user_id: 2 , fault_count: 10, total_count:10},{user_id: 10 , fault_count: 2, total_count:8},{user_id: 4 , fault_count: 7, total_count:17},{user_id: 5 , fault_count: 1, total_count:50},{user_id: 6 , fault_count: 6, total_count:16},{user_id: 9 , fault_count: 0, total_count:0},{user_id: 8 , fault_count: 0, total_count:0},{user_id: 12 , fault_count: 0, total_count:0}],
+    ratingCalculations:{}
   };
   componentWillMount() {
     this.getCountries();
     this.getOffers();
+    this.state.ratingList.forEach((user) =>{
+      if(user.total_count == 0){
+        this.state.ratingCalculations[user.user_id] ='N/A';
+      }else{
+        var divVal = user.fault_count/user.total_count;
+        var ratingVal = Math.round(((1-divVal)*4))+1
+        this.state.ratingCalculations[user.user_id] = ratingVal;
+      }
+       
+    })
+    console.log(this.state.ratingCalculations)
   }
 
   async getOffers() {
@@ -324,93 +337,23 @@ Cards to display offers
                           <Col>{offer.amountInDes} {offer.destinationCurrency}</Col>
                           <Col>{offer.destinationCountry} </Col>
                           <Col>{offer.expirationDate}</Col>
-                          <Col><ReactStars count={5} size={24} color2={'#ffd700'} value={4} edit={false}/></Col>
+                    
+                          {this.state.ratingCalculations[offer.userId] != 'N/A' && <Col><ReactStars count={5} size={24} color2={'#ffd700'} value={parseInt(this.state.ratingCalculations[offer.userId])} edit={false}/></Col>}
+
+                          {this.state.ratingCalculations[offer.userId] == 'N/A' && <Col>N/A</Col>}
                         </Row>
                       </Card.Body>
                     </Card>
                   </Col>
                 </Row>
-                {/*<Card
-                    className="card browse_card"
-                    style={{ backgroundColor: "rgb(0,0,0,0.1)" }}
-                    onClick={() => {
-                      this.setState({ modalShow: "block", open: true });
-                      this.setState({ offerId: offer.id });
-                    }}
-                    key={offer.id}
-                  >
-                    <div className="d-flex justify-content-center p-2">
-                      <h4>John Doe</h4>
-                    </div>
-                    <div className="d-flex justify-content-center p-3">
-                      <h5 className="mr-4">
-                        Source country:{" "}
-                        <span style={{ fontWeight: "bold" }}>
-                          {offer.sourceCountry}
-                        </span>
-                        <span style={{ color: "rgb(0,0,0,0.6)" }}>
-                          ({offer.sourceCurrency})
-                        </span>
-                      </h5>
-                      <ArrowRightAltSharpIcon />{" "}
-                      <h5 className="ml-4">
-                        Destination country:{" "}
-                        <span style={{ fontWeight: "bold" }}>
-                          {offer.destinationCountry}
-                        </span>
-                        <span style={{ color: "rgb(0,0,0,0.6)" }}>
-                          ({offer.destinationCurrency})
-                        </span>
-                      </h5>
-                    </div>
-                    <div className="d-flex justify-content-center p-3">
-                      <h5 className="mr-4">
-                        Remit Amount:{" "}
-                        <span style={{ fontWeight: "bold" }}>
-                          {offer.amountInSrc}
-                        </span>
-                        <span style={{ color: "rgb(0,0,0,0.6)" }}>
-                          ({offer.sourceCurrency})
-                        </span>
-                      </h5>
-                      <ArrowRightAltSharpIcon />{" "}
-                      <h5 className="ml-4">
-                        Destination Amount:{" "}
-                        <span style={{ fontWeight: "bold" }}>
-                          {offer.amountInDes}
-                        </span>
-                        <span style={{ color: "rgb(0,0,0,0.6)" }}>
-                          ({offer.destinationCurrency})
-                        </span>
-                      </h5>
-                    </div>
-                    <div className="p-3 d-flex justify-content-center">
-                      <div>
-                        {offer.splitOfferAllowed == true ? (
-                          <h5>
-                            Split offer{" "}
-                            <span style={{ color: "green" }}>allowed</span>
-                          </h5>
-                        ) : (
-                          ""
-                        )}
-                        {offer.counterOfferAllowed == true ? (
-                          <h5>
-                            <span style={{ color: "green" }}>Accepting </span>
-                            Counter Offers
-                          </h5>
-                        ) : (
-                          ""
-                        )}
-                      </div>
-                    </div>
-                        </Card>*/}
+        
                 {this.state.offerId === offer.id ? (
                   <OfferModal
                     offer={offer}
                     modalShow={this.state.modalShow}
                     changeModalVisible={this.changeModalVisible}
                     open={this.state.open}
+                    ratingCalculations = {this.state.ratingCalculations}
                   ></OfferModal>
                 ) : (
                   ""
