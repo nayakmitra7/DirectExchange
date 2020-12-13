@@ -10,6 +10,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/esm/Button";
 import OfferHeader from "./OfferHeader";
+import Badge from 'react-bootstrap/Badge';
 // import Modal from "./Modal";
 import Modal1 from "react-bootstrap/Modal";
 import { Spinner } from "react-bootstrap";
@@ -136,15 +137,16 @@ class OfferAbortedHistory extends Component {
             <h3>Single Matches</h3>
           </Col>
         </Row>
-        <Card>
-          <Accordion.Toggle as={Card.Header} eventKey="0">
+       
+          <Accordion.Toggle as={Card.Header} eventKey="0" className="background-history">
             {singleOfferUpdated.map((offerarr) => (
               <div>
+                 <Card style={{marginBottom:'2%'}}>
                 <ListGroup.Item
                   variant="secondary"
                   className="list-group-style-auto-matching "
                 >
-                  <div className="p-3" style={{ border: "3px hotpink solid" }}>
+                  <div className="p-3" style={{ border: "3px red solid" }}>
                     <Row className="header-bold-auto-matching ">
                       <Col>Offer ID</Col>
                       <Col>Username</Col>
@@ -153,22 +155,7 @@ class OfferAbortedHistory extends Component {
                       <Col>Amount(src)</Col>
                       <Col>Country(src)</Col>
                       <Col>Exp Date</Col>
-                      <Col>
-                        {/* {offerarr.mySingleOffer[0].offerStatus == 4 ? (
-                          <i style={{ color: "green", fontSize: "16px" }}>
-                            Payment Transferred
-                          </i>
-                        ) : (
-                          <Button
-                            onClick={() =>
-                              this.handleClickOpen(offerarr.mySingleOffer[0])
-                            }
-                            className="btn btn-primary"
-                          >
-                            Pay Now
-                          </Button>
-                        )} */}
-                      </Col>
+                      <Col>Status</Col>
                     </Row>
                     <Row>
                       <Col>#{offerarr.mySingleOffer[0].id}</Col>
@@ -184,7 +171,7 @@ class OfferAbortedHistory extends Component {
                       </Col>
                       <Col>{offerarr.mySingleOffer[0].sourceCountry}</Col>
                       <Col>{offerarr.mySingleOffer[0].expirationDate}</Col>
-                      <Col></Col>
+                      <Col><h5><Badge variant="danger">Aborted</Badge></h5></Col>
                     </Row>
                   </div>
                 </ListGroup.Item>
@@ -199,17 +186,7 @@ class OfferAbortedHistory extends Component {
                         <Col>Amount(src)</Col>
                         <Col>Country(src)</Col>
                         <Col>Exp Date</Col>
-                        <Col>
-                          {/* {offerarr.otherSingleOffers[0].offerStatus == 4 ? (
-                            <i style={{ fontSize: "16px", color: "blue" }}>
-                              Payment Received
-                            </i>
-                          ) : (
-                            <i style={{ fontSize: "16px", color: "crimson" }}>
-                              Payment Awaiting!
-                            </i>
-                          )} */}
-                        </Col>
+                        <Col>Status</Col>
                       </Row>
                       <Row>
                         <Col>#{offerarr.otherSingleOffers[0].id}</Col>
@@ -232,33 +209,32 @@ class OfferAbortedHistory extends Component {
                         <Col>
                           {offerarr.otherSingleOffers[0].expirationDate}
                         </Col>
-                        <Col></Col>
+                        <Col><h5><Badge variant="danger">Aborted</Badge></h5></Col>
                       </Row>
                     </ListGroup.Item>
                   </ListGroup>
                 </Card.Body>
+                </Card>
               </div>
             ))}
           </Accordion.Toggle>
 
-          {/* <Accordion.Toggle eventKey="0">
-            
-          </Accordion.Toggle> */}
-        </Card>
+  
         <Row align="center" className="my-4">
           <Col>
             <h3>Split Matches</h3>
           </Col>
         </Row>
-        <Card>
-          <Accordion.Toggle as={Card.Header} eventKey="0">
+        
+          <Accordion.Toggle as={Card.Header} eventKey="0" className="background-history">
             {splitOfferUpdated.map((offerarr) => (
               <div>
+                <Card style={{marginBottom:'2%'}}>
                 <ListGroup.Item
                   variant="secondary"
                   className="list-group-style-auto-matching "
                 >
-                  <div className="p-3" style={{ border: "3px hotpink solid" }}>
+                  <div className="p-3" style={{ border: "3px red solid" }}>
                     <Row className="header-bold-auto-matching ">
                       <Col>Offer ID</Col>
                       <Col>Username</Col>
@@ -267,22 +243,7 @@ class OfferAbortedHistory extends Component {
                       <Col>Amount(src)</Col>
                       <Col>Country(src)</Col>
                       <Col>Exp Date</Col>
-                      <Col>
-                        {/* {offerarr.mySplitOffer[0].offerStatus == 4 ? (
-                          <i style={{ color: "green", fontSize: "16px" }}>
-                            Payment Transferred
-                          </i>
-                        ) : (
-                          <Button
-                            className="btn btn-primary"
-                            onClick={() =>
-                              this.handleClickOpen(offerarr.mySplitOffer[0])
-                            }
-                          >
-                            Pay Now
-                          </Button>
-                        )} */}
-                      </Col>
+                      <Col>Status</Col>
                     </Row>
                     <Row>
                       <Col>#{offerarr.mySplitOffer[0].id}</Col>
@@ -298,7 +259,7 @@ class OfferAbortedHistory extends Component {
                       </Col>
                       <Col>{offerarr.mySplitOffer[0].sourceCountry}</Col>
                       <Col>{offerarr.mySplitOffer[0].expirationDate}</Col>
-                      <Col></Col>
+                      <Col><h5><Badge variant="danger">Aborted</Badge></h5></Col>
                     </Row>
                   </div>
                 </ListGroup.Item>
@@ -314,17 +275,7 @@ class OfferAbortedHistory extends Component {
                           <Col>Amount(src)</Col>
                           <Col>Country(src)</Col>
                           <Col>Exp Date</Col>
-                          <Col>
-                            {/* {offer.offerStatus == 4 ? (
-                              <i style={{ fontSize: "16px", color: "blue" }}>
-                                Payment Received
-                              </i>
-                            ) : (
-                              <i style={{ fontSize: "16px", color: "crimson" }}>
-                                Payment Awaiting !
-                              </i>
-                            )} */}
-                          </Col>
+                          <Col>Status</Col>
                         </Row>
                         <Row>
                           <Col>#{offer.id}</Col>
@@ -341,20 +292,16 @@ class OfferAbortedHistory extends Component {
                           </Col>
                           <Col>{offer.sourceCountry}</Col>
                           <Col>{offer.expirationDate}</Col>
-                          <Col></Col>
+                          <Col><h5><Badge variant="danger">Aborted</Badge></h5></Col>
                         </Row>
                       </ListGroup.Item>
                     </ListGroup>
                   </Card.Body>
                 ))}
+                </Card>
               </div>
             ))}
           </Accordion.Toggle>
-
-          {/* <Accordion.Toggle eventKey="0">
-            
-          </Accordion.Toggle> */}
-        </Card>
       </div>
     );
   }

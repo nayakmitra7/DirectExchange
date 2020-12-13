@@ -161,18 +161,10 @@ class OfferModal extends Component {
                 &times;
               </span>
               <div align="center" className="p-3">
-                <h1>John's Offer Details</h1>
+                <h1>{this.props.offer.nickname}'s Offer Details</h1>
               </div>
               <div>
-                <Link to={this.state.url}>
-                  <StarRatings
-                    rating={this.state.rating}
-                    starRatedColor="blue"
-                    changeRating={this.changeRating}
-                    numberOfStars={6}
-                    name="rating"
-                  />
-                </Link>
+            
               </div>
               {/* <Table striped borderless hover variant="dark">
                 <tr className="p-3">
@@ -231,7 +223,7 @@ class OfferModal extends Component {
                   </Col>
                   <Col>{this.props.offer.sourceCountry}</Col>
                   <Col>{this.props.offer.expirationDate}</Col>
-                  <Col onClick={()=>{alert("hi")}}><ReactStars count={5} size={18} color2={'#ffd700'} value={4} edit={false} /></Col>
+                  <Col><Link to={this.state.url}> <ReactStars count={5} size={18} color2={'#ffd700'} value={4} edit={false} /></Link></Col>
                 </Row>
               </ListGroup.Item>
               <div className="mt-5">
