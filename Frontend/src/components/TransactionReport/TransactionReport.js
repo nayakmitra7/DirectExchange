@@ -80,7 +80,7 @@ class TransactionReport extends Component {
                         className="card-header-transaction-report"
                         style={{ textAlign: "center" }}
                     >
-                        <h2>System Transaction Report</h2>
+                        <h2>System Financial Report</h2>
                     </Card.Header>
                     {this.state.report && <ReactTable className="trans-report"
                         data={this.state.report}
