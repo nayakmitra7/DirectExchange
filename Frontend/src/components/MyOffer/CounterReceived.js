@@ -7,20 +7,22 @@ import { Button, Card, ListGroup } from "react-bootstrap";
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { toast } from 'react-toastify';
-
+import Modal from 'react-bootstrap/Modal';
+import { Spinner } from 'react-bootstrap';
 class CounterReceived extends Component {
   constructor() {
     super();
     this.state = {
       navarr: ["black", "black", "black", "black", "rgb(0, 106, 255)"],
       userId: localStorage.getItem("id"),
-      offers: []
+      offers: [],
+      spinner:true
     }
   }
   componentDidMount() {
 
     Axios.get(address + '/offerMatching/receivedCounterOffers/' + this.state.userId).then((response) => {
-      this.setState({ offers: response.data });
+      this.setState({ offers: response.data, spinner:false });
       console.log(response.data)
     })
   }
@@ -157,6 +159,22 @@ class CounterReceived extends Component {
     return (
       <div>
         <Navbar></Navbar>
+        <Modal show={this.state.spinner} size="sm" centered>
+
+          <Modal.Body>
+            <Row>
+              <Col></Col>
+              <Col><div>
+                <Spinner animation="border" role="status">
+                  <span className="sr-only">Loading...</span>
+                </Spinner>
+              </div ></Col>
+              <Col></Col>
+            </Row>
+
+          </Modal.Body>
+
+        </Modal>
         <MyOfferHeader navarr={this.state.navarr}></MyOfferHeader>
         {inner}
       </div>

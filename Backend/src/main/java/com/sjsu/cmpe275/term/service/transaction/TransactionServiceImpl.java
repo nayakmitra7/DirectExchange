@@ -150,6 +150,24 @@ public class TransactionServiceImpl implements TransactionService {
 		return transactionRepository.getAbortedTransactionHistory(userId);
 	}
 
+	@Override
+	public Integer getCountOfAbortedTransactionPerMonth(Integer year, Integer month) {
+		// TODO Auto-generated method stub
+		return transactionRepository.getCountOfAbortedTransactionPerMonth(year, month);
+	}
+
+	@Override
+	public Integer getCountOfCompletedTransactionPerMonth(Integer year, Integer month) {
+		// TODO Auto-generated method stub
+		return transactionRepository.getCountOfCompletedTransactionPerMonth(year, month);
+	}
+
+	@Override
+	public Double getSumOfCompletedTransactionPerMonth(Integer year, Integer month) {
+		// TODO Auto-generated method stub
+		return transactionRepository.getSumOfCompletedTransactionPerMonth(year, month);
+	}
+
 //	@Override
 //	public void updateDependantOffersOnAccept(Long offerId) {
 //		
