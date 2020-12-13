@@ -1,5 +1,8 @@
 package com.sjsu.cmpe275.term.controllers;
 
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -392,6 +395,25 @@ public class TransactionController {
 
 			TransactionDTO transactionresponse = objectMapper.convertValue(updatedTransaction,TransactionDTO.class);
 			 return new ResponseEntity<TransactionDTO>(transactionresponse, HttpStatus.OK);
+		} catch (Exception ex) {
+			ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(500, HttpStatus.INTERNAL_SERVER_ERROR,
+					ex.getMessage());
+			throw new GenericException(errorResponseDTO);
+		}
+
+	}
+	@RequestMapping(value = "/transaction/report", method = RequestMethod.GET, produces = "application/json")
+	@ResponseBody
+	public void getTransactionReport() {
+		try {
+			
+			for(int i = 0; i < 12; i++) {
+				LocalDate currentdate = LocalDate.now().minus(i, ChronoUnit.MONTHS);
+				int month = currentdate.getMonthValue();
+				int year = currentdate.getYear();
+				System.out.println(month+" "+year);
+			}
+			//return new ResponseEntity<List<OfferDto>>(offerList, HttpStatus.OK);
 		} catch (Exception ex) {
 			ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(500, HttpStatus.INTERNAL_SERVER_ERROR,
 					ex.getMessage());
