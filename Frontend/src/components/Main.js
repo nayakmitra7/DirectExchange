@@ -39,11 +39,12 @@ class Main extends Component {
           <Route path="/myOffer/countermade" component={CounterMade} />
           <Route path="/sendMessage" component={SendMessage} />
           <Route path="/offer/history/:id" component={OfferHistory} />
-          <Route path="/offer/abort/history/:id" component={OfferAbortedHistory}/>
-
+          <Route
+            path="/offer/abort/history/:id"
+            component={OfferAbortedHistory}
+          />
           <Route path="/accounts/:userId" component={Account} />
           <Route path="/TransactionHistory" component={TransactionReport} />
-
         </div>
       </Router>
     );
