@@ -20,13 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sjsu.cmpe275.term.dto.ErrorResponseDTO;
-import com.sjsu.cmpe275.term.dto.ExRateDTO;
 import com.sjsu.cmpe275.term.dto.OfferDto;
 import com.sjsu.cmpe275.term.dto.ResponseDTO;
 import com.sjsu.cmpe275.term.exceptions.GenericException;
 import com.sjsu.cmpe275.term.models.ExchangeRate;
 import com.sjsu.cmpe275.term.models.Offer;
-import com.sjsu.cmpe275.term.repository.OfferRepository;
 import com.sjsu.cmpe275.term.service.exrate.ExRateService;
 import com.sjsu.cmpe275.term.service.offer.OfferService;
 import com.sjsu.cmpe275.term.utils.Constant;
@@ -115,7 +113,7 @@ public class OfferController {
 //			throw new GenericException(errorResponseDTO);
 //		}
 //	}
-	
+
 	@RequestMapping(value = "/offer/{userId}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public ResponseEntity<List<OfferDto>> getOfferList(@PathVariable Long userId) {
@@ -132,7 +130,6 @@ public class OfferController {
 		return new ResponseEntity<List<OfferDto>>(offerdto, HttpStatus.OK);
 
 	}
-	
 
 	@RequestMapping(value = "/offer/{userId}/open", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
@@ -244,6 +241,22 @@ public class OfferController {
 			throw new GenericException(errorResponseDTO);
 		}
 
+	}
+
+	@RequestMapping(value = "/offer/user/month/{userId}/{month}", method = RequestMethod.GET, produces = "application/json")
+	@ResponseBody
+	public ResponseEntity<List<OfferDto>> getClosedTransactionOffers(@PathVariable Long userId,
+			@PathVariable int month) {
+		List<Offer> offers = null;
+		if (month == 0) {
+			offers = offerService.getClosedTransactionOffers(userId, Constant.OFFERFULFILED);
+		} else {
+			offers = offerService.getClosedTransactionOffersByMonth(userId, Constant.OFFERFULFILED, month);
+		}
+
+		List<OfferDto> offerdtos = objectMapper.convertValue(offers, new TypeReference<List<OfferDto>>() {
+		});
+		return new ResponseEntity<List<OfferDto>>(offerdtos, HttpStatus.OK);
 	}
 
 }
