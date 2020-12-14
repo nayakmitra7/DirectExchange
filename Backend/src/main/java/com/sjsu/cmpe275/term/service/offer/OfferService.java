@@ -15,4 +15,5 @@ public interface OfferService {
 	public Offer getOfferById(Long offerId);
 	public List<Offer> getOwnOfferById(Long userId, Date todayDate, int OpenOffer);
 	public List<Offer> getCloseOfferById(Long userId, Date todayDate);
+	public Offer getOfferById1(Long id);
 }

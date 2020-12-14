@@ -20,5 +20,5 @@ public class Constant {
 	public static int COUNTER_ACCEPTED = 1;
 	public static int COUNTER_REJECTED = 2;
 	public static int COUNTER_ABORTED = 3;
-
+	public static int COUNTER_TIMEDOUT = 4;
 }
