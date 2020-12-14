@@ -33,12 +33,7 @@ public class OfferDto {
     private Long userId;
     private int offerStatus;
     private String nickname;
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date dataChangeCreatedTime;
-    
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date dataChangeLastModifiedTime;
-	
+
 	//List<CounterOffer> counterOffers;
 	public OfferDto() {
 		
@@ -183,26 +178,6 @@ public class OfferDto {
 
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
-	}
-
-
-	public Date getDataChangeCreatedTime() {
-		return dataChangeCreatedTime;
-	}
-
-
-	public void setDataChangeCreatedTime(Date dataChangeCreatedTime) {
-		this.dataChangeCreatedTime = dataChangeCreatedTime;
-	}
-
-
-	public Date getDataChangeLastModifiedTime() {
-		return dataChangeLastModifiedTime;
-	}
-
-
-	public void setDataChangeLastModifiedTime(Date dataChangeLastModifiedTime) {
-		this.dataChangeLastModifiedTime = dataChangeLastModifiedTime;
 	}
 
 	
