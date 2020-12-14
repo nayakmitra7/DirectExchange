@@ -1,5 +1,9 @@
 [
     {
+        "label": "All",
+        "value": 0
+    },
+    {
         "label": "January",
         "value": 1
     },
