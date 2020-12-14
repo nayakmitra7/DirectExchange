@@ -16,13 +16,13 @@ class CounterReceived extends Component {
       navarr: ["black", "black", "black", "black", "rgb(0, 106, 255)"],
       userId: localStorage.getItem("id"),
       offers: [],
-      spinner:true
+      spinner: true
     }
   }
   componentDidMount() {
 
     Axios.get(address + '/offerMatching/receivedCounterOffers/' + this.state.userId).then((response) => {
-      this.setState({ offers: response.data, spinner:false });
+      this.setState({ offers: response.data, spinner: false });
       console.log(response.data)
     })
   }
@@ -39,13 +39,14 @@ class CounterReceived extends Component {
   }
   acceptCounter = (e, counterObject) => {
     e.preventDefault();
+    this.setState({ spinner: true });
     let data = { "id": counterObject.counterOfferId, "srcUserId": counterObject.srcOfferDTO.userId, "srcOfferId": counterObject.srcOfferDTO.id, "tgtUserId": counterObject.tgtOfferDTO.userId, "tgtOfferId": counterObject.tgtOfferDTO.id, "otherUserId": counterObject.otherOfferDTO && counterObject.otherOfferDTO.userId, "otherOfferId": counterObject.otherOfferDTO && counterObject.otherOfferDTO.id, "counterAmtFromSrcToTgt": counterObject.counterAmtFromSrcToTgt, "counterCurrencyFromSrcToTgt": counterObject.counterCurrencyFromSrcToTgt, "counterStatus": counterObject.counterStatus }
     console.log(data)
     Axios.put(address + '/counterOffer/accept', data).then((response) => {
       if (response.status == 200) {
 
         Axios.get(address + '/offerMatching/receivedCounterOffers/' + this.state.userId).then((response) => {
-          this.setState({ offers: response.data });
+          this.setState({ offers: response.data, spinner: false });
           toast.success("You have successfully accepted the counter offer !")
           console.log(response.data)
         })
