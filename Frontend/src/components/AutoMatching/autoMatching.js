@@ -236,11 +236,9 @@ class AutoMatching extends Component {
                         <Col>Offer ID</Col>
                         <Col>Username</Col>
                         <Col>Country(src)</Col>
-                        <Col>Currency(src)</Col>
                         <Col>Amount(src)</Col>
                         <Col>Amount(des)</Col>
                         <Col>Country(des)</Col>
-                        <Col>Currency(des)</Col>
                         <Col>Exp Date</Col>
 
                     </Row>
@@ -248,11 +246,9 @@ class AutoMatching extends Component {
                         <Col>#{offer.id}</Col>
                         <Col>{offer.nickname}</Col>
                         <Col>{offer.sourceCountry}</Col>
-                        <Col>{offer.sourceCurrency}</Col>
-                        <Col>{offer.amountInSrc}</Col>
-                        <Col>{offer.amountInDes}</Col>
+                        <Col>{offer.amountInSrc} {offer.sourceCurrency}</Col>
+                        <Col>{offer.amountInDes }{offer.destinationCurrency}</Col>
                         <Col>{offer.destinationCountry}</Col>
-                        <Col>{offer.destinationCurrency}</Col>
                         <Col>{offer.expirationDate}</Col>
 
                     </Row>
@@ -267,10 +263,8 @@ class AutoMatching extends Component {
 
 
                         <Col>Country(src)</Col>
-                        <Col>Currency(src)</Col>
                         <Col>Amount(src)</Col>
                         <Col>Amount(des)</Col>
-                        <Col>Currency(des)</Col>
 
                         <Col>Country(des)</Col>
 
@@ -282,10 +276,8 @@ class AutoMatching extends Component {
                         <Col>{element.offer.nickname}</Col>
 
                         <Col>{element.offer.sourceCountry}</Col>
-                        <Col>{element.offer.sourceCurrency}</Col>
-                        <Col>{element.offer.amountInSrc}</Col>
-                        <Col>{element.offer.amountInDes}</Col>
-                        <Col>{element.offer.destinationCurrency}</Col>
+                        <Col>{element.offer.amountInSrc} {element.offer.sourceCurrency}</Col>
+                        <Col>{element.offer.amountInDes} {element.offer.destinationCurrency}</Col>
                         <Col>{element.offer.destinationCountry}</Col>
                         <Col>{element.offer.expirationDate}</Col>
 

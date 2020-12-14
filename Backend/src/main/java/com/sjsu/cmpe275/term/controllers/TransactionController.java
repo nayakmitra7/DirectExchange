@@ -11,6 +11,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -70,6 +72,7 @@ public class TransactionController {
 
 	@RequestMapping(value = "/twoPartyTransaction", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<ResponseDTO> postTwoPartyTransaction(@RequestBody TransactionDTO transactionDTO) {
 		try {
 			Transaction transaction = objectMapper.convertValue(transactionDTO, Transaction.class);
@@ -183,6 +186,7 @@ public class TransactionController {
 
 	@RequestMapping(value = "/threePartyTransaction", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<ResponseDTO> postThreePartyTransaction(@RequestBody TransactionDTO transactionDTO) {
 		try {
 			Transaction transaction = objectMapper.convertValue(transactionDTO, Transaction.class);
