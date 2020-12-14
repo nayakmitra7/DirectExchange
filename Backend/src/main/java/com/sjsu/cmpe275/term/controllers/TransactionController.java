@@ -7,7 +7,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +30,7 @@ import com.sjsu.cmpe275.term.dto.ReportDTO;
 import com.sjsu.cmpe275.term.dto.ResponseDTO;
 import com.sjsu.cmpe275.term.dto.TransactionDTO;
 import com.sjsu.cmpe275.term.exceptions.GenericException;
+import com.sjsu.cmpe275.term.models.CounterOffer;
 import com.sjsu.cmpe275.term.models.Offer;
 import com.sjsu.cmpe275.term.models.Rating;
 import com.sjsu.cmpe275.term.models.Transaction;
@@ -52,7 +55,7 @@ public class TransactionController {
 
 	@Autowired
 	UserService userService;
-	
+
 	@Autowired
 	CounterOfferService counterOfferService;
 
@@ -61,11 +64,9 @@ public class TransactionController {
 
 	@Autowired
 	private EmailUtility emailUtil;
-	
+
 	@Autowired
 	private RatingService ratingService;
-	
-	
 
 	@RequestMapping(value = "/twoPartyTransaction", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
@@ -99,56 +100,74 @@ public class TransactionController {
 			transaction.setTranStatus(Constant.TRANSACTION_INPROGRESS);
 
 			Transaction savedOffer = transactionService.acceptSingleOffer(transaction);
-			
+
 			try {
-			
-			if(savedOffer != null) {
-				long user1 = savedOffer.getOfferUserId1();
-				long user2 = savedOffer.getOfferUserId2();
-				
-				Rating rating1 = ratingService.getRating(user1);
-				Rating rating2 = ratingService.getRating(user2);
-				
-				rating1.setTotalCount(rating1.getTotalCount()+1);
-				rating2.setTotalCount(rating2.getTotalCount()+1);
-				
-				ratingService.createRating(rating1);
-				ratingService.createRating(rating2);
-				new java.util.Timer().schedule( 
-				        new java.util.TimerTask() {
-				            @Override
-				            public void run() {
-				            	int status = transactionService.getTransaction(transaction.getId()).getTranStatus();
-				            	if(status !=Constant.TRANSACTION_COMPLETED) {
-				            		transaction.setTranStatus(Constant.TRANSACTION_ABORTED);
-				            		transactionService.acceptSingleOffer(transaction);
-				            	
-				            		Offer offer11 = offerService.getOfferById1(offerId1);
-				        			Offer offer22= offerService.getOfferById1(offerId2);		
-				            	int offer1Status = offer11.getOfferStatus();
-				            	int offer2Status = offer22.getOfferStatus();
-					            	if(offer1Status != Constant.OFFERTRANSFERRED) {
-					            		rating1.setFaultCount(rating1.getFaultCount()+1);
-					            		ratingService.createRating(rating1);
-					    				
-					            	}
-					            	if(offer2Status != Constant.OFFERTRANSFERRED) {
-					            		rating2.setFaultCount(rating2.getFaultCount()+1);
-					            		ratingService.createRating(rating2);
-					            	}
-				            	}
-				            }
-				        }, 
-				        100000
-				);
-				
+
+				if (savedOffer != null) {
+					long user1 = savedOffer.getOfferUserId1();
+					long user2 = savedOffer.getOfferUserId2();
+
+					Rating rating1 = ratingService.getRating(user1);
+					Rating rating2 = ratingService.getRating(user2);
+
+					rating1.setTotalCount(rating1.getTotalCount() + 1);
+					rating2.setTotalCount(rating2.getTotalCount() + 1);
+
+					ratingService.createRating(rating1);
+					ratingService.createRating(rating2);
+					new java.util.Timer().schedule(new java.util.TimerTask() {
+						@Override
+						public void run() {
+							int status = transactionService.getTransaction(transaction.getId()).getTranStatus();
+							if (status != Constant.TRANSACTION_COMPLETED) {
+								transaction.setTranStatus(Constant.TRANSACTION_ABORTED);
+								transactionService.acceptSingleOffer(transaction);
+
+								Offer offer11 = offerService.getOfferById1(offerId1);
+								Offer offer22 = offerService.getOfferById1(offerId2);
+								int offer1Status = offer11.getOfferStatus();
+								int offer2Status = offer22.getOfferStatus();
+								if (offer1Status != Constant.OFFERTRANSFERRED) {
+									rating1.setFaultCount(rating1.getFaultCount() + 1);
+									ratingService.createRating(rating1);
+								}
+								if (offer2Status != Constant.OFFERTRANSFERRED) {
+									rating2.setFaultCount(rating2.getFaultCount() + 1);
+									ratingService.createRating(rating2);
+								}
+								offer11.setOfferStatus(Constant.OFFEROPEN);
+			    				offerService.postOffer(offer11);
+			    				offer22.setOfferStatus(Constant.OFFEROPEN);
+			    				offerService.postOffer(offer22);
+							}
+						}
+					}, 100000);
+
 				}
+			} catch (Exception ex) {
+				System.out.println(" Rating has some error " + ex);
 			}
-			catch(Exception ex) {
-				System.out.println(" Rating has some error "+ex);
+
+			// Open src offers of counter offer table
+			List<CounterOffer> counterOfferList1 = counterOfferService.getCounterOffersByTgt(offerId1);
+			List<CounterOffer> counterOfferList2 = counterOfferService.getCounterOffersByTgt(offerId2);
+
+			Set<CounterOffer> offerList = new HashSet<>();
+			offerList.addAll(counterOfferList1);
+			offerList.addAll(counterOfferList2);
+			for (CounterOffer counterOffer : offerList) {
+				if (counterOffer.getOtherOfferId() == offerId1 || counterOffer.getOtherOfferId() == offerId2) {
+					counterOffer.setCounterStatus(Constant.COUNTER_ABORTED);
+					counterOfferService.update(counterOffer);
+				} else if (counterOffer.getTgtOfferId() == offerId1 || counterOffer.getTgtOfferId() == offerId2) {
+					counterOffer.setCounterStatus(Constant.COUNTER_REJECTED);
+					counterOfferService.update(counterOffer);
+				}
+				Offer srcRejectOffer = offerService.getOfferById(counterOffer.getSrcOfferId());
+				srcRejectOffer.setOfferStatus(Constant.OFFEROPEN);
+				offerService.postOffer(srcRejectOffer);
 			}
-			
-			
+			//
 			emailUtil.sendEmail(emailList, "Offer accepted", "Offer accepted! Make the payment.");
 
 			ResponseDTO responseDTO = new ResponseDTO(200, HttpStatus.OK, "You have successfully accepted the offer!");
@@ -203,66 +222,94 @@ public class TransactionController {
 			transaction.setOfferIdStatus2(Constant.OFFERTRANSACTION);
 			transaction.setOfferIdStatus3(Constant.OFFERTRANSACTION);
 			Transaction savedOffer = transactionService.acceptSplitOffer(transaction);
-			
+
 			try {
-			if(savedOffer != null) {
-				long user1 = savedOffer.getOfferUserId1();
-				long user2 = savedOffer.getOfferUserId2();
-				long user3 = savedOffer.getOfferUserId3();
-				
-				Rating rating1 = ratingService.getRating(user1);
-				Rating rating2 = ratingService.getRating(user2);
-				Rating rating3 = ratingService.getRating(user3);
-				
-				rating1.setTotalCount(rating1.getTotalCount()+1);
-				rating2.setTotalCount(rating2.getTotalCount()+1);
-				rating3.setTotalCount(rating3.getTotalCount()+1);
-				
-				ratingService.createRating(rating1);
-				ratingService.createRating(rating2);
-				ratingService.createRating(rating3);
-				
-				new java.util.Timer().schedule( 
-				        new java.util.TimerTask() {
-				            @Override
-				            public void run() {
-				            	int status = transactionService.getTransaction(transaction.getId()).getTranStatus();
-				            	if(status != Constant.TRANSACTION_COMPLETED) {
-				            	
-				            	transaction.setTranStatus(Constant.TRANSACTION_ABORTED);
-				            	transactionService.acceptSingleOffer(transaction);
-				            	
-				            	Offer offer11 = offerService.getOfferById1(offerId1);
-			        			Offer offer22= offerService.getOfferById1(offerId2);	
-			        			Offer offer33= offerService.getOfferById1(offerId3);
-				            	int offer1Status = offer11.getOfferStatus();
-				            	int offer2Status = offer22.getOfferStatus();
-				            	int offer3Status = offer33.getOfferStatus();
-				            	
-					            	if(offer1Status != Constant.OFFERTRANSFERRED) {
-					            		rating1.setFaultCount(rating1.getFaultCount()+1);
-					            		ratingService.createRating(rating1);
-					            	}
-					            	if(offer2Status != Constant.OFFERTRANSFERRED) {
-					            		rating2.setFaultCount(rating2.getFaultCount()+1);
-					            		ratingService.createRating(rating2);
-					            	}
-					            	if(offer3Status != Constant.OFFERTRANSFERRED) {
-					            		rating3.setFaultCount(rating3.getFaultCount()+1);
-					            		ratingService.createRating(rating3);
-					            	}
-				            	}
-				            }
-				        }, 
-				        100000 
-				);
-				
+				if (savedOffer != null) {
+					long user1 = savedOffer.getOfferUserId1();
+					long user2 = savedOffer.getOfferUserId2();
+					long user3 = savedOffer.getOfferUserId3();
+
+					Rating rating1 = ratingService.getRating(user1);
+					Rating rating2 = ratingService.getRating(user2);
+					Rating rating3 = ratingService.getRating(user3);
+
+					rating1.setTotalCount(rating1.getTotalCount() + 1);
+					rating2.setTotalCount(rating2.getTotalCount() + 1);
+					rating3.setTotalCount(rating3.getTotalCount() + 1);
+
+					ratingService.createRating(rating1);
+					ratingService.createRating(rating2);
+					ratingService.createRating(rating3);
+
+					new java.util.Timer().schedule(new java.util.TimerTask() {
+						@Override
+						public void run() {
+							int status = transactionService.getTransaction(transaction.getId()).getTranStatus();
+							if (status != Constant.TRANSACTION_COMPLETED) {
+
+								transaction.setTranStatus(Constant.TRANSACTION_ABORTED);
+								transactionService.acceptSingleOffer(transaction);
+
+								Offer offer11 = offerService.getOfferById1(offerId1);
+								Offer offer22 = offerService.getOfferById1(offerId2);
+								Offer offer33 = offerService.getOfferById1(offerId3);
+								int offer1Status = offer11.getOfferStatus();
+								int offer2Status = offer22.getOfferStatus();
+								int offer3Status = offer33.getOfferStatus();
+
+								if (offer1Status != Constant.OFFERTRANSFERRED) {
+									rating1.setFaultCount(rating1.getFaultCount() + 1);
+									ratingService.createRating(rating1);
+								}
+								if (offer2Status != Constant.OFFERTRANSFERRED) {
+									rating2.setFaultCount(rating2.getFaultCount() + 1);
+									ratingService.createRating(rating2);
+								}
+								if (offer3Status != Constant.OFFERTRANSFERRED) {
+									rating3.setFaultCount(rating3.getFaultCount() + 1);
+									ratingService.createRating(rating3);
+								}
+								
+								offer11.setOfferStatus(Constant.OFFEROPEN);
+			    				offerService.postOffer(offer11);
+			    				offer22.setOfferStatus(Constant.OFFEROPEN);
+			    				offerService.postOffer(offer22);
+			    				offer33.setOfferStatus(Constant.OFFEROPEN);
+			    				offerService.postOffer(offer33);
+							}
+						}
+					}, 100000);
+
+				}
+			} catch (Exception ex) {
+				System.out.println(" Rating has some error " + ex);
+
 			}
+
+			// Open src offers of counter offer table
+			List<CounterOffer> counterOfferList1 = counterOfferService.getCounterOffersByTgt(offerId1);
+			List<CounterOffer> counterOfferList2 = counterOfferService.getCounterOffersByTgt(offerId2);
+			List<CounterOffer> counterOfferList3 = counterOfferService.getCounterOffersByTgt(offerId3);
+
+			Set<CounterOffer> offerList = new HashSet<>();
+			offerList.addAll(counterOfferList1);
+			offerList.addAll(counterOfferList2);
+			offerList.addAll(counterOfferList3);
+			for (CounterOffer counterOffer : offerList) {
+				if (counterOffer.getOtherOfferId() == offerId1 || counterOffer.getOtherOfferId() == offerId2
+						|| counterOffer.getOtherOfferId() == offerId3) {
+					counterOffer.setCounterStatus(Constant.COUNTER_ABORTED);
+					counterOfferService.update(counterOffer);
+				} else if (counterOffer.getTgtOfferId() == offerId1 || counterOffer.getTgtOfferId() == offerId2
+						|| counterOffer.getTgtOfferId() == offerId3) {
+					counterOffer.setCounterStatus(Constant.COUNTER_REJECTED);
+					counterOfferService.update(counterOffer);
+				}
+				Offer srcRejectOffer = offerService.getOfferById(counterOffer.getSrcOfferId());
+				srcRejectOffer.setOfferStatus(Constant.OFFEROPEN);
+				offerService.postOffer(srcRejectOffer);
 			}
-			catch(Exception ex) {
-				System.out.println(" Rating has some error "+ex);
-				
-			}
+			//
 			emailUtil.sendEmail(emailList, "Accept Offer", "Accept Offer");
 
 			ResponseDTO responseDTO = new ResponseDTO(200, HttpStatus.OK, "You have successfully accepted the offer!");
@@ -292,7 +339,7 @@ public class TransactionController {
 		}
 
 	}
-	
+
 	@RequestMapping(value = "/offer/history/{userId}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public ResponseEntity<List<TransactionDTO>> getTransactionHistory(@PathVariable("userId") Long userId) {
@@ -310,7 +357,7 @@ public class TransactionController {
 		}
 
 	}
-	
+
 	@RequestMapping(value = "/offer/abort/history/{userId}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public ResponseEntity<List<TransactionDTO>> getAbortedTransactionHistory(@PathVariable("userId") Long userId) {
@@ -372,79 +419,75 @@ public class TransactionController {
 		try {
 
 			Transaction transaction = transactionService.getTransaction(transactionId);
-			
+
 //			Transaction transaction = transactionService.updateTransactionStatusforOneOffer(transactionId,offerId);
-			Transaction updatedTransaction=null;
+			Transaction updatedTransaction = null;
 			if (transaction.getIsSplit()) {
 				if (transaction.getOfferId1() == offerId) {
-					updatedTransaction = transactionService.updateOfferIdStatus1(transactionId,offerId);
-				}
-				else if (transaction.getOfferId2() == offerId) {
-					updatedTransaction = transactionService.updateOfferIdStatus2(transactionId,offerId);
-				}
-				else if(transaction.getOfferId3() == offerId){
-					updatedTransaction = transactionService.updateOfferIdStatus3(transactionId,offerId);
-				}
-				else {
+					updatedTransaction = transactionService.updateOfferIdStatus1(transactionId, offerId);
+				} else if (transaction.getOfferId2() == offerId) {
+					updatedTransaction = transactionService.updateOfferIdStatus2(transactionId, offerId);
+				} else if (transaction.getOfferId3() == offerId) {
+					updatedTransaction = transactionService.updateOfferIdStatus3(transactionId, offerId);
+				} else {
 					ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(404, HttpStatus.NOT_FOUND,
-							"Offer id"+offerId+" not available in the transaction");
+							"Offer id" + offerId + " not available in the transaction");
 					throw new GenericException(errorResponseDTO);
 				}
-			}
-			else {
+			} else {
 				if (transaction.getOfferId1() == offerId) {
-					updatedTransaction = transactionService.updateOfferIdStatus1(transactionId,offerId);
-				}
-				else if(transaction.getOfferId2() == offerId) {
-					updatedTransaction = transactionService.updateOfferIdStatus2(transactionId,offerId);
-				}
-				else {
+					updatedTransaction = transactionService.updateOfferIdStatus1(transactionId, offerId);
+				} else if (transaction.getOfferId2() == offerId) {
+					updatedTransaction = transactionService.updateOfferIdStatus2(transactionId, offerId);
+				} else {
 					ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(404, HttpStatus.NOT_FOUND,
-							"Offer id"+offerId+" not available in the transaction");
+							"Offer id" + offerId + " not available in the transaction");
 					throw new GenericException(errorResponseDTO);
 				}
 			}
-			
-			if(updatedTransaction.getOfferIdStatus1()==4&&updatedTransaction.getOfferIdStatus2()==4
-					) {
-				//update transaction and offer status as fulfiled
-				if(!transaction.getIsSplit()) {
+
+			if (updatedTransaction.getOfferIdStatus1() == 4 && updatedTransaction.getOfferIdStatus2() == 4) {
+				// update transaction and offer status as fulfiled
+				if (!transaction.getIsSplit()) {
 					String[] emailList = new String[2];
-					
+
 					emailList[0] = transaction.getOfferEmailId1();
 					emailList[1] = transaction.getOfferEmailId2();
-				System.out.println(emailList[0]+"  "+emailList[1]);
-					updatedTransaction = transactionService.updateTransactionStatusForTwoOffers(transactionId,transaction.getOfferId1(),transaction.getOfferId2());
+					System.out.println(emailList[0] + "  " + emailList[1]);
+					updatedTransaction = transactionService.updateTransactionStatusForTwoOffers(transactionId,
+							transaction.getOfferId1(), transaction.getOfferId2());
 					User user1 = userService.getUserByEmailId(transaction.getOfferEmailId1());
 					User user2 = userService.getUserByEmailId(transaction.getOfferEmailId2());
-					Offer offer1= offerService.getOfferById(transaction.getOfferId1());
-					Offer offer2= offerService.getOfferById(transaction.getOfferId2());
+					Offer offer1 = offerService.getOfferById(transaction.getOfferId1());
+					Offer offer2 = offerService.getOfferById(transaction.getOfferId2());
 //					emailUtil.sendEmail(emailList, "Transaction Complete", "All the parties have transfered the money.\r\n"+user1.getNickname() +
 //							"Transfered"+offer1.getAmountInSrc()+" "+offer1.getSourceCurrency()+"\r\n"+
 //							user2.getNickname() +
 //							"Transfered"+offer2.getAmountInSrc()+" "+offer2.getSourceCurrency()+"\r\n"
 //							);
-					//emailUtil.sendEmail(emailList, "Transaction Complete", "Transaction Complete");
-					String user1emailtext="All the parties have transfered the money.\r\n"+user1.getNickname() +
-							" has Transfered "+offer1.getAmountInSrc()+" "+offer1.getSourceCurrency()+"\r\n"+
-							user2.getNickname() +
-							" has Transfered "+offer2.getAmountInSrc()+" "+offer2.getSourceCurrency()+"\r\n"+
-							
-							"\r\n You received "+ (offer1.getAmountInDes()-(offer1.getAmountInDes()*0.05))+" "+offer1.getDestinationCurrency()+" after service fee";
-					String user2emailtext="All the parties have transfered the money.\r\n"+user1.getNickname() +
-							" has Transfered "+offer1.getAmountInSrc()+" "+offer1.getSourceCurrency()+"\r\n"+
-							user2.getNickname() +
-							" has Transfered "+offer2.getAmountInSrc()+" "+offer2.getSourceCurrency()+"\r\n"+
-							
-							"\r\n You received "+ (offer2.getAmountInDes()-(offer2.getAmountInDes()*0.05))+" "+offer2.getDestinationCurrency()+" after service fee";
-					String emailList1[]= {user1.getEmailId()};
-					String emailList2[]= {user2.getEmailId()};
-					
-					emailUtil.sendEmail(emailList1,"Transaction Complete",user1emailtext);
-					emailUtil.sendEmail(emailList2,"Transaction Complete",user2emailtext);
-				}
-				else {
-					if(updatedTransaction.getOfferIdStatus3()==4) {
+					// emailUtil.sendEmail(emailList, "Transaction Complete", "Transaction
+					// Complete");
+					String user1emailtext = "All the parties have transfered the money.\r\n" + user1.getNickname()
+							+ " has Transfered " + offer1.getAmountInSrc() + " " + offer1.getSourceCurrency() + "\r\n"
+							+ user2.getNickname() + " has Transfered " + offer2.getAmountInSrc() + " "
+							+ offer2.getSourceCurrency() + "\r\n" +
+
+							"\r\n You received " + (offer1.getAmountInDes() - (offer1.getAmountInDes() * 0.05)) + " "
+							+ offer1.getDestinationCurrency() + " after service fee";
+					String user2emailtext = "All the parties have transfered the money.\r\n" + user1.getNickname()
+							+ " has Transfered " + offer1.getAmountInSrc() + " " + offer1.getSourceCurrency() + "\r\n"
+							+ user2.getNickname() + " has Transfered " + offer2.getAmountInSrc() + " "
+							+ offer2.getSourceCurrency() + "\r\n" +
+
+							"\r\n You received " + (offer2.getAmountInDes() - (offer2.getAmountInDes() * 0.05)) + " "
+							+ offer2.getDestinationCurrency() + " after service fee";
+					String emailList1[] = { user1.getEmailId() };
+					String emailList2[] = { user2.getEmailId() };
+
+					emailUtil.sendEmail(emailList1, "Transaction Complete", user1emailtext);
+					emailUtil.sendEmail(emailList2, "Transaction Complete", user2emailtext);
+				} else {
+					if (updatedTransaction.getOfferIdStatus3() == 4) {
 						Calendar cal = Calendar.getInstance();
 						cal.set(Calendar.HOUR_OF_DAY, 0);
 						cal.set(Calendar.MINUTE, 0);
@@ -452,19 +495,19 @@ public class TransactionController {
 						cal.set(Calendar.MILLISECOND, 0);
 						Date todayDate = cal.getTime();
 						String[] emailList = new String[3];
-						
+
 						emailList[0] = transaction.getOfferEmailId1();
 						emailList[1] = transaction.getOfferEmailId2();
 						emailList[2] = transaction.getOfferEmailId3();
 
-					updatedTransaction = transactionService.updateTransactionStatusForThreeOffers(transactionId,transaction.getOfferId1(),transaction.getOfferId2()
-							,transaction.getOfferId3());
-					User user1 = userService.getUserByEmailId(transaction.getOfferEmailId1());
-					User user2 = userService.getUserByEmailId(transaction.getOfferEmailId2());
-					User user3 = userService.getUserByEmailId(transaction.getOfferEmailId3());
-					Offer offer1= offerService.getOfferById(transaction.getOfferId1());
-					Offer offer3= offerService.getOfferById(transaction.getOfferId3());
-					Offer offer2= offerService.getOfferById(transaction.getOfferId2());
+						updatedTransaction = transactionService.updateTransactionStatusForThreeOffers(transactionId,
+								transaction.getOfferId1(), transaction.getOfferId2(), transaction.getOfferId3());
+						User user1 = userService.getUserByEmailId(transaction.getOfferEmailId1());
+						User user2 = userService.getUserByEmailId(transaction.getOfferEmailId2());
+						User user3 = userService.getUserByEmailId(transaction.getOfferEmailId3());
+						Offer offer1 = offerService.getOfferById(transaction.getOfferId1());
+						Offer offer3 = offerService.getOfferById(transaction.getOfferId3());
+						Offer offer2 = offerService.getOfferById(transaction.getOfferId2());
 
 //					emailUtil.sendEmail(emailList, "Transaction Complete", "All the parties have transfered the money.\r\n"+user1.getNickname() +
 //							"Transfered "+offer1.getAmountInSrc()+" "+offer1.getSourceCurrency()+"\r\n"+
@@ -474,47 +517,46 @@ public class TransactionController {
 //							"Transfered "+offer3.getAmountInSrc()+" "+offer3.getSourceCurrency()+"\r\n"
 //							
 //							);
-					String user1emailtext="All the parties have transfered the money.\r\n"+user1.getNickname() +
-							" has Transfered "+offer1.getAmountInSrc()+" "+offer1.getSourceCurrency()+"\r\n"+
-							user2.getNickname() +
-							" has Transfered "+offer2.getAmountInSrc()+" "+offer2.getSourceCurrency()+"\r\n"+
-							user3.getNickname() +
-							" has Transfered "+offer3.getAmountInSrc()+" "+offer3.getSourceCurrency()+"\r\n"+
-							"\r\n You received "+ (offer1.getAmountInDes()-(offer1.getAmountInDes()*0.05))+" "+offer1.getDestinationCurrency()+" after service fee";
-					String user2emailtext="All the parties have transfered the money.\r\n"+user1.getNickname() +
-							" has Transfered "+offer1.getAmountInSrc()+" "+offer1.getSourceCurrency()+"\r\n"+
-							user2.getNickname() +
-							" has Transfered "+offer2.getAmountInSrc()+" "+offer2.getSourceCurrency()+"\r\n"+
-							user3.getNickname() +
-							" has Transfered "+offer3.getAmountInSrc()+" "+offer3.getSourceCurrency()+"\r\n"+
-							"\r\n You received "+ (offer2.getAmountInDes()-(offer2.getAmountInDes()*0.05))+" "+offer2.getDestinationCurrency()+" after service fee";
-					String user3emailtext="All the parties have transfered the money.\r\n"+user1.getNickname() +
-							" has Transfered "+offer1.getAmountInSrc()+" "+offer1.getSourceCurrency()+"\r\n"+
-							user2.getNickname() +
-							" has Transfered "+offer2.getAmountInSrc()+" "+offer2.getSourceCurrency()+"\r\n"+
-							user3.getNickname() +
-							" has Transfered "+offer3.getAmountInSrc()+" "+offer3.getSourceCurrency()+"\r\n"+
-							"\r\n You received "+ (offer3.getAmountInDes()-(offer3.getAmountInDes()*0.05))+" "+offer3.getDestinationCurrency()+" after service fee";
-					
-					
-					String emailList1[]= {user1.getEmailId()};
-					String emailList2[]= {user2.getEmailId()};
-					String emailList3[]= {user3.getEmailId()};
-					
-					emailUtil.sendEmail(emailList1,"Transaction Complete",user1emailtext);
-					emailUtil.sendEmail(emailList2,"Transaction Complete",user2emailtext);
-					emailUtil.sendEmail(emailList3,"Transaction Complete",user3emailtext);
+						String user1emailtext = "All the parties have transfered the money.\r\n" + user1.getNickname()
+								+ " has Transfered " + offer1.getAmountInSrc() + " " + offer1.getSourceCurrency()
+								+ "\r\n" + user2.getNickname() + " has Transfered " + offer2.getAmountInSrc() + " "
+								+ offer2.getSourceCurrency() + "\r\n" + user3.getNickname() + " has Transfered "
+								+ offer3.getAmountInSrc() + " " + offer3.getSourceCurrency() + "\r\n"
+								+ "\r\n You received " + (offer1.getAmountInDes() - (offer1.getAmountInDes() * 0.05))
+								+ " " + offer1.getDestinationCurrency() + " after service fee";
+						String user2emailtext = "All the parties have transfered the money.\r\n" + user1.getNickname()
+								+ " has Transfered " + offer1.getAmountInSrc() + " " + offer1.getSourceCurrency()
+								+ "\r\n" + user2.getNickname() + " has Transfered " + offer2.getAmountInSrc() + " "
+								+ offer2.getSourceCurrency() + "\r\n" + user3.getNickname() + " has Transfered "
+								+ offer3.getAmountInSrc() + " " + offer3.getSourceCurrency() + "\r\n"
+								+ "\r\n You received " + (offer2.getAmountInDes() - (offer2.getAmountInDes() * 0.05))
+								+ " " + offer2.getDestinationCurrency() + " after service fee";
+						String user3emailtext = "All the parties have transfered the money.\r\n" + user1.getNickname()
+								+ " has Transfered " + offer1.getAmountInSrc() + " " + offer1.getSourceCurrency()
+								+ "\r\n" + user2.getNickname() + " has Transfered " + offer2.getAmountInSrc() + " "
+								+ offer2.getSourceCurrency() + "\r\n" + user3.getNickname() + " has Transfered "
+								+ offer3.getAmountInSrc() + " " + offer3.getSourceCurrency() + "\r\n"
+								+ "\r\n You received " + (offer3.getAmountInDes() - (offer3.getAmountInDes() * 0.05))
+								+ " " + offer3.getDestinationCurrency() + " after service fee";
+
+						String emailList1[] = { user1.getEmailId() };
+						String emailList2[] = { user2.getEmailId() };
+						String emailList3[] = { user3.getEmailId() };
+
+						emailUtil.sendEmail(emailList1, "Transaction Complete", user1emailtext);
+						emailUtil.sendEmail(emailList2, "Transaction Complete", user2emailtext);
+						emailUtil.sendEmail(emailList3, "Transaction Complete", user3emailtext);
 
 //					System.out.println(user1emailtext);
 //					System.out.println(user2emailtext);
 //					System.out.println(user3emailtext);
 
-		}
 					}
+				}
 			}
 
-			TransactionDTO transactionresponse = objectMapper.convertValue(updatedTransaction,TransactionDTO.class);
-			 return new ResponseEntity<TransactionDTO>(transactionresponse, HttpStatus.OK);
+			TransactionDTO transactionresponse = objectMapper.convertValue(updatedTransaction, TransactionDTO.class);
+			return new ResponseEntity<TransactionDTO>(transactionresponse, HttpStatus.OK);
 		} catch (Exception ex) {
 			ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(500, HttpStatus.INTERNAL_SERVER_ERROR,
 					ex.getMessage());
@@ -522,22 +564,24 @@ public class TransactionController {
 		}
 
 	}
+
 	@RequestMapping(value = "/transaction/report", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public ResponseEntity<List<ReportDTO>> getTransactionReport() {
 		try {
 			List<ReportDTO> reportList = new ArrayList<ReportDTO>();
-			for(int i = 0; i < 12; i++) {
+			for (int i = 0; i < 12; i++) {
 				LocalDate currentdate = LocalDate.now().minus(i, ChronoUnit.MONTHS);
 				int month = currentdate.getMonthValue();
 				int year = currentdate.getYear();
 				int completedTransactionCount = transactionService.getCountOfCompletedTransactionPerMonth(year, month);
 				int abortedTransactionCount = transactionService.getCountOfAbortedTransactionPerMonth(year, month);
-				Double transferedSum = transactionService.getSumOfCompletedTransactionPerMonth(year, month);				
+				Double transferedSum = transactionService.getSumOfCompletedTransactionPerMonth(year, month);
 				Double serviceFeeCollected = transferedSum * 0.05;
 				DecimalFormat df = new DecimalFormat("#.##");
 				Double serviceFeeCollected1 = Double.parseDouble(df.format(serviceFeeCollected));
-				ReportDTO reportDTO = new ReportDTO(completedTransactionCount, abortedTransactionCount, year+"", Month.of(month).name(), transferedSum, serviceFeeCollected1);
+				ReportDTO reportDTO = new ReportDTO(completedTransactionCount, abortedTransactionCount, year + "",
+						Month.of(month).name(), transferedSum, serviceFeeCollected1);
 				reportList.add(reportDTO);
 			}
 			return new ResponseEntity<List<ReportDTO>>(reportList, HttpStatus.OK);
