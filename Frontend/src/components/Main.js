@@ -17,6 +17,7 @@ import OfferAbortedHistory from "./OtherOffer/OfferAbortedHistroy";
 import Account from "./Account/Account";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import TransactionReport from "./TransactionReport/TransactionReport";
+import Individualreport from "./TransactionReport/Individualreport";
 
 //Create a Main Component
 class Main extends Component {
@@ -45,6 +46,7 @@ class Main extends Component {
           />
           <Route path="/accounts/:userId" component={Account} />
           <Route path="/TransactionHistory" component={TransactionReport} />
+          <Route path="/individualreport" component={Individualreport} />
         </div>
       </Router>
     );
