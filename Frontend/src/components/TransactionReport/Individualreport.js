@@ -13,14 +13,16 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 class Individualreport extends Component {
   state = {
-    selectedMonth: 0,
+    selectedMonth: months[0],
     offers: [],
     totalFee: 0,
     totalSourceCurrency: 0,
   };
   handleMonth = (selectedMonth) => {
-    console.log(selectedMonth.value);
-    this.setState({ selectedMonth: selectedMonth.value });
+    console.log(selectedMonth);
+    this.setState({ selectedMonth: selectedMonth }, () => {
+      this.getOffersByMonth();
+    });
   };
   componentDidMount() {
     this.getOffersByMonth();
@@ -29,7 +31,7 @@ class Individualreport extends Component {
   getOffersByMonth = async () => {
     const offers = await axios.get(
       `${address}/offer/user/month/${localStorage.getItem("id")}/${
-        this.state.selectedMonth
+        this.state.selectedMonth.value
       }`
     );
     this.setState({ offers: offers }, () => {
@@ -124,10 +126,7 @@ class Individualreport extends Component {
             <div className="row justify-content-center">
               <div className="col-4 p-3 mt-3 ">
                 <Select
-                  placeholder="Select Month"
-                  value={
-                    this.state.selectedMonth ? this.state.selectedMonth : ""
-                  }
+                  value={this.state.selectedMonth}
                   onChange={this.handleMonth}
                   options={months}
                 ></Select>
