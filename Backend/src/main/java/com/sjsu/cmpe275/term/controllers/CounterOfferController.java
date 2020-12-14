@@ -97,11 +97,9 @@ public class CounterOfferController {
 			srcOffer.setOfferStatus(Constant.COUNTERMADE);
 			offerService.postOffer(srcOffer);
 			/*
-			if (otherOffer != null) {
-				otherOffer.setOfferStatus(Constant.COUNTERMADE);
-				offerService.postOffer(otherOffer);
-			}
-			*/
+			 * if (otherOffer != null) { otherOffer.setOfferStatus(Constant.COUNTERMADE);
+			 * offerService.postOffer(otherOffer); }
+			 */
 
 			// Send notifications to the two parties
 			String[] srcEmailList = new String[1];
@@ -117,24 +115,21 @@ public class CounterOfferController {
 					"You have been proposed a counter offer from user " + srcNickname + " for an amount of "
 							+ counterAmtFromSrcToTgt + " " + counterCurrencyFromSrcToTgt + "!");
 			try {
-			new java.util.Timer().schedule( 
-			        new java.util.TimerTask() {
-			            @Override
-			            public void run() {
-			            	int counterStatus = counterOffer.getCounterStatus();
-			            	if(counterStatus!=Constant.COUNTER_ACCEPTED || counterStatus!=Constant.COUNTER_REJECTED || counterStatus!=Constant.COUNTER_ABORTED) {
-			            		counterOffer.setCounterStatus(Constant.COUNTER_TIMEDOUT);
-			            		counterOfferService.createCounterOffer(counterOffer);
-			            		srcOffer.setOfferStatus(Constant.OFFEROPEN);
-			        			offerService.postOffer(srcOffer);
-			            		
-			            	}
-			            }
-			        }, 
-			        120000 
-			);
-			}
-			catch(Exception ex) {
+				new java.util.Timer().schedule(new java.util.TimerTask() {
+					@Override
+					public void run() {
+						int counterStatus = counterOffer.getCounterStatus();
+						if (counterStatus != Constant.COUNTER_ACCEPTED || counterStatus != Constant.COUNTER_REJECTED
+								|| counterStatus != Constant.COUNTER_ABORTED) {
+							counterOffer.setCounterStatus(Constant.COUNTER_TIMEDOUT);
+							counterOfferService.createCounterOffer(counterOffer);
+							srcOffer.setOfferStatus(Constant.OFFEROPEN);
+							offerService.postOffer(srcOffer);
+
+						}
+					}
+				}, 120000);
+			} catch (Exception ex) {
 				System.out.println("Exception is coming in Scheduler code of Counter Offer" + ex);
 			}
 			// return response
@@ -312,94 +307,100 @@ public class CounterOfferController {
 			if (!isCounterSplit) {
 				transactionService.acceptSingleOffer(t);
 				try {
-				Rating rating1 = ratingService.getRating(srcUserId);
-				Rating rating2 = ratingService.getRating(tgtUserId);
-				
-				
-				rating1.setTotalCount(rating1.getTotalCount()+1);
-				rating2.setTotalCount(rating2.getTotalCount()+1);
+					Rating rating1 = ratingService.getRating(srcUserId);
+					Rating rating2 = ratingService.getRating(tgtUserId);
 
-				ratingService.createRating(rating1);
-				ratingService.createRating(rating2);
+					rating1.setTotalCount(rating1.getTotalCount() + 1);
+					rating2.setTotalCount(rating2.getTotalCount() + 1);
 
-				transactionService.acceptSplitOffer(t);
-				new java.util.Timer().schedule( 
-				        new java.util.TimerTask() {
-				            @Override
-				            public void run() {
-				            	int status = transactionService.getTransaction(t.getId()).getTranStatus();
-				            	if(status != Constant.TRANSACTION_COMPLETED) {
-				            	
-				            	t.setTranStatus(Constant.TRANSACTION_ABORTED);
-				            	transactionService.acceptSingleOffer(t);
-				            	
-				            	int offer1Status = offerService.getOfferById1(srcOfferId).getOfferStatus();
-				            	int offer2Status = offerService.getOfferById1(tgtOfferId).getOfferStatus();
-				 
-				            	
-					            	if(offer1Status != Constant.OFFERTRANSFERRED) {
-					            		rating1.setFaultCount(rating1.getFaultCount()+1);
-					            		ratingService.createRating(rating1);
-					            	}
-					            	if(offer2Status != Constant.OFFERTRANSFERRED) {
-					            		rating2.setFaultCount(rating2.getFaultCount()+1);
-					            		ratingService.createRating(rating2);
-					            	}
-				            	}
-				            }
-				        }, 
-				        120000 
-				);
-				}catch(Exception ex) {
+					ratingService.createRating(rating1);
+					ratingService.createRating(rating2);
+
+					transactionService.acceptSplitOffer(t);
+					new java.util.Timer().schedule(new java.util.TimerTask() {
+						@Override
+						public void run() {
+							int status = transactionService.getTransaction(t.getId()).getTranStatus();
+							if (status != Constant.TRANSACTION_COMPLETED) {
+
+								t.setTranStatus(Constant.TRANSACTION_ABORTED);
+								transactionService.acceptSingleOffer(t);
+								Offer offer11 = offerService.getOfferById1(srcOfferId);
+								Offer offer22 = offerService.getOfferById1(tgtOfferId);
+								int offer1Status = offer11.getOfferStatus();
+								int offer2Status = offer22.getOfferStatus();
+
+								if (offer1Status != Constant.OFFERTRANSFERRED) {
+									rating1.setFaultCount(rating1.getFaultCount() + 1);
+									ratingService.createRating(rating1);
+								}
+								if (offer2Status != Constant.OFFERTRANSFERRED) {
+									rating2.setFaultCount(rating2.getFaultCount() + 1);
+									ratingService.createRating(rating2);
+								}
+								offer11.setOfferStatus(Constant.OFFEROPEN);
+								offerService.postOffer(offer11);
+								offer22.setOfferStatus(Constant.OFFEROPEN);
+								offerService.postOffer(offer22);
+
+							}
+						}
+					}, 120000);
+				} catch (Exception ex) {
 					System.out.println("Exception is coming in Sceduler code of Counter Offer" + ex);
 				}
 			} else {
 				transactionService.acceptSplitOffer(t);
 				try {
-				Rating rating1 = ratingService.getRating(srcUserId);
-				Rating rating2 = ratingService.getRating(tgtUserId);
-				Rating rating3 = ratingService.getRating(otherUserId);
-				
-				rating1.setTotalCount(rating1.getTotalCount()+1);
-				rating2.setTotalCount(rating2.getTotalCount()+1);
-				rating3.setTotalCount(rating3.getTotalCount()+1);
-				
-				ratingService.createRating(rating1);
-				ratingService.createRating(rating2);
-				ratingService.createRating(rating3);
-				new java.util.Timer().schedule( 
-				        new java.util.TimerTask() {
-				            @Override
-				            public void run() {
-				            	int status = transactionService.getTransaction(t.getId()).getTranStatus();
-				            	if(status != Constant.TRANSACTION_COMPLETED) {
-				            	
-				            	t.setTranStatus(Constant.TRANSACTION_ABORTED);
-				            	transactionService.acceptSingleOffer(t);
-				            	
-				            	int offer1Status = offerService.getOfferById1(srcOfferId).getOfferStatus();
-				            	int offer2Status = offerService.getOfferById1(tgtOfferId).getOfferStatus();
-				            	int offer3Status = offerService.getOfferById1(otherOfferId).getOfferStatus();
-				            	
-					            	if(offer1Status != Constant.OFFERTRANSFERRED) {
-					            		rating1.setFaultCount(rating1.getFaultCount()+1);
-					            		ratingService.createRating(rating1);
-					            	}
-					            	if(offer2Status != Constant.OFFERTRANSFERRED) {
-					            		rating2.setFaultCount(rating2.getFaultCount()+1);
-					            		ratingService.createRating(rating2);
-					            	}
-					            	if(offer3Status != Constant.OFFERTRANSFERRED) {
-					            		rating3.setFaultCount(rating3.getFaultCount()+1);
-					            		ratingService.createRating(rating3);
-					            	}
-				            	}
-				            }
-				        }, 
-				        120000 
-				);
-			}
-				catch(Exception ex) {
+					Rating rating1 = ratingService.getRating(srcUserId);
+					Rating rating2 = ratingService.getRating(tgtUserId);
+					Rating rating3 = ratingService.getRating(otherUserId);
+
+					rating1.setTotalCount(rating1.getTotalCount() + 1);
+					rating2.setTotalCount(rating2.getTotalCount() + 1);
+					rating3.setTotalCount(rating3.getTotalCount() + 1);
+
+					ratingService.createRating(rating1);
+					ratingService.createRating(rating2);
+					ratingService.createRating(rating3);
+					new java.util.Timer().schedule(new java.util.TimerTask() {
+						@Override
+						public void run() {
+							int status = transactionService.getTransaction(t.getId()).getTranStatus();
+							if (status != Constant.TRANSACTION_COMPLETED) {
+
+								t.setTranStatus(Constant.TRANSACTION_ABORTED);
+								transactionService.acceptSingleOffer(t);
+								Offer offer11 = offerService.getOfferById1(srcOfferId);
+								Offer offer22 = offerService.getOfferById1(tgtOfferId);
+								Offer offer33 = offerService.getOfferById1(otherOfferId);
+
+								int offer1Status = offer11.getOfferStatus();
+								int offer2Status = offer22.getOfferStatus();
+								int offer3Status = offer33.getOfferStatus();
+
+								if (offer1Status != Constant.OFFERTRANSFERRED) {
+									rating1.setFaultCount(rating1.getFaultCount() + 1);
+									ratingService.createRating(rating1);
+								}
+								if (offer2Status != Constant.OFFERTRANSFERRED) {
+									rating2.setFaultCount(rating2.getFaultCount() + 1);
+									ratingService.createRating(rating2);
+								}
+								if (offer3Status != Constant.OFFERTRANSFERRED) {
+									rating3.setFaultCount(rating3.getFaultCount() + 1);
+									ratingService.createRating(rating3);
+								}
+								offer11.setOfferStatus(Constant.OFFEROPEN);
+			    				offerService.postOffer(offer11);
+			    				offer22.setOfferStatus(Constant.OFFEROPEN);
+			    				offerService.postOffer(offer22);
+			    				offer33.setOfferStatus(Constant.OFFEROPEN);
+			    				offerService.postOffer(offer33);
+							}
+						}
+					}, 120000);
+				} catch (Exception ex) {
 					System.out.println("Exception is coming in Sceduler code of Counter Offer" + ex);
 				}
 			}

@@ -187,12 +187,13 @@ class AutoMatching extends Component {
     }
     submitCounterHandle = async (e, counterAmtFromSrcToTgt) => {
         e.preventDefault();
-        this.setState({ spinner: true });
+        
         console.log("In submitCounterOffer")
         let minBound = this.state.selectedCounterOffer.amountInSrc * 0.9;
         let maxBound = this.state.selectedCounterOffer.amountInSrc * 1.1;
         let withinRange = minBound <= counterAmtFromSrcToTgt && counterAmtFromSrcToTgt <= maxBound;
         if (withinRange) {
+            this.setState({ spinner: true });
             axios
                 .post(address + '/offerMatching/counterOffer', { srcOfferDTO: this.state.myOffer, tgtOfferDTO: this.state.selectedCounterOffer, otherOfferDTO: this.state.otherOffer, counterAmtFromSrcToTgt, counterCurrencyFromSrcToTgt: this.state.selectedCounterOffer.sourceCurrency, counterStatus: COUNTEROFFER_OPEN })
                 .then(res => {
