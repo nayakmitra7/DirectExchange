@@ -31,6 +31,14 @@ class NavigationBar extends Component {
               >
                 My Transactions
               </NavDropdown.Item>
+              <NavDropdown.Item
+                href={`/individualreport`}
+                onClick={() =>
+                  localStorage.setItem("visitId", localStorage.getItem("id"))
+                }
+              >
+                My Monthly Report
+              </NavDropdown.Item>
               <NavDropdown.Item href="/sendMessage">
                 Send a message
               </NavDropdown.Item>

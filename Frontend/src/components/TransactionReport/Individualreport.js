@@ -27,6 +27,39 @@ class Individualreport extends Component {
   componentDidMount() {
     this.getOffersByMonth();
   }
+  getExchangerate = async () => {
+    const countries = await axios.get(address + "/country");
+    let country = countries.data.filter(
+      (country) => country.currency === this.state.offers[0].sourceCurrency
+    );
+    console.log(country);
+    axios
+      .get(address + "/exchangerate/" + country[0].symbol)
+      .then((response) => {
+        //  this.setState({ exchangeRateList: response.data })
+        let exchangeRateList = response.data;
+
+        switch (this.state.offers[0].destinationCurrency) {
+          case "Rupee":
+            this.setState({ exchangeRate: exchangeRateList.inrRate });
+            break;
+          case "Yuan":
+            this.setState({ exchangeRate: exchangeRateList.rmbRate });
+            break;
+          case "Dollar":
+            this.setState({ exchangeRate: exchangeRateList.usdRate });
+            break;
+          case "Euro":
+            this.setState({ exchangeRate: exchangeRateList.eurRate });
+            break;
+          case "Pound":
+            this.setState({ exchangeRate: exchangeRateList.gbpRate });
+            break;
+          default:
+            break;
+        }
+      });
+  };
 
   getOffersByMonth = async () => {
     const offers = await axios.get(
@@ -34,7 +67,8 @@ class Individualreport extends Component {
         this.state.selectedMonth.value
       }`
     );
-    this.setState({ offers: offers }, () => {
+    this.setState({ offers: offers.data }, () => {
+      this.getExchangerate();
       this.getTotalServiceFee();
       this.getTotalSourceCurrency();
       this.getTotalDestinationCurrency();
@@ -43,7 +77,7 @@ class Individualreport extends Component {
   getTotalServiceFee = () => {
     let { offers } = this.state;
     let totalFee = 0;
-    for (let i = 0; i < offers; i++) {
+    for (let i = 0; i < offers.length; i++) {
       totalFee += offers[i].amountInDes * 0.05;
     }
     this.setState({ totalFee });
@@ -51,7 +85,8 @@ class Individualreport extends Component {
   getTotalSourceCurrency = () => {
     let { offers } = this.state;
     let totalSourceCurrency = 0;
-    for (let i = 0; i < offers; i++) {
+    for (let i = 0; i < offers.length; i++) {
+      console.log(offers[i].amountInSrc);
       totalSourceCurrency += offers[i].amountInSrc;
     }
     this.setState({ totalSourceCurrency });
@@ -60,7 +95,7 @@ class Individualreport extends Component {
   getTotalDestinationCurrency = () => {
     let { offers } = this.state;
     let totalDestinationCurrency = 0;
-    for (let i = 0; i < offers; i++) {
+    for (let i = 0; i < offers.length; i++) {
       totalDestinationCurrency += offers[i].amountInDes;
     }
     this.setState({ totalDestinationCurrency });
@@ -85,7 +120,13 @@ class Individualreport extends Component {
                   style={{ fontSize: "18px" }}
                   type="text"
                   disabled="true"
-                  value="$1000"
+                  value={
+                    this.state.totalSourceCurrency +
+                    " " +
+                    (this.state.offers[0]
+                      ? this.state.offers[0].sourceCurrency
+                      : "")
+                  }
                 ></input>
               </div>
               <div className="col-4 d-flex justify-content-between">
@@ -97,7 +138,13 @@ class Individualreport extends Component {
                   style={{ fontSize: "18px" }}
                   type="text"
                   disabled="true"
-                  value="73500 inr"
+                  value={
+                    this.state.totalDestinationCurrency +
+                    " " +
+                    (this.state.offers[0]
+                      ? this.state.offers[0].destinationCurrency
+                      : "")
+                  }
                 ></input>
               </div>
             </div>
@@ -109,7 +156,7 @@ class Individualreport extends Component {
                   style={{ fontSize: "18px" }}
                   type="text"
                   disabled="true"
-                  value="0.05"
+                  value="0.05%"
                 ></input>
               </div>
               <div className="col-4 d-flex justify-content-between">
@@ -119,7 +166,13 @@ class Individualreport extends Component {
                   style={{ fontSize: "18px" }}
                   type="text"
                   disabled="true"
-                  value="$10.05"
+                  value={
+                    this.state.totalFee +
+                    " " +
+                    (this.state.offers[0]
+                      ? this.state.offers[0].destinationCurrency
+                      : "")
+                  }
                 ></input>
               </div>
             </div>
@@ -134,40 +187,48 @@ class Individualreport extends Component {
             </div>
           </Card.Body>
         </Card>
-        <div>
-          <Row>
-            <Col>
-              <Card className="margin-left-right-browse-offer">
-                <Card.Body>
-                  <Row
-                    className="header-bold-auto-matching"
-                    style={{ cursor: "pointer" }}
-                  >
-                    <Col>ID</Col>
-                    <Col>Username</Col>
-                    <Col>Country(src)</Col>
-                    <Col>Amount(src)</Col>
-                    <Col>Amount(des)</Col>
-                    <Col>Country(des)</Col>
-                    <Col>Date</Col>
-                  </Row>
-                  <Row>
-                    {/* <Col>#{offer.id}</Col>
-                    <Col>{offer.nickname}</Col>
-                    <Col>{offer.sourceCountry}</Col>
-                    <Col>
-                      {offer.amountInSrc} {offer.sourceCurrency}
-                    </Col>
-                    <Col>
-                      {offer.amountInDes} {offer.destinationCurrency}
-                    </Col>
-                    <Col>{offer.destinationCountry} </Col>
-                    <Col>{offer.expirationDate}</Col> */}
-                  </Row>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
+        <div className="info-enclose">
+          {this.state.offers.map((offer) => (
+            <div>
+              <Row>
+                <Col>
+                  <Card className="margin-left-right-browse-offer">
+                    <Card.Body>
+                      <Row
+                        className="header-bold-auto-matching"
+                        style={{ cursor: "pointer" }}
+                      >
+                        <Col>ID</Col>
+                        <Col>Username</Col>
+                        <Col>Country(src)</Col>
+                        <Col>Amount(src)</Col>
+                        <Col>Amount(des)</Col>
+                        <Col>Country(des)</Col>
+                        <Col>Exchange Rate</Col>
+                        <Col>Transaction Date</Col>
+                        <Col>Service Fee</Col>
+                      </Row>
+                      <Row>
+                        <Col>#{offer.id}</Col>
+                        <Col>{offer.nickname}</Col>
+                        <Col>{offer.sourceCountry}</Col>
+                        <Col>
+                          {offer.amountInSrc} {offer.sourceCurrency}
+                        </Col>
+                        <Col>
+                          {offer.amountInDes} {offer.destinationCurrency}
+                        </Col>
+                        <Col>{offer.destinationCountry} </Col>
+                        <Col>{this.state.exchangeRate}</Col>
+                        <Col>{offer.dataChangeLastModifiedTime}</Col>
+                        <Col>{(offer.amountInDes * 0.05).toFixed(2)}</Col>
+                      </Row>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              </Row>
+            </div>
+          ))}
         </div>
       </div>
     );

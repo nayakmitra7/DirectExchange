@@ -10,7 +10,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/esm/Button";
 import OfferHeader from "./OfferHeader";
-import Badge from 'react-bootstrap/Badge';
+import Badge from "react-bootstrap/Badge";
 // import Modal from "./Modal";
 import Modal1 from "react-bootstrap/Modal";
 import { Spinner } from "react-bootstrap";
@@ -137,11 +137,15 @@ class OfferAbortedHistory extends Component {
             <h3>Single Matches</h3>
           </Col>
         </Row>
-       
-          <Accordion.Toggle as={Card.Header} eventKey="0" className="background-history">
-            {singleOfferUpdated.map((offerarr) => (
-              <div>
-                 <Card style={{marginBottom:'2%'}}>
+
+        <Accordion.Toggle
+          as={Card.Header}
+          eventKey="0"
+          className="background-history"
+        >
+          {singleOfferUpdated.map((offerarr) => (
+            <div>
+              <Card style={{ marginBottom: "2%" }}>
                 <ListGroup.Item
                   variant="secondary"
                   className="list-group-style-auto-matching "
@@ -171,11 +175,15 @@ class OfferAbortedHistory extends Component {
                       </Col>
                       <Col>{offerarr.mySingleOffer[0].sourceCountry}</Col>
                       <Col>{offerarr.mySingleOffer[0].expirationDate}</Col>
-                      <Col><h5><Badge variant="danger">Aborted</Badge></h5></Col>
+                      <Col>
+                        <h5>
+                          <Badge variant="danger">Aborted</Badge>
+                        </h5>
+                      </Col>
                     </Row>
                   </div>
                 </ListGroup.Item>
-                <Card.Body className="padding-drop-history" >
+                <Card.Body className="padding-drop-history">
                   <ListGroup variant="flush">
                     <ListGroup.Item variant="" className="">
                       <Row className="header-bold-auto-matching ">
@@ -190,10 +198,15 @@ class OfferAbortedHistory extends Component {
                       </Row>
                       <Row>
                         <Col>#{offerarr.otherSingleOffers[0].id}</Col>
-                        <Col>
-                          {offerarr.otherSingleOffers[0].nickname.slice(0, 2)}
-                          <span style={{ fontSize: "22px" }}>***</span>
-                        </Col>
+                        {localStorage.getItem("id") !==
+                        localStorage.getItem("visitId") ? (
+                          <Col>
+                            {offerarr.otherSingleOffers[0].nickname.slice(0, 2)}
+                            <span style={{ fontSize: "22px" }}>***</span>
+                          </Col>
+                        ) : (
+                          <Col>{offerarr.otherSingleOffers[0].nickname}</Col>
+                        )}
                         <Col>
                           {offerarr.otherSingleOffers[0].destinationCountry}
                         </Col>
@@ -209,27 +222,34 @@ class OfferAbortedHistory extends Component {
                         <Col>
                           {offerarr.otherSingleOffers[0].expirationDate}
                         </Col>
-                        <Col><h5><Badge variant="danger">Aborted</Badge></h5></Col>
+                        <Col>
+                          <h5>
+                            <Badge variant="danger">Aborted</Badge>
+                          </h5>
+                        </Col>
                       </Row>
                     </ListGroup.Item>
                   </ListGroup>
                 </Card.Body>
-                </Card>
-              </div>
-            ))}
-          </Accordion.Toggle>
+              </Card>
+            </div>
+          ))}
+        </Accordion.Toggle>
 
-  
         <Row align="center" className="my-4">
           <Col>
             <h3>Split Matches</h3>
           </Col>
         </Row>
-        
-          <Accordion.Toggle as={Card.Header} eventKey="0" className="background-history">
-            {splitOfferUpdated.map((offerarr) => (
-              <div>
-                <Card style={{marginBottom:'2%'}}>
+
+        <Accordion.Toggle
+          as={Card.Header}
+          eventKey="0"
+          className="background-history"
+        >
+          {splitOfferUpdated.map((offerarr) => (
+            <div>
+              <Card style={{ marginBottom: "2%" }}>
                 <ListGroup.Item
                   variant="secondary"
                   className="list-group-style-auto-matching "
@@ -259,7 +279,11 @@ class OfferAbortedHistory extends Component {
                       </Col>
                       <Col>{offerarr.mySplitOffer[0].sourceCountry}</Col>
                       <Col>{offerarr.mySplitOffer[0].expirationDate}</Col>
-                      <Col><h5><Badge variant="danger">Aborted</Badge></h5></Col>
+                      <Col>
+                        <h5>
+                          <Badge variant="danger">Aborted</Badge>
+                        </h5>
+                      </Col>
                     </Row>
                   </div>
                 </ListGroup.Item>
@@ -279,10 +303,16 @@ class OfferAbortedHistory extends Component {
                         </Row>
                         <Row>
                           <Col>#{offer.id}</Col>
-                          <Col>
-                            {offer.nickname.slice(0, 2)}
-                            <span style={{ fontSize: "22px" }}>***</span>
-                          </Col>
+
+                          {localStorage.getItem("id") !==
+                          localStorage.getItem("visitId") ? (
+                            <Col>
+                              {offer.nickname.slice(0, 2)}
+                              <span style={{ fontSize: "22px" }}>***</span>
+                            </Col>
+                          ) : (
+                            <Col>{offer.nickname}</Col>
+                          )}
                           <Col>{offer.destinationCountry}</Col>
                           <Col>
                             {offer.amountInDes} {offer.destinationCurrency}
@@ -292,16 +322,20 @@ class OfferAbortedHistory extends Component {
                           </Col>
                           <Col>{offer.sourceCountry}</Col>
                           <Col>{offer.expirationDate}</Col>
-                          <Col><h5><Badge variant="danger">Aborted</Badge></h5></Col>
+                          <Col>
+                            <h5>
+                              <Badge variant="danger">Aborted</Badge>
+                            </h5>
+                          </Col>
                         </Row>
                       </ListGroup.Item>
                     </ListGroup>
                   </Card.Body>
                 ))}
-                </Card>
-              </div>
-            ))}
-          </Accordion.Toggle>
+              </Card>
+            </div>
+          ))}
+        </Accordion.Toggle>
       </div>
     );
   }

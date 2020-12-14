@@ -223,8 +223,11 @@ public class Offer extends BaseEntity{
 		this.nickname = nickname;
 	}
 
-	
-
+//	
+//	@Override
+//	public Date dataChangeCreatedTime() {
+//		
+//	}
 	
 	
 }

@@ -65,4 +65,17 @@ public abstract class BaseEntity implements Serializable {
     protected void preRemove() {
         this.dataChangeLastModifiedTime = new Date();
     }
+
+	public Date getDataChangeCreatedTime() {
+		return dataChangeCreatedTime;
+	}
+
+
+
+	public Date getDataChangeLastModifiedTime() {
+		return dataChangeLastModifiedTime;
+	}
+
+
+    
 }

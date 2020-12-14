@@ -43,6 +43,32 @@ public class OfferDto {
 		
 	}
 
+	
+
+	public OfferDto(Long id, String sourceCountry, String sourceCurrency, Double amountInSrc, Double amountInDes,
+			Double amountInUSD, String destinationCountry, String destinationCurrency, Date expirationDate,
+			Boolean counterOfferAllowed, Boolean splitOfferAllowed, Long userId, int offerStatus, String nickname,
+			Date dataChangeCreatedTime, Date dataChangeLastModifiedTime) {
+		super();
+		this.id = id;
+		this.sourceCountry = sourceCountry;
+		this.sourceCurrency = sourceCurrency;
+		this.amountInSrc = amountInSrc;
+		this.amountInDes = amountInDes;
+		this.amountInUSD = amountInUSD;
+		this.destinationCountry = destinationCountry;
+		this.destinationCurrency = destinationCurrency;
+		this.expirationDate = expirationDate;
+		this.counterOfferAllowed = counterOfferAllowed;
+		this.splitOfferAllowed = splitOfferAllowed;
+		this.userId = userId;
+		this.offerStatus = offerStatus;
+		this.nickname = nickname;
+		this.dataChangeCreatedTime = dataChangeCreatedTime;
+		this.dataChangeLastModifiedTime = dataChangeLastModifiedTime;
+	}
+
+
 
 	public Long getId() {
 		return id;
