@@ -9,9 +9,61 @@ import "../BrowseOffer/browseoffer.css";
 import { address } from "../../js/helper/constant";
 import Select from "react-select";
 import months from "../../js/helper/months.json";
-
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 class Individualreport extends Component {
-  state = {};
+  state = {
+    selectedMonth: 0,
+    offers: [],
+    totalFee: 0,
+    totalSourceCurrency: 0,
+  };
+  handleMonth = (selectedMonth) => {
+    console.log(selectedMonth.value);
+    this.setState({ selectedMonth: selectedMonth.value });
+  };
+  componentDidMount() {
+    this.getOffersByMonth();
+  }
+
+  getOffersByMonth = async () => {
+    const offers = await axios.get(
+      `${address}/offer/user/month/${localStorage.getItem("id")}/${
+        this.state.selectedMonth
+      }`
+    );
+    this.setState({ offers: offers }, () => {
+      this.getTotalServiceFee();
+      this.getTotalSourceCurrency();
+      this.getTotalDestinationCurrency();
+    });
+  };
+  getTotalServiceFee = () => {
+    let { offers } = this.state;
+    let totalFee = 0;
+    for (let i = 0; i < offers; i++) {
+      totalFee += offers[i].amountInDes * 0.05;
+    }
+    this.setState({ totalFee });
+  };
+  getTotalSourceCurrency = () => {
+    let { offers } = this.state;
+    let totalSourceCurrency = 0;
+    for (let i = 0; i < offers; i++) {
+      totalSourceCurrency += offers[i].amountInSrc;
+    }
+    this.setState({ totalSourceCurrency });
+  };
+
+  getTotalDestinationCurrency = () => {
+    let { offers } = this.state;
+    let totalDestinationCurrency = 0;
+    for (let i = 0; i < offers; i++) {
+      totalDestinationCurrency += offers[i].amountInDes;
+    }
+    this.setState({ totalDestinationCurrency });
+  };
+
   render() {
     return (
       <div>
@@ -71,11 +123,53 @@ class Individualreport extends Component {
             </div>
             <div className="row justify-content-center">
               <div className="col-4 p-3 mt-3 ">
-                <Select placeholder="Select Month" options={months}></Select>
+                <Select
+                  placeholder="Select Month"
+                  value={
+                    this.state.selectedMonth ? this.state.selectedMonth : ""
+                  }
+                  onChange={this.handleMonth}
+                  options={months}
+                ></Select>
               </div>
             </div>
           </Card.Body>
         </Card>
+        <div>
+          <Row>
+            <Col>
+              <Card className="margin-left-right-browse-offer">
+                <Card.Body>
+                  <Row
+                    className="header-bold-auto-matching"
+                    style={{ cursor: "pointer" }}
+                  >
+                    <Col>ID</Col>
+                    <Col>Username</Col>
+                    <Col>Country(src)</Col>
+                    <Col>Amount(src)</Col>
+                    <Col>Amount(des)</Col>
+                    <Col>Country(des)</Col>
+                    <Col>Date</Col>
+                  </Row>
+                  <Row>
+                    {/* <Col>#{offer.id}</Col>
+                    <Col>{offer.nickname}</Col>
+                    <Col>{offer.sourceCountry}</Col>
+                    <Col>
+                      {offer.amountInSrc} {offer.sourceCurrency}
+                    </Col>
+                    <Col>
+                      {offer.amountInDes} {offer.destinationCurrency}
+                    </Col>
+                    <Col>{offer.destinationCountry} </Col>
+                    <Col>{offer.expirationDate}</Col> */}
+                  </Row>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+        </div>
       </div>
     );
   }
