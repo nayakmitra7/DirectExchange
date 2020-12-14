@@ -88,7 +88,7 @@ class Account extends Component {
                                 <Form noValidate validated={this.state.validated} id="contact-form-class" onSubmit={this.handleSubmit}>
                                     <div>
                                         <Form.Group controlId="formBasicEmail">
-                                            <Form.Label>Country 2 Bank Name</Form.Label>
+                                            <Form.Label>Country Bank Name</Form.Label>
                                             <Form.Control onChange={this.handleAccountChange} value={this.state.accountData.bankName} required name="bankName" type="text" placeholder="Bank name 2" />
                                             <Form.Label>Country Name</Form.Label>
                                             <Form.Control onChange={this.handleAccountChange} value={this.state.accountData.countryName} name="countryName" required as="select">
