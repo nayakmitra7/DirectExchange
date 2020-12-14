@@ -26,7 +26,7 @@ public interface OfferRepository extends JpaRepository<Offer, Long> {
 	@Query("Select o1 from Offer o1 where o1.userId = :userId and o1.offerStatus=:offerStatus")
 	List<Offer> getClosedTransactionOffers(@Param("userId") Long userId, @Param("offerStatus") int offerStatus);
 
-	@Query("Select o1 from Offer o1 where o1.userId = :userId and o1.offerStatus=:offerStatus and MONTH(o1.dataChangeCreatedTime)=:month")
+	@Query("Select o1 from Offer o1 where o1.userId = :userId and o1.offerStatus=:offerStatus and MONTH(o1.dataChangeLastModifiedTime)=:month")
 	List<Offer> getClosedTransactionOffersByMonth(@Param("userId") Long userId, @Param("offerStatus") int offerStatus,
 			@Param("month") int month);
 
