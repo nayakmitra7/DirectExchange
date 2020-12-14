@@ -43,17 +43,19 @@ class BrowseOffer extends Component {
   componentWillMount() {
     this.getCountries();
     this.getOffers();
-    this.state.ratingList.forEach((user) =>{
-      if(user.total_count == 0){
-        this.state.ratingCalculations[user.user_id] ='N/A';
-      }else{
-        var divVal = user.fault_count/user.total_count;
-        var ratingVal = Math.round(((1-divVal)*4))+1
-        this.state.ratingCalculations[user.user_id] = ratingVal;
-      }
-       
+    axios.get(address+'/rating').then((response)=>{
+      response.data.forEach((user) =>{
+        if(user.totalCount == 0){
+          this.state.ratingCalculations[user.userId] ='N/A';
+        }else{
+          var divVal = user.faultCount/user.totalCount;
+          var ratingVal = Math.round(((1-divVal)*4))+1
+          this.state.ratingCalculations[user.userId] = ratingVal;
+        }
+         
+      })
     })
-    console.log(this.state.ratingCalculations)
+     
   }
 
   async getOffers() {
