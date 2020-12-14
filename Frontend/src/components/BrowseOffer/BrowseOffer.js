@@ -41,8 +41,7 @@ class BrowseOffer extends Component {
     ratingCalculations:{}
   };
   componentWillMount() {
-    this.getCountries();
-    this.getOffers();
+   
     axios.get(address+'/rating').then((response)=>{
       response.data.forEach((user) =>{
         if(user.totalCount == 0){
@@ -54,6 +53,8 @@ class BrowseOffer extends Component {
         }
          
       })
+      this.getCountries();
+      this.getOffers();
     })
      
   }
@@ -339,10 +340,10 @@ Cards to display offers
                           <Col>{offer.amountInDes} {offer.destinationCurrency}</Col>
                           <Col>{offer.destinationCountry} </Col>
                           <Col>{offer.expirationDate}</Col>
-                    
-                          {this.state.ratingCalculations[offer.userId] != 'N/A' && <Col><ReactStars count={5} size={24} color2={'#ffd700'} value={parseInt(this.state.ratingCalculations[offer.userId])} edit={false}/></Col>}
+                          
+                          {this.state.ratingCalculations  && this.state.ratingCalculations[offer.userId] != 'N/A' && <Col><ReactStars count={5} size={24} color2={'#ffd700'} value={parseInt(this.state.ratingCalculations[offer.userId])} edit={false}/></Col>}
 
-                          {this.state.ratingCalculations[offer.userId] == 'N/A' && <Col>N/A</Col>}
+                          {this.state.ratingCalculations && this.state.ratingCalculations[offer.userId] == 'N/A' && <Col>N/A</Col>}
                         </Row>
                       </Card.Body>
                     </Card>
