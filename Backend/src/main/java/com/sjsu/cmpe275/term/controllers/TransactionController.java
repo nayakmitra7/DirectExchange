@@ -7,7 +7,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +30,7 @@ import com.sjsu.cmpe275.term.dto.ReportDTO;
 import com.sjsu.cmpe275.term.dto.ResponseDTO;
 import com.sjsu.cmpe275.term.dto.TransactionDTO;
 import com.sjsu.cmpe275.term.exceptions.GenericException;
+import com.sjsu.cmpe275.term.models.CounterOffer;
 import com.sjsu.cmpe275.term.models.Offer;
 import com.sjsu.cmpe275.term.models.Rating;
 import com.sjsu.cmpe275.term.models.Transaction;
@@ -148,7 +151,26 @@ public class TransactionController {
 				System.out.println(" Rating has some error "+ex);
 			}
 			
-			
+			//Open src offers of counter offer table
+			List<CounterOffer> counterOfferList1 = counterOfferService.getCounterOffersByTgt(offerId1);
+			List<CounterOffer> counterOfferList2 = counterOfferService.getCounterOffersByTgt(offerId2);
+
+			Set<CounterOffer> offerList = new HashSet<>();
+			offerList.addAll(counterOfferList1);
+			offerList.addAll(counterOfferList2);
+			for (CounterOffer counterOffer : offerList) {
+				if(counterOffer.getOtherOfferId() == offerId1 || counterOffer.getOtherOfferId() == offerId2) {
+					counterOffer.setCounterStatus(Constant.COUNTER_ABORTED);
+					counterOfferService.update(counterOffer);
+				}else if(counterOffer.getTgtOfferId() == offerId1 || counterOffer.getTgtOfferId() == offerId2) {
+					counterOffer.setCounterStatus(Constant.COUNTER_REJECTED);
+					counterOfferService.update(counterOffer);
+				}
+				Offer srcRejectOffer = offerService.getOfferById(counterOffer.getSrcOfferId());
+				srcRejectOffer.setOfferStatus(Constant.OFFEROPEN);
+				offerService.postOffer(srcRejectOffer);
+			}
+			//
 			emailUtil.sendEmail(emailList, "Offer accepted", "Offer accepted! Make the payment.");
 
 			ResponseDTO responseDTO = new ResponseDTO(200, HttpStatus.OK, "You have successfully accepted the offer!");
@@ -263,6 +285,29 @@ public class TransactionController {
 				System.out.println(" Rating has some error "+ex);
 				
 			}
+			
+			//Open src offers of counter offer table
+			List<CounterOffer> counterOfferList1 = counterOfferService.getCounterOffersByTgt(offerId1);
+			List<CounterOffer> counterOfferList2 = counterOfferService.getCounterOffersByTgt(offerId2);
+			List<CounterOffer> counterOfferList3 = counterOfferService.getCounterOffersByTgt(offerId3);
+
+			Set<CounterOffer> offerList = new HashSet<>();
+			offerList.addAll(counterOfferList1);
+			offerList.addAll(counterOfferList2);
+			offerList.addAll(counterOfferList3);
+			for (CounterOffer counterOffer : offerList) {
+				if(counterOffer.getOtherOfferId() == offerId1 || counterOffer.getOtherOfferId() == offerId2 || counterOffer.getOtherOfferId() == offerId3) {
+					counterOffer.setCounterStatus(Constant.COUNTER_ABORTED);
+					counterOfferService.update(counterOffer);
+				}else if(counterOffer.getTgtOfferId() == offerId1 || counterOffer.getTgtOfferId() == offerId2 || counterOffer.getTgtOfferId() == offerId3) {
+					counterOffer.setCounterStatus(Constant.COUNTER_REJECTED);
+					counterOfferService.update(counterOffer);
+				}
+				Offer srcRejectOffer = offerService.getOfferById(counterOffer.getSrcOfferId());
+				srcRejectOffer.setOfferStatus(Constant.OFFEROPEN);
+				offerService.postOffer(srcRejectOffer);
+			}
+			//
 			emailUtil.sendEmail(emailList, "Accept Offer", "Accept Offer");
 
 			ResponseDTO responseDTO = new ResponseDTO(200, HttpStatus.OK, "You have successfully accepted the offer!");
