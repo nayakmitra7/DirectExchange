@@ -33,7 +33,7 @@ public class OfferDto {
     private Long userId;
     private int offerStatus;
     private String nickname;
-	
+
 	//List<CounterOffer> counterOffers;
 	public OfferDto() {
 		
