@@ -68,7 +68,7 @@ class OfferModal extends Component {
   accept = (offer2) => {
     if (
       Math.round(offer2.amountInDes) ==
-        Math.round(this.props.offer.amountInSrc) &&
+      Math.round(this.props.offer.amountInSrc) &&
       offer2.destinationCurrency == this.props.offer.sourceCurrency
     ) {
       this.setState({ spinner: true });
@@ -125,7 +125,7 @@ class OfferModal extends Component {
           if (res.status === 200) {
             toast.success(
               "Counter offer email has been sent to " +
-                this.state.selectedCounterOffer.nickname
+              this.state.selectedCounterOffer.nickname
             );
           }
         })
@@ -161,18 +161,10 @@ class OfferModal extends Component {
                 &times;
               </span>
               <div align="center" className="p-3">
-                <h1>John's Offer Details</h1>
+                <h1>{this.props.offer.nickname}'s Offer Details</h1>
               </div>
               <div>
-                <Link to={this.state.url}>
-                  <StarRatings
-                    rating={this.state.rating}
-                    starRatedColor="blue"
-                    changeRating={this.changeRating}
-                    numberOfStars={6}
-                    name="rating"
-                  />
-                </Link>
+
               </div>
               {/* <Table striped borderless hover variant="dark">
                 <tr className="p-3">
@@ -231,7 +223,9 @@ class OfferModal extends Component {
                   </Col>
                   <Col>{this.props.offer.sourceCountry}</Col>
                   <Col>{this.props.offer.expirationDate}</Col>
-                  <Col onClick={()=>{alert("hi")}}><ReactStars count={5} size={18} color2={'#ffd700'} value={4} edit={false} /></Col>
+                  {this.props.ratingCalculations[this.props.offer.userId] != 'N/A' && <Col><Link to={this.state.url}> <ReactStars count={5} size={18} color2={'#ffd700'} value={parseInt(this.props.ratingCalculations[this.props.offer.userId])} edit={false} /></Link></Col>}
+
+                  {this.props.ratingCalculations[this.props.offer.userId] == 'N/A' && <Col>N/A</Col>}
                 </Row>
               </ListGroup.Item>
               <div className="mt-5">
@@ -271,8 +265,8 @@ class OfferModal extends Component {
                     Counter Offer
                   </button>
                 ) : (
-                  ""
-                )}
+                    ""
+                  )}
               </div>
             </div>
           </div>

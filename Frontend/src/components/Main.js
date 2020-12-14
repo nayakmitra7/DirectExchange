@@ -14,9 +14,9 @@ import CounterMade from "./MyOffer/CounterMade";
 import SendMessage from "./SendMessage/SendMessgae";
 import OfferHistory from "./OtherOffer/OfferHistory";
 import OfferAbortedHistory from "./OtherOffer/OfferAbortedHistroy";
-
 import Account from "./Account/Account";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import TransactionReport from "./TransactionReport/TransactionReport";
 
 //Create a Main Component
 class Main extends Component {
@@ -39,13 +39,11 @@ class Main extends Component {
           <Route path="/myOffer/countermade" component={CounterMade} />
           <Route path="/sendMessage" component={SendMessage} />
           <Route path="/offer/history/:id" component={OfferHistory} />
-          <Route
-            path="/offer/abort/history/:id"
-            component={OfferAbortedHistory}
-          />
+          <Route path="/offer/abort/history/:id" component={OfferAbortedHistory}/>
 
           <Route path="/accounts/:userId" component={Account} />
-          {/* </Switch> */}
+          <Route path="/TransactionHistory" component={TransactionReport} />
+
         </div>
       </Router>
     );

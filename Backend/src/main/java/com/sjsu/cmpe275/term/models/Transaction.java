@@ -1,4 +1,6 @@
 package com.sjsu.cmpe275.term.models;
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,7 +10,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "TRANSACTION")
-public class Transaction {
+public class Transaction extends BaseEntity{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,6 +46,7 @@ public class Transaction {
 	private Long offerUserId3;
 	@Column(name = "tranStatus", nullable = false)
 	private int tranStatus;
+
 	
 	public Long getId() {
 		return id;
@@ -135,6 +138,7 @@ public class Transaction {
 	public void setTranStatus(int tranStatus) {
 		this.tranStatus = tranStatus;
 	}
+
 	
 }
 

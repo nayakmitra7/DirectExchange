@@ -26,8 +26,10 @@ import com.sjsu.cmpe275.term.dto.UserAccountDTO;
 import com.sjsu.cmpe275.term.dto.UserDTO;
 import com.sjsu.cmpe275.term.exceptions.GenericException;
 import com.sjsu.cmpe275.term.models.Account;
+import com.sjsu.cmpe275.term.models.Rating;
 import com.sjsu.cmpe275.term.models.User;
 import com.sjsu.cmpe275.term.service.account.AccountService;
+import com.sjsu.cmpe275.term.service.rating.RatingService;
 import com.sjsu.cmpe275.term.service.user.UserService;
 
 @RestController
@@ -41,6 +43,8 @@ public class UserController {
 	private ObjectMapper objectMapper;
 	@Autowired
 	private JavaMailSender emailSender;
+	@Autowired
+	private RatingService ratingService;
 
 	@RequestMapping(value = "/user/{emailId}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
@@ -83,6 +87,12 @@ public class UserController {
 			account2.setUserId(newUser.getId());
 			accountService.createAccount(account1);
 			accountService.createAccount(account2);
+			// Rating Table entry
+			Rating userRating = new Rating(newUser.getId(), 0, 0);
+			ratingService.createRating(userRating);
+			
+			
+			
 //			List<Account> accounts = new ArrayList<>();
 //			accounts.add(accountService.createAccount(account1));
 //			accounts.add(accountService.createAccount(account2));

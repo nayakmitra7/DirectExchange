@@ -31,7 +31,14 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>{
 
 	@Query("Select t1 from Transaction t1 where (t1.offerUserId1 = :userId or t1.offerUserId2 = :userId or t1.offerUserId3 = :userId) and t1.tranStatus=3")
 	List<Transaction> getAbortedTransactionHistory(Long userId);
-
 	
+	@Query("Select count(id) FROM Transaction where YEAR(dataChangeCreatedTime)=:year and MONTH(dataChangeCreatedTime) =:month and tranStatus = 3 ")
+	Integer getCountOfAbortedTransactionPerMonth(Integer year, Integer month);
+	
+	@Query("Select count(id) FROM Transaction where YEAR(dataChangeCreatedTime)=:year and MONTH(dataChangeCreatedTime) =:month and tranStatus = 2 ")
+	Integer getCountOfCompletedTransactionPerMonth(Integer year, Integer month);	
+
+	@Query("Select Round(COALESCE(sum(amountInUSD),0),2) from Offer o1 where o1.id in (SELECT offerId1 FROM Transaction where YEAR(dataChangeCreatedTime)=:year and MONTH(dataChangeCreatedTime) = :month and tranStatus = 2) or o1.id in (SELECT offerId2 FROM Transaction where YEAR(dataChangeCreatedTime)=:year and MONTH(dataChangeCreatedTime) = :month and tranStatus = 2) or o1.id in (SELECT offerId3 FROM Transaction where YEAR(dataChangeCreatedTime)=:year and MONTH(dataChangeCreatedTime) = :month and tranStatus = 2)  ")
+	Double getSumOfCompletedTransactionPerMonth(Integer year, Integer month);	
 }
 

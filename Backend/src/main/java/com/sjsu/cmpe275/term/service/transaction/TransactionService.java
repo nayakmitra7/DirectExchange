@@ -33,6 +33,13 @@ public interface TransactionService {
 	public List<Transaction> getTransactionHistory(Long userId);
 
 	public List<Transaction> getAbortedTransactionHistory(Long userId);
+	
+	public Integer getCountOfAbortedTransactionPerMonth(Integer year, Integer month);
+	
+	public Integer getCountOfCompletedTransactionPerMonth(Integer year, Integer month);
+	
+	public Double getSumOfCompletedTransactionPerMonth(Integer year, Integer month);
+	
 
 //	public void updateDependantOffersOnAccept(Long offerId);
 }

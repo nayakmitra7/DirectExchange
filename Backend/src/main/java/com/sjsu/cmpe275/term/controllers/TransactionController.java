@@ -1,5 +1,10 @@
 package com.sjsu.cmpe275.term.controllers;
 
+import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -19,14 +24,17 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sjsu.cmpe275.term.dto.ErrorResponseDTO;
 import com.sjsu.cmpe275.term.dto.OfferDto;
+import com.sjsu.cmpe275.term.dto.ReportDTO;
 import com.sjsu.cmpe275.term.dto.ResponseDTO;
 import com.sjsu.cmpe275.term.dto.TransactionDTO;
 import com.sjsu.cmpe275.term.exceptions.GenericException;
 import com.sjsu.cmpe275.term.models.Offer;
+import com.sjsu.cmpe275.term.models.Rating;
 import com.sjsu.cmpe275.term.models.Transaction;
 import com.sjsu.cmpe275.term.models.User;
 import com.sjsu.cmpe275.term.service.counterOffer.CounterOfferService;
 import com.sjsu.cmpe275.term.service.offer.OfferService;
+import com.sjsu.cmpe275.term.service.rating.RatingService;
 import com.sjsu.cmpe275.term.service.transaction.TransactionService;
 import com.sjsu.cmpe275.term.service.user.UserService;
 import com.sjsu.cmpe275.term.utils.Constant;
@@ -53,6 +61,11 @@ public class TransactionController {
 
 	@Autowired
 	private EmailUtility emailUtil;
+	
+	@Autowired
+	private RatingService ratingService;
+	
+	
 
 	@RequestMapping(value = "/twoPartyTransaction", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
@@ -86,6 +99,56 @@ public class TransactionController {
 			transaction.setTranStatus(Constant.TRANSACTION_INPROGRESS);
 
 			Transaction savedOffer = transactionService.acceptSingleOffer(transaction);
+			
+			try {
+			
+			if(savedOffer != null) {
+				long user1 = savedOffer.getOfferUserId1();
+				long user2 = savedOffer.getOfferUserId2();
+				
+				Rating rating1 = ratingService.getRating(user1);
+				Rating rating2 = ratingService.getRating(user2);
+				
+				rating1.setTotalCount(rating1.getTotalCount()+1);
+				rating2.setTotalCount(rating2.getTotalCount()+1);
+				
+				ratingService.createRating(rating1);
+				ratingService.createRating(rating2);
+				new java.util.Timer().schedule( 
+				        new java.util.TimerTask() {
+				            @Override
+				            public void run() {
+				            	int status = transactionService.getTransaction(transaction.getId()).getTranStatus();
+				            	if(status !=Constant.TRANSACTION_COMPLETED) {
+				            		transaction.setTranStatus(Constant.TRANSACTION_ABORTED);
+				            		transactionService.acceptSingleOffer(transaction);
+				            	
+				            		Offer offer11 = offerService.getOfferById1(offerId1);
+				        			Offer offer22= offerService.getOfferById1(offerId2);		
+				            	int offer1Status = offer11.getOfferStatus();
+				            	int offer2Status = offer22.getOfferStatus();
+					            	if(offer1Status != Constant.OFFERTRANSFERRED) {
+					            		rating1.setFaultCount(rating1.getFaultCount()+1);
+					            		ratingService.createRating(rating1);
+					    				
+					            	}
+					            	if(offer2Status != Constant.OFFERTRANSFERRED) {
+					            		rating2.setFaultCount(rating2.getFaultCount()+1);
+					            		ratingService.createRating(rating2);
+					            	}
+				            	}
+				            }
+				        }, 
+				        100000
+				);
+				
+				}
+			}
+			catch(Exception ex) {
+				System.out.println(" Rating has some error "+ex);
+			}
+			
+			
 			emailUtil.sendEmail(emailList, "Offer accepted", "Offer accepted! Make the payment.");
 
 			ResponseDTO responseDTO = new ResponseDTO(200, HttpStatus.OK, "You have successfully accepted the offer!");
@@ -140,6 +203,66 @@ public class TransactionController {
 			transaction.setOfferIdStatus2(Constant.OFFERTRANSACTION);
 			transaction.setOfferIdStatus3(Constant.OFFERTRANSACTION);
 			Transaction savedOffer = transactionService.acceptSplitOffer(transaction);
+			
+			try {
+			if(savedOffer != null) {
+				long user1 = savedOffer.getOfferUserId1();
+				long user2 = savedOffer.getOfferUserId2();
+				long user3 = savedOffer.getOfferUserId3();
+				
+				Rating rating1 = ratingService.getRating(user1);
+				Rating rating2 = ratingService.getRating(user2);
+				Rating rating3 = ratingService.getRating(user3);
+				
+				rating1.setTotalCount(rating1.getTotalCount()+1);
+				rating2.setTotalCount(rating2.getTotalCount()+1);
+				rating3.setTotalCount(rating3.getTotalCount()+1);
+				
+				ratingService.createRating(rating1);
+				ratingService.createRating(rating2);
+				ratingService.createRating(rating3);
+				
+				new java.util.Timer().schedule( 
+				        new java.util.TimerTask() {
+				            @Override
+				            public void run() {
+				            	int status = transactionService.getTransaction(transaction.getId()).getTranStatus();
+				            	if(status != Constant.TRANSACTION_COMPLETED) {
+				            	
+				            	transaction.setTranStatus(Constant.TRANSACTION_ABORTED);
+				            	transactionService.acceptSingleOffer(transaction);
+				            	
+				            	Offer offer11 = offerService.getOfferById1(offerId1);
+			        			Offer offer22= offerService.getOfferById1(offerId2);	
+			        			Offer offer33= offerService.getOfferById1(offerId3);
+				            	int offer1Status = offer11.getOfferStatus();
+				            	int offer2Status = offer22.getOfferStatus();
+				            	int offer3Status = offer33.getOfferStatus();
+				            	
+					            	if(offer1Status != Constant.OFFERTRANSFERRED) {
+					            		rating1.setFaultCount(rating1.getFaultCount()+1);
+					            		ratingService.createRating(rating1);
+					            	}
+					            	if(offer2Status != Constant.OFFERTRANSFERRED) {
+					            		rating2.setFaultCount(rating2.getFaultCount()+1);
+					            		ratingService.createRating(rating2);
+					            	}
+					            	if(offer3Status != Constant.OFFERTRANSFERRED) {
+					            		rating3.setFaultCount(rating3.getFaultCount()+1);
+					            		ratingService.createRating(rating3);
+					            	}
+				            	}
+				            }
+				        }, 
+				        100000 
+				);
+				
+			}
+			}
+			catch(Exception ex) {
+				System.out.println(" Rating has some error "+ex);
+				
+			}
 			emailUtil.sendEmail(emailList, "Accept Offer", "Accept Offer");
 
 			ResponseDTO responseDTO = new ResponseDTO(200, HttpStatus.OK, "You have successfully accepted the offer!");
@@ -393,6 +516,33 @@ public class TransactionController {
 			TransactionDTO transactionresponse = objectMapper.convertValue(updatedTransaction,TransactionDTO.class);
 			 return new ResponseEntity<TransactionDTO>(transactionresponse, HttpStatus.OK);
 		} catch (Exception ex) {
+			ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(500, HttpStatus.INTERNAL_SERVER_ERROR,
+					ex.getMessage());
+			throw new GenericException(errorResponseDTO);
+		}
+
+	}
+	@RequestMapping(value = "/transaction/report", method = RequestMethod.GET, produces = "application/json")
+	@ResponseBody
+	public ResponseEntity<List<ReportDTO>> getTransactionReport() {
+		try {
+			List<ReportDTO> reportList = new ArrayList<ReportDTO>();
+			for(int i = 0; i < 12; i++) {
+				LocalDate currentdate = LocalDate.now().minus(i, ChronoUnit.MONTHS);
+				int month = currentdate.getMonthValue();
+				int year = currentdate.getYear();
+				int completedTransactionCount = transactionService.getCountOfCompletedTransactionPerMonth(year, month);
+				int abortedTransactionCount = transactionService.getCountOfAbortedTransactionPerMonth(year, month);
+				Double transferedSum = transactionService.getSumOfCompletedTransactionPerMonth(year, month);				
+				Double serviceFeeCollected = transferedSum * 0.05;
+				DecimalFormat df = new DecimalFormat("#.##");
+				Double serviceFeeCollected1 = Double.parseDouble(df.format(serviceFeeCollected));
+				ReportDTO reportDTO = new ReportDTO(completedTransactionCount, abortedTransactionCount, year+"", Month.of(month).name(), transferedSum, serviceFeeCollected1);
+				reportList.add(reportDTO);
+			}
+			return new ResponseEntity<List<ReportDTO>>(reportList, HttpStatus.OK);
+		} catch (Exception ex) {
+			System.out.println(ex.getMessage());
 			ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(500, HttpStatus.INTERNAL_SERVER_ERROR,
 					ex.getMessage());
 			throw new GenericException(errorResponseDTO);
