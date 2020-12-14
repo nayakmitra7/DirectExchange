@@ -35,7 +35,7 @@ class AutoMatching extends Component {
             counterModal: false,
             myOffer: {},
             selectedCounterOffer: {},
-            spinner: false,
+            spinner: true,
             offer2: '',
             offer1: '',
             list: [],
@@ -55,7 +55,7 @@ class AutoMatching extends Component {
         axios.get(address + '/offerMatching/single/' + this.state.offerId).then((response) => {
             if (response.status == 200 && response.data.offer) {
                 console.log(response.data)
-                this.setState({ singleOfferList: response.data, offerExists: 1, offerSrcAmount: response.data.offer.amountInSrc, sourceAmountChange: response.data.offer.amountInSrc, offer1: response.data.offer, myOffer: response.data.offer })
+                this.setState({ singleOfferList: response.data, offerExists: 1, offerSrcAmount: response.data.offer.amountInSrc, sourceAmountChange: response.data.offer.amountInSrc, offer1: response.data.offer, myOffer: response.data.offer, spinner:false })
             }
         }).catch(error => {
             toast.error("Internal error has occured 1", { position: 'top-center', autoClose: false })

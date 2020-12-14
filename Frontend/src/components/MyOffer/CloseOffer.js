@@ -13,10 +13,13 @@ import Tabs from "react-bootstrap/Tabs";
 import Tab from "react-bootstrap/Tab";
 import ListGroup from "react-bootstrap/ListGroup";
 import Button from "react-bootstrap/esm/Button";
+import Modal from 'react-bootstrap/Modal';
+import { Spinner } from 'react-bootstrap';
 class CloseOffer extends Component {
   state = {
-    navarr: ["black", "rgb(0, 106, 255)","black","black","black"],
+    navarr: ["black", "rgb(0, 106, 255)", "black", "black", "black"],
     closeOffers: [],
+    spinner:true
   };
 
   componentDidMount() {
@@ -25,7 +28,7 @@ class CloseOffer extends Component {
       .get(`${address}/offer/${localStorage.getItem("id")}/close`)
       .then((response) => {
         console.log(response.data);
-        this.setState({ closeOffers: response.data });
+        this.setState({ closeOffers: response.data, spinner:false });
       })
       .catch((error) => {
         toast.error(error, {
@@ -38,6 +41,22 @@ class CloseOffer extends Component {
     return (
       <div>
         <Navbar></Navbar>
+        <Modal show={this.state.spinner} size="sm" centered>
+
+          <Modal.Body>
+            <Row>
+              <Col></Col>
+              <Col><div>
+                <Spinner animation="border" role="status">
+                  <span className="sr-only">Loading...</span>
+                </Spinner>
+              </div ></Col>
+              <Col></Col>
+            </Row>
+
+          </Modal.Body>
+
+        </Modal>
         <MyOfferHeader navarr={this.state.navarr}></MyOfferHeader>
         <div className="margin-left-right-offer">
           {this.state.closeOffers.map((offer) => (
@@ -74,8 +93,8 @@ class CloseOffer extends Component {
                   {offer.offerStatus == 2 ? (
                     <Col style={{ color: "green" }}>Fulfilled</Col>
                   ) : (
-                    <Col style={{ color: "red" }}>Expired</Col>
-                  )}
+                      <Col style={{ color: "red" }}>Expired</Col>
+                    )}
                 </Row>
               </ListGroup.Item>
             </Accordion.Toggle>

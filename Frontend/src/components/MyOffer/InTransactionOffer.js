@@ -19,7 +19,7 @@ class InTransactionOffer extends Component {
     singleOfferList: [],
     splitOfferList: [],
     open: false,
-    spinner: false,
+    spinner: true,
   };
   componentWillMount() {
     this.getInTransactionOrders();
@@ -33,6 +33,7 @@ class InTransactionOffer extends Component {
       );
       let splitOfferList = [];
       let singleOfferList = [];
+      this.setState({spinner:false})
       for (let i = 0; i < transactionlist.data.length; i++) {
         let splitOffer = {};
         let singleOffer = {};

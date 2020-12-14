@@ -33,9 +33,12 @@ class CounterReceived extends Component {
       return "Accepted";
     } else if (status == 2) {
       return "Rejected";
-    } else {
+    } else if (status == 3) {
       return "Aborted";
+    }else{
+      return "Timed out";
     }
+
   }
   acceptCounter = (e, counterObject) => {
     e.preventDefault();
