@@ -21,23 +21,22 @@ public class OfferServiceImpl implements OfferService {
 	OfferRepository offerRepository;
 	@PersistenceUnit
 	private EntityManagerFactory entityManagerFactory;
-	
 
-	
 	@Override
 	public Offer getOfferById(Long id) {
 		Offer offer = offerRepository.findById(id).orElse(null);
 		return offerRepository.getOne(id);
 	}
-	
+
 	@Override
 	public Offer getOfferById1(Long id) {
-			EntityManager em = entityManagerFactory.createEntityManager();
-			Offer offer = em.find(Offer.class, id);
-			em.merge(offer);
-			em.refresh(offer);
+		EntityManager em = entityManagerFactory.createEntityManager();
+		Offer offer = em.find(Offer.class, id);
+		em.merge(offer);
+		em.refresh(offer);
 		return offer;
 	}
+
 //	@Override
 //	public Offer getOfferById1(String id) {
 //		Offer offer = offerRepository.getOfferById1(id);
@@ -48,6 +47,7 @@ public class OfferServiceImpl implements OfferService {
 		// TODO Auto-generated method stub
 		return offerRepository.save(offer);
 	}
+
 //	@Override
 //	public Page<Offer> getOffer(int pagenumber, int limit, String sourcecurrencyamount, String destinationcountry,
 //			String sourcecurrency, String destinationcurrency) {
@@ -89,18 +89,30 @@ public class OfferServiceImpl implements OfferService {
 //	}
 //	
 	@Override
-	public List<Offer> getOffer(Long userId,Date todayDate) {
+	public List<Offer> getOffer(Long userId, Date todayDate) {
 		// TODO Auto-generated method stub
-		return offerRepository.getOffer(userId,todayDate);
+		return offerRepository.getOffer(userId, todayDate);
 	}
+
 	@Override
 	public List<Offer> getOwnOfferById(Long userId, Date todayDate, int openOffer) {
-		
-		return offerRepository.getOwnOfferById(userId,todayDate,openOffer);
+
+		return offerRepository.getOwnOfferById(userId, todayDate, openOffer);
 	}
+
 	@Override
 	public List<Offer> getCloseOfferById(Long userId, Date todayDate) {
-		
-		return offerRepository.getCloseOfferById(userId,todayDate,Constant.OFFEREXPIRED,Constant.OFFERFULFILED);
+
+		return offerRepository.getCloseOfferById(userId, todayDate, Constant.OFFEREXPIRED, Constant.OFFERFULFILED);
+	}
+
+	@Override
+	public List<Offer> getClosedTransactionOffers(Long userId, int offerStatus) {
+		return offerRepository.getClosedTransactionOffers(userId, offerStatus);
+	}
+
+	@Override
+	public List<Offer> getClosedTransactionOffersByMonth(Long userId, int offerStatus, int month) {
+		return offerRepository.getClosedTransactionOffersByMonth(userId, offerStatus, month);
 	}
 }
