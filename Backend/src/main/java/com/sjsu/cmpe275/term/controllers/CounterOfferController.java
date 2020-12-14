@@ -96,10 +96,12 @@ public class CounterOfferController {
 			// Update the offer status of the party who proposed the counter offer
 			srcOffer.setOfferStatus(Constant.COUNTERMADE);
 			offerService.postOffer(srcOffer);
+			/*
 			if (otherOffer != null) {
 				otherOffer.setOfferStatus(Constant.COUNTERMADE);
 				offerService.postOffer(otherOffer);
 			}
+			*/
 
 			// Send notifications to the two parties
 			String[] srcEmailList = new String[1];
@@ -120,9 +122,12 @@ public class CounterOfferController {
 			            @Override
 			            public void run() {
 			            	int counterStatus = counterOffer.getCounterStatus();
-			            	if(counterStatus!=Constant.COUNTER_ACCEPTED || counterStatus!=Constant.COUNTER_REJECTED) {
-			            		counterOffer.setCounterStatus(Constant.COUNTER_ABORTED);
+			            	if(counterStatus!=Constant.COUNTER_ACCEPTED || counterStatus!=Constant.COUNTER_REJECTED || counterStatus!=Constant.COUNTER_ABORTED) {
+			            		counterOffer.setCounterStatus(Constant.COUNTER_TIMEDOUT);
 			            		counterOfferService.createCounterOffer(counterOffer);
+			            		srcOffer.setOfferStatus(Constant.OFFEROPEN);
+			        			offerService.postOffer(srcOffer);
+			            		
 			            	}
 			            }
 			        }, 
