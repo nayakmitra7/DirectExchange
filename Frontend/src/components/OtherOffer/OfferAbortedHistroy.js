@@ -8,12 +8,14 @@ import Accordion from "react-bootstrap/Accordion";
 import ListGroup from "react-bootstrap/ListGroup";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/esm/Button";
 import OfferHeader from "./OfferHeader";
 import Badge from "react-bootstrap/Badge";
 // import Modal from "./Modal";
 import Modal1 from "react-bootstrap/Modal";
-import { Spinner } from "react-bootstrap";
+import Spinner from "react-bootstrap/Spinner";
+
 class OfferAbortedHistory extends Component {
   state = {
     navarr: ["black", "rgb(0, 106, 255)"],
@@ -29,6 +31,7 @@ class OfferAbortedHistory extends Component {
   async getOfferHistory() {
     let transactionlist;
     try {
+      this.setState({ spinner: true });
       transactionlist = await axios.get(
         `${address}/offer/abort/history/${localStorage.getItem("visitId")}`
       );
@@ -62,6 +65,7 @@ class OfferAbortedHistory extends Component {
       });
       Promise.all(singleOfferList).then(() => {
         //console.log(singleOfferList);
+        this.setState({ spinner: false });
         this.setState({ singleOfferList });
       });
     } catch (error) {
@@ -350,6 +354,21 @@ class OfferAbortedHistory extends Component {
             </div>
           ))}
         </Accordion.Toggle>
+        <Modal show={this.state.spinner} size="sm" centered>
+          <Modal.Body>
+            <Row>
+              <Col></Col>
+              <Col>
+                <div>
+                  <Spinner animation="border" role="status">
+                    <span className="sr-only">Loading...</span>
+                  </Spinner>
+                </div>
+              </Col>
+              <Col></Col>
+            </Row>
+          </Modal.Body>
+        </Modal>
       </div>
     );
   }

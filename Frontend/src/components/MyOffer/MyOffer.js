@@ -20,13 +20,13 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import Button1 from 'react-bootstrap/Button';
+import Button1 from "react-bootstrap/Button";
 class MyOffer extends Component {
   constructor(props) {
     super(props);
   }
   state = {
-    navarr: ["rgb(0, 106, 255)", "black", "black","black","black"],
+    navarr: ["rgb(0, 106, 255)", "black", "black", "black", "black"],
     openOffers: [],
     open: false,
   };
@@ -101,9 +101,9 @@ class MyOffer extends Component {
                   <Col>Country(src)</Col>
                   <Col>Exp Date</Col>
                   <Col>
-                  <Button1
-                    size="sm"
-                    style={{marginBottom:'1%'}}
+                    <Button1
+                      size="sm"
+                      style={{ marginBottom: "1%" }}
                       className="btn btn-primary"
                       onClick={() => this.autoMatch(offer.id)}
                     >
@@ -123,15 +123,15 @@ class MyOffer extends Component {
                   </Col>
                   <Col>{offer.sourceCountry}</Col>
                   <Col>{offer.expirationDate}</Col>
-                  
+
                   <Col>
                     <Button1
-                    style={{marginTop:'1%'}}
-                    size="sm"
+                      style={{ marginTop: "1%" }}
+                      size="sm"
                       variant="success"
                       onClick={() => this.handleClickOpen(offer)}
                     >
-                      Modify Order
+                      Modify Offer
                     </Button1>
                   </Col>
                 </Row>

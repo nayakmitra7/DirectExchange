@@ -11,7 +11,7 @@ import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/esm/Button";
 import OfferHeader from "./OfferHeader";
 // import Modal from "./Modal";
-import Modal1 from "react-bootstrap/Modal";
+import Modal from "react-bootstrap/Modal";
 import { Spinner } from "react-bootstrap";
 import Badge from "react-bootstrap/Badge";
 import "./History.css";
@@ -29,6 +29,7 @@ class OfferHistory extends Component {
 
   async getOfferHistory() {
     let transactionlist;
+    this.setState({ spinner: true });
     try {
       transactionlist = await axios.get(
         `${address}/offer/history/${localStorage.getItem("visitId")}`
@@ -63,6 +64,7 @@ class OfferHistory extends Component {
       });
       Promise.all(singleOfferList).then(() => {
         //console.log(singleOfferList);
+        this.setState({ spinner: false });
         this.setState({ singleOfferList });
       });
     } catch (error) {
@@ -354,6 +356,21 @@ class OfferHistory extends Component {
             </div>
           ))}
         </Accordion.Toggle>
+        <Modal show={this.state.spinner} size="sm" centered>
+          <Modal.Body>
+            <Row>
+              <Col></Col>
+              <Col>
+                <div>
+                  <Spinner animation="border" role="status">
+                    <span className="sr-only">Loading...</span>
+                  </Spinner>
+                </div>
+              </Col>
+              <Col></Col>
+            </Row>
+          </Modal.Body>
+        </Modal>
       </div>
     );
   }
