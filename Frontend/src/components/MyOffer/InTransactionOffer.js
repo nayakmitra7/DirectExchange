@@ -33,7 +33,7 @@ class InTransactionOffer extends Component {
       );
       let splitOfferList = [];
       let singleOfferList = [];
-      this.setState({spinner:false})
+      this.setState({ spinner: false });
       for (let i = 0; i < transactionlist.data.length; i++) {
         let splitOffer = {};
         let singleOffer = {};
@@ -169,10 +169,11 @@ class InTransactionOffer extends Component {
                       <Col>Amount(des)</Col>
                       <Col>Amount(src)</Col>
                       <Col>Country(src)</Col>
+                      <Col>Created Date</Col>
                       <Col>Exp Date</Col>
                       <Col>
                         {offerarr.mySingleOffer[0].offerStatus == 4 ? (
-                          <i style={{ color: "green", fontSize: "16px" }}>
+                          <i style={{ color: "green", fontSize: "15px" }}>
                             Payment Transferred
                           </i>
                         ) : (
@@ -200,6 +201,9 @@ class InTransactionOffer extends Component {
                         {offerarr.mySingleOffer[0].sourceCurrency}
                       </Col>
                       <Col>{offerarr.mySingleOffer[0].sourceCountry}</Col>
+                      <Col>
+                        {offerarr.mySingleOffer[0].dataChangeCreatedTime}
+                      </Col>
                       <Col>{offerarr.mySingleOffer[0].expirationDate}</Col>
                       <Col></Col>
                     </Row>
@@ -215,14 +219,15 @@ class InTransactionOffer extends Component {
                         <Col>Amount(des)</Col>
                         <Col>Amount(src)</Col>
                         <Col>Country(src)</Col>
+                        <Col>Created Time</Col>
                         <Col>Exp Date</Col>
                         <Col>
                           {offerarr.otherSingleOffers[0].offerStatus == 4 ? (
-                            <i style={{ fontSize: "16px", color: "blue" }}>
+                            <i style={{ fontSize: "15px", color: "blue" }}>
                               Payment Received
                             </i>
                           ) : (
-                            <i style={{ fontSize: "16px", color: "crimson" }}>
+                            <i style={{ fontSize: "15px", color: "crimson" }}>
                               Payment Awaiting!
                             </i>
                           )}
@@ -243,6 +248,9 @@ class InTransactionOffer extends Component {
                           {offerarr.otherSingleOffers[0].sourceCurrency}
                         </Col>
                         <Col>{offerarr.otherSingleOffers[0].sourceCountry}</Col>
+                        <Col>
+                          {offerarr.otherSingleOffers[0].dataChangeCreatedTime}
+                        </Col>
                         <Col>
                           {offerarr.otherSingleOffers[0].expirationDate}
                         </Col>
@@ -280,10 +288,11 @@ class InTransactionOffer extends Component {
                       <Col>Amount(des)</Col>
                       <Col>Amount(src)</Col>
                       <Col>Country(src)</Col>
+                      <Col>Created Time</Col>
                       <Col>Exp Date</Col>
                       <Col>
                         {offerarr.mySplitOffer[0].offerStatus == 4 ? (
-                          <i style={{ color: "green", fontSize: "16px" }}>
+                          <i style={{ color: "green", fontSize: "15px" }}>
                             Payment Transferred
                           </i>
                         ) : (
@@ -311,6 +320,9 @@ class InTransactionOffer extends Component {
                         {offerarr.mySplitOffer[0].sourceCurrency}
                       </Col>
                       <Col>{offerarr.mySplitOffer[0].sourceCountry}</Col>
+                      <Col>
+                        {offerarr.mySplitOffer[0].dataChangeCreatedTime}
+                      </Col>
                       <Col>{offerarr.mySplitOffer[0].expirationDate}</Col>
                       <Col></Col>
                     </Row>
@@ -327,14 +339,15 @@ class InTransactionOffer extends Component {
                           <Col>Amount(des)</Col>
                           <Col>Amount(src)</Col>
                           <Col>Country(src)</Col>
+                          <Col>Created Time</Col>
                           <Col>Exp Date</Col>
                           <Col>
                             {offer.offerStatus == 4 ? (
-                              <i style={{ fontSize: "16px", color: "blue" }}>
+                              <i style={{ fontSize: "15px", color: "blue" }}>
                                 Payment Received
                               </i>
                             ) : (
-                              <i style={{ fontSize: "16px", color: "crimson" }}>
+                              <i style={{ fontSize: "15px", color: "crimson" }}>
                                 Payment Awaiting !
                               </i>
                             )}
@@ -351,6 +364,7 @@ class InTransactionOffer extends Component {
                             {offer.amountInSrc} {offer.sourceCurrency}
                           </Col>
                           <Col>{offer.sourceCountry}</Col>
+                          <Col>{offer.dataChangeCreatedTime}</Col>
                           <Col>{offer.expirationDate}</Col>
                           <Col></Col>
                         </Row>

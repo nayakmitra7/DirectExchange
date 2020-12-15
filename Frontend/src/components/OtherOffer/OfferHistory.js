@@ -160,6 +160,7 @@ class OfferHistory extends Component {
                       <Col>Amount(src)</Col>
                       <Col>Country(src)</Col>
                       <Col>Exp Date</Col>
+                      <Col>Created At</Col>
                       <Col>Status</Col>
                     </Row>
                     <Row>
@@ -176,6 +177,9 @@ class OfferHistory extends Component {
                       </Col>
                       <Col>{offerarr.mySingleOffer[0].sourceCountry}</Col>
                       <Col>{offerarr.mySingleOffer[0].expirationDate}</Col>
+                      <Col>
+                        {offerarr.mySingleOffer[0].dataChangeCreatedTime}
+                      </Col>
                       <Col>
                         <h5>
                           <Badge variant="success">Fulfilled</Badge>
@@ -195,6 +199,7 @@ class OfferHistory extends Component {
                         <Col>Amount(src)</Col>
                         <Col>Country(src)</Col>
                         <Col>Exp Date</Col>
+                        <Col>Created At</Col>
                         <Col>Status</Col>
                       </Row>
                       <Row>
@@ -222,6 +227,9 @@ class OfferHistory extends Component {
                         <Col>{offerarr.otherSingleOffers[0].sourceCountry}</Col>
                         <Col>
                           {offerarr.otherSingleOffers[0].expirationDate}
+                        </Col>
+                        <Col>
+                          {offerarr.otherSingleOffers[0].dataChangeCreatedTime}
                         </Col>
                         <Col>
                           <h5>
@@ -268,6 +276,7 @@ class OfferHistory extends Component {
                       <Col>Amount(src)</Col>
                       <Col>Country(src)</Col>
                       <Col>Exp Date</Col>
+                      <Col>Created At</Col>
                       <Col>Status</Col>
                     </Row>
                     <Row>
@@ -284,6 +293,9 @@ class OfferHistory extends Component {
                       </Col>
                       <Col>{offerarr.mySplitOffer[0].sourceCountry}</Col>
                       <Col>{offerarr.mySplitOffer[0].expirationDate}</Col>
+                      <Col>
+                        {offerarr.mySplitOffer[0].dataChangeCreatedTime}
+                      </Col>
                       <Col>
                         <h5>
                           <Badge variant="success">Fulfilled</Badge>
@@ -304,6 +316,7 @@ class OfferHistory extends Component {
                           <Col>Amount(src)</Col>
                           <Col>Country(src)</Col>
                           <Col>Exp Date</Col>
+                          <Col>Created At</Col>
                           <Col>Status</Col>
                         </Row>
                         <Row>
@@ -326,6 +339,7 @@ class OfferHistory extends Component {
                           </Col>
                           <Col>{offer.sourceCountry}</Col>
                           <Col>{offer.expirationDate}</Col>
+                          <Col>{offer.dataChangeCreatedTime}</Col>
                           <Col>
                             <h5>
                               <Badge variant="success">Fulfilled</Badge>
