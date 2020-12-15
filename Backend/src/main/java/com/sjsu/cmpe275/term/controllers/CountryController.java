@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +34,7 @@ public class CountryController {
 	
 	@GetMapping(value = "/country")
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<List<CountryDto>> getAllCountry() {
 		List<Country> allCountries = countryServiceImpl.getAllCountry();
 		List<CountryDto> countryDtos = allCountries
@@ -42,6 +45,7 @@ public class CountryController {
 	}
 	@GetMapping(value = "/country/sender/{id}")
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<List<CountryDto>> getSenderCountry(@PathVariable("id") Long id) {
 		List<Country> allCountries = countryServiceImpl.getSenderCountry(id);
 		List<CountryDto> countryDtos = allCountries
@@ -52,6 +56,7 @@ public class CountryController {
 	}
 	@GetMapping(value = "/country/receiver/{id}")
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<List<CountryDto>> getReceiverCountry(@PathVariable("id") Long id) {
 		List<Country> allCountries = countryServiceImpl.getReceiverCountry(id);
 		List<CountryDto> countryDtos = allCountries
@@ -64,6 +69,7 @@ public class CountryController {
 	//sample code. should be removed later
 	@GetMapping(value = "/cron/{id}")
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<ResponseDTO> abcd(@PathVariable("id") int id) {
 		new java.util.Timer().schedule( 
 		        new java.util.TimerTask() {

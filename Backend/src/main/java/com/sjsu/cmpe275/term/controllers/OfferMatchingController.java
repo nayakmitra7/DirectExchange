@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +44,7 @@ public class OfferMatchingController {
 
 	@RequestMapping(value = "/offerMatching/single/{id}", method = RequestMethod.GET)
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<OfferMatchingDTO> getSingleMatchingOffer(@PathVariable Long id) {
 		try {
 
@@ -95,6 +98,7 @@ public class OfferMatchingController {
 
 	@RequestMapping(value = "/offerMatching/split/{id}", method = RequestMethod.GET)
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<List<OfferMatchingDTO>> getSplitMatchingOffer(@PathVariable Long id) {
 		try {
 

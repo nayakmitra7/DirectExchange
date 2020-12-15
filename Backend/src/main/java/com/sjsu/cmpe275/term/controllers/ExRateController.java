@@ -3,6 +3,8 @@ package com.sjsu.cmpe275.term.controllers;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +35,7 @@ public class ExRateController {
 
 	@GetMapping(value = "/exchangerate")
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<List<ExRateDTO>> getExRates() {
 
 		ErrorResponseDTO errorResponseDTO = null;
@@ -58,6 +61,7 @@ public class ExRateController {
 
 	@GetMapping(value = "/exchangerate/{currency}")
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<ExRateDTO> getExRate(@PathVariable String currency) {
 		ErrorResponseDTO errorResponseDTO = null;
 		try {

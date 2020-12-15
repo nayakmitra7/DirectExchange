@@ -5,6 +5,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,6 +48,7 @@ public class OfferController {
 
 	@RequestMapping(value = "/offer", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<ResponseDTO> postOffer(@RequestBody OfferDto offerDTO) {
 		try {
 			// Offer offer = new Offer(offerDTO.getSourceCountry(),
@@ -84,6 +87,7 @@ public class OfferController {
 //	
 	@RequestMapping(value = "/offer", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<List<OfferDto>> getOffer() {
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.HOUR_OF_DAY, 0);
@@ -116,6 +120,7 @@ public class OfferController {
 
 	@RequestMapping(value = "/offer/{userId}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<List<OfferDto>> getOfferList(@PathVariable Long userId) {
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.HOUR_OF_DAY, 0);
@@ -133,6 +138,7 @@ public class OfferController {
 
 	@RequestMapping(value = "/offer/{userId}/open", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<List<OfferDto>> getOpenOfferById(@PathVariable Long userId) {
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.HOUR_OF_DAY, 0);
@@ -150,6 +156,7 @@ public class OfferController {
 
 	@RequestMapping(value = "/offer/{userId}/close", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<List<OfferDto>> getCloseOfferById(@PathVariable Long userId) {
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.HOUR_OF_DAY, 0);
@@ -167,6 +174,7 @@ public class OfferController {
 
 	@RequestMapping(value = "/offer", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<OfferDto> updateOffer(@RequestParam("id") Long id,
 			@RequestParam("amountInSrc") Double amountInSrc) {
 		try {
@@ -245,6 +253,7 @@ public class OfferController {
 
 	@RequestMapping(value = "/offer/user/month/{userId}/{month}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<List<OfferDto>> getClosedTransactionOffers(@PathVariable Long userId,
 			@PathVariable int month) {
 		List<Offer> offers = null;
