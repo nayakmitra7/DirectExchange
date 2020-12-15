@@ -3,6 +3,8 @@ package com.sjsu.cmpe275.term.controllers;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +44,7 @@ public class RatingController {
 
 	@RequestMapping(value = "/rating/{userId}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<RatingDTO> getRatingController(@PathVariable("userId") Long userId) {
 		Rating rating = ratingService.getRating(userId);
 		if (rating == null) {
@@ -67,6 +70,7 @@ public class RatingController {
 	}
 	@RequestMapping(value = "/rating", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<List<RatingDTO2>> getAllRatings() {
 		List<Rating> ratings = ratingService.getRating();
 		List<RatingDTO2> RatingDtos = ratings

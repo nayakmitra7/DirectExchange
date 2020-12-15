@@ -61,6 +61,8 @@ public class CounterOfferController {
 	RatingService ratingService;
 
 	private static DecimalFormat df2 = new DecimalFormat("#.##");
+	private static final int TIMECOUNTER = 300000;
+	private static final int TIMETRANSACTION = 600000;
 
 	@RequestMapping(value = "/offerMatching/counterOffer", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
@@ -131,7 +133,7 @@ public class CounterOfferController {
 
 						}
 					}
-				}, 120000);
+				}, TIMECOUNTER);
 			} catch (Exception ex) {
 				System.out.println("Exception is coming in Scheduler code of Counter Offer" + ex);
 			}
@@ -150,6 +152,7 @@ public class CounterOfferController {
 
 	@RequestMapping(value = "/offerMatching/receivedCounterOffers/{userId}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<List<CounterOfferWrapperDTO>> getReceivedCounterOffers(@PathVariable Long userId) {
 		try {
 			List<CounterOffer> receivedCounterOffers = counterOfferService.getReceivedCounterOffers(userId);
@@ -193,6 +196,7 @@ public class CounterOfferController {
 
 	@RequestMapping(value = "/offerMatching/proposedCounterOffers/{userId}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<List<CounterOfferWrapperDTO>> getProposedCounterOffers(@PathVariable Long userId) {
 		try {
 			List<CounterOffer> proposedCounterOffers = counterOfferService.getProposedCounterOffers(userId);
@@ -349,7 +353,7 @@ public class CounterOfferController {
 
 							}
 						}
-					}, 120000);
+					}, TIMETRANSACTION);
 				} catch (Exception ex) {
 					System.out.println("Exception is coming in Sceduler code of Counter Offer" + ex);
 				}
@@ -403,7 +407,7 @@ public class CounterOfferController {
 			    				offerService.postOffer(offer33);
 							}
 						}
-					}, 120000);
+					}, TIMETRANSACTION);
 				} catch (Exception ex) {
 					System.out.println("Exception is coming in Sceduler code of Counter Offer" + ex);
 				}
@@ -456,6 +460,7 @@ public class CounterOfferController {
 
 	@RequestMapping(value = "/counterOffer/reject", method = RequestMethod.PUT, consumes = "application/json", produces = "application/json")
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<ResponseDTO> rejectCounterOffer(@RequestBody CounterOfferDTO counterOfferDTO) {
 		try {
 			// Get required data from body

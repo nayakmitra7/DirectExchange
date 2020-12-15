@@ -47,6 +47,7 @@ import com.sjsu.cmpe275.term.utils.EmailUtility;
 
 @RestController
 @CrossOrigin()
+@Transactional
 public class TransactionController {
 
 	@Autowired
@@ -70,6 +71,7 @@ public class TransactionController {
 	@Autowired
 	private RatingService ratingService;
 
+	private static final int TIME = 600000;
 	@RequestMapping(value = "/twoPartyTransaction", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
 	@Transactional
@@ -103,7 +105,7 @@ public class TransactionController {
 			transaction.setTranStatus(Constant.TRANSACTION_INPROGRESS);
 
 			Transaction savedOffer = transactionService.acceptSingleOffer(transaction);
-
+			System.out.println(Thread.currentThread().getName());
 			try {
 
 				if (savedOffer != null) {
@@ -121,6 +123,8 @@ public class TransactionController {
 					new java.util.Timer().schedule(new java.util.TimerTask() {
 						@Override
 						public void run() {
+							System.out.println(Thread.currentThread().getName());
+
 							int status = transactionService.getTransaction(transaction.getId()).getTranStatus();
 							if (status != Constant.TRANSACTION_COMPLETED) {
 								transaction.setTranStatus(Constant.TRANSACTION_ABORTED);
@@ -144,7 +148,7 @@ public class TransactionController {
 			    				offerService.postOffer(offer22);
 							}
 						}
-					}, 100000);
+					}, TIME);
 
 				}
 			} catch (Exception ex) {
@@ -282,7 +286,7 @@ public class TransactionController {
 			    				offerService.postOffer(offer33);
 							}
 						}
-					}, 100000);
+					}, TIME);
 
 				}
 			} catch (Exception ex) {
@@ -328,6 +332,7 @@ public class TransactionController {
 
 	@RequestMapping(value = "/intransaction/{userId}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<List<TransactionDTO>> getInTransactionData(@PathVariable("userId") Long userId) {
 		try {
 			List<Transaction> transaction = transactionService.getInTransactionData(userId);
@@ -346,6 +351,7 @@ public class TransactionController {
 
 	@RequestMapping(value = "/offer/history/{userId}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<List<TransactionDTO>> getTransactionHistory(@PathVariable("userId") Long userId) {
 		try {
 			List<Transaction> transaction = transactionService.getTransactionHistory(userId);
@@ -364,6 +370,7 @@ public class TransactionController {
 
 	@RequestMapping(value = "/offer/abort/history/{userId}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<List<TransactionDTO>> getAbortedTransactionHistory(@PathVariable("userId") Long userId) {
 		try {
 			List<Transaction> transaction = transactionService.getAbortedTransactionHistory(userId);
@@ -382,6 +389,7 @@ public class TransactionController {
 
 	@RequestMapping(value = "/transaction/offer/{offerId1}/{offerId2}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<List<OfferDto>> getSingleOfferByTransaction(@PathVariable("offerId1") Long offerId1,
 			@PathVariable("offerId2") Long offerId2) {
 		try {
@@ -400,6 +408,7 @@ public class TransactionController {
 
 	@RequestMapping(value = "/transaction/offer/{offerId1}/{offerId2}/{offerId3}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<List<OfferDto>> getSplitOfferByTransaction(@PathVariable("offerId1") Long offerId1,
 			@PathVariable("offerId2") Long offerId2, @PathVariable("offerId3") Long offerId3) {
 		try {
@@ -418,6 +427,7 @@ public class TransactionController {
 
 	@RequestMapping(value = "/transaction/offer/receivemoney/{transactionId}/{offerId}", method = RequestMethod.PUT, produces = "application/json")
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<TransactionDTO> updateTransactionComplete(@PathVariable("transactionId") Long transactionId,
 			@PathVariable("offerId") Long offerId) {
 		try {
@@ -571,6 +581,7 @@ public class TransactionController {
 
 	@RequestMapping(value = "/transaction/report", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<List<ReportDTO>> getTransactionReport() {
 		try {
 			List<ReportDTO> reportList = new ArrayList<ReportDTO>();

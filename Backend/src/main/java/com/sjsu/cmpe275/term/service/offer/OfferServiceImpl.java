@@ -34,6 +34,7 @@ public class OfferServiceImpl implements OfferService {
 		Offer offer = em.find(Offer.class, id);
 		em.merge(offer);
 		em.refresh(offer);
+		em.close(); 
 		return offer;
 	}
 
