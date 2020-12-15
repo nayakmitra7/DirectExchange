@@ -17,6 +17,7 @@ class Individualreport extends Component {
     offers: [],
     totalFee: 0,
     totalSourceCurrency: 0,
+    totalDestinationCurrency: 0,
   };
   handleMonth = (selectedMonth) => {
     console.log(selectedMonth);
@@ -68,10 +69,12 @@ class Individualreport extends Component {
       }`
     );
     this.setState({ offers: offers.data }, () => {
-      this.getExchangerate();
-      this.getTotalServiceFee();
-      this.getTotalSourceCurrency();
-      this.getTotalDestinationCurrency();
+      if (offers.data.length > 0) {
+        this.getExchangerate();
+        this.getTotalServiceFee();
+        this.getTotalSourceCurrency();
+        this.getTotalDestinationCurrency();
+      }
     });
   };
   getTotalServiceFee = () => {
@@ -187,49 +190,55 @@ class Individualreport extends Component {
             </div>
           </Card.Body>
         </Card>
-        <div className="info-enclose">
-          {this.state.offers.map((offer) => (
-            <div>
-              <Row>
-                <Col>
-                  <Card className="margin-left-right-browse-offer">
-                    <Card.Body>
-                      <Row
-                        className="header-bold-auto-matching"
-                        style={{ cursor: "pointer" }}
-                      >
-                        <Col>ID</Col>
-                        <Col>Username</Col>
-                        <Col>Country(src)</Col>
-                        <Col>Amount(src)</Col>
-                        <Col>Amount(des)</Col>
-                        <Col>Country(des)</Col>
-                        <Col>Exchange Rate</Col>
-                        <Col>Transaction Date</Col>
-                        <Col>Service Fee</Col>
-                      </Row>
-                      <Row>
-                        <Col>#{offer.id}</Col>
-                        <Col>{offer.nickname}</Col>
-                        <Col>{offer.sourceCountry}</Col>
-                        <Col>
-                          {offer.amountInSrc} {offer.sourceCurrency}
-                        </Col>
-                        <Col>
-                          {offer.amountInDes} {offer.destinationCurrency}
-                        </Col>
-                        <Col>{offer.destinationCountry} </Col>
-                        <Col>{this.state.exchangeRate}</Col>
-                        <Col>{offer.dataChangeLastModifiedTime}</Col>
-                        <Col>{(offer.amountInDes * 0.05).toFixed(2)}</Col>
-                      </Row>
-                    </Card.Body>
-                  </Card>
-                </Col>
-              </Row>
-            </div>
-          ))}
-        </div>
+        {this.state.offers.length === 0 ? (
+          <div align="center" className="mt-5 p-4">
+            <h1>No accepted offers</h1>
+          </div>
+        ) : (
+          <div className="info-enclose">
+            {this.state.offers.map((offer) => (
+              <div>
+                <Row>
+                  <Col>
+                    <Card className="margin-left-right-browse-offer">
+                      <Card.Body>
+                        <Row
+                          className="header-bold-auto-matching"
+                          style={{ cursor: "pointer" }}
+                        >
+                          <Col>ID</Col>
+                          <Col>Username</Col>
+                          <Col>Country(src)</Col>
+                          <Col>Amount(src)</Col>
+                          <Col>Amount(des)</Col>
+                          <Col>Country(des)</Col>
+                          <Col>Exchange Rate</Col>
+                          <Col>Transaction Date</Col>
+                          <Col>Service Fee</Col>
+                        </Row>
+                        <Row>
+                          <Col>#{offer.id}</Col>
+                          <Col>{offer.nickname}</Col>
+                          <Col>{offer.sourceCountry}</Col>
+                          <Col>
+                            {offer.amountInSrc} {offer.sourceCurrency}
+                          </Col>
+                          <Col>
+                            {offer.amountInDes} {offer.destinationCurrency}
+                          </Col>
+                          <Col>{offer.destinationCountry} </Col>
+                          <Col>{this.state.exchangeRate}</Col>
+                          <Col>{offer.dataChangeLastModifiedTime}</Col>
+                          <Col>{(offer.amountInDes * 0.05).toFixed(2)}</Col>
+                        </Row>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                </Row>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     );
   }
