@@ -40,6 +40,7 @@ public class UserServiceImpl implements UserService {
 		criteria.where(builder.equal(userRoot.get(User_.nickname), nickname));
 
 		List<User> returnuser = em.createQuery(criteria).getResultList();
+		em.close();
 		if (returnuser.size() == 0)
 			return null;
 		return returnuser.get(0);
@@ -56,6 +57,7 @@ public class UserServiceImpl implements UserService {
 		criteria.where(builder.equal(userRoot.get(User_.emailId), emailId));
 
 		List<User> returnuser = em.createQuery(criteria).getResultList();
+		em.close();
 		if (returnuser.size() == 0)
 			return null;
 		return returnuser.get(0);

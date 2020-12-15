@@ -3,6 +3,8 @@ package com.sjsu.cmpe275.term.controllers;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,6 +50,7 @@ public class UserController {
 
 	@RequestMapping(value = "/user/{emailId}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<UserDTO> getUserController(@PathVariable("emailId") String emailId) {
 		User user = userService.getUserByEmailId(emailId);
 		UserDTO userDTO = null;
@@ -65,6 +68,7 @@ public class UserController {
 
 	@RequestMapping(value = "/user", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<UserDTO> createUserController(@RequestBody UserAccountDTO userAccountDTO) {
 		ErrorResponseDTO errorResponseDTO = null;
 		try {
@@ -111,6 +115,7 @@ public class UserController {
 
 	@RequestMapping(value = "/user/messaging/{id}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<List<UserDTO>> getBusinessUsers(@PathVariable("id") Long userId) {
 		List<User> user = userService.getBusinessUsers(userId);
 		List<UserDTO> userDTOs = user.stream().map(element -> objectMapper.convertValue(element, UserDTO.class))
@@ -121,6 +126,7 @@ public class UserController {
 
 	@RequestMapping(value = "/user/messaging/send", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<ResponseDTO> sendMessage(@RequestBody MessageDTO messageDTO) {
 		SimpleMailMessage msg = new SimpleMailMessage();
 
@@ -135,6 +141,7 @@ public class UserController {
 
 	@RequestMapping(value = "/user/account", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<ResponseDTO> createAccount(@RequestBody AccountDTO accountDTO) {
 
 		Account newAccount = objectMapper.convertValue(accountDTO, Account.class);
@@ -146,6 +153,7 @@ public class UserController {
 
 	@RequestMapping(value = "/user/account/{userId}", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
+	@Transactional
 	public ResponseEntity<List<AccountDTO>> getAccounts(@PathVariable("userId") Long userId) {
 		List<Account> accounts = accountService.getAccounts(userId);
 		List<AccountDTO> accountDTOs = accounts.stream()
