@@ -14,8 +14,8 @@ public class CounterOfferServiceImpl implements CounterOfferService {
 	CounterOfferRepository counterOfferRepository;
 
 	@Override
-	public void createCounterOffer(CounterOffer counterOffer) {
-		counterOfferRepository.save(counterOffer);
+	public CounterOffer createCounterOffer(CounterOffer counterOffer) {
+		return counterOfferRepository.save(counterOffer);
 	}
 
 	@Override

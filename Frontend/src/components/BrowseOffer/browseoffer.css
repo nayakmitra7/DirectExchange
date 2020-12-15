@@ -78,3 +78,12 @@
   margin-left: 2%;
   margin-right: 2%;
 }
+.reputation_style:hover{
+  color: black!important;
+  text-decoration: none!important;
+cursor: pointer;
+}
+.reputation_style{
+  color: black!important;
+  text-decoration: none!important;
+}

@@ -135,6 +135,23 @@ class OfferHistory extends Component {
       <div>
         <Navbar></Navbar>
         <OfferHeader navarr={this.state.navarr}></OfferHeader>
+        {localStorage.getItem("id") == localStorage.getItem("visitId") ? (
+          <Row align="left">
+            <Col>
+              <h3 className="ml-4">
+                My Transaction History
+            </h3>
+            </Col>
+          </Row>
+        ) : (
+            <Row align="left">
+              <Col>
+                <h3 className="ml-4">
+                  Transaction History for {localStorage.getItem("visitNickname")}
+                </h3>
+              </Col>
+            </Row>
+          )}
         <Row align="center">
           <Col>
             <h3>Single Matches</h3>
@@ -207,14 +224,14 @@ class OfferHistory extends Component {
                       <Row>
                         <Col>#{offerarr.otherSingleOffers[0].id}</Col>
                         {localStorage.getItem("id") !==
-                        localStorage.getItem("visitId") ? (
-                          <Col>
-                            {offerarr.otherSingleOffers[0].nickname.slice(0, 2)}
-                            <span style={{ fontSize: "22px" }}>***</span>
-                          </Col>
-                        ) : (
-                          <Col>{offerarr.otherSingleOffers[0].nickname}</Col>
-                        )}
+                          localStorage.getItem("visitId") ? (
+                            <Col>
+                              {offerarr.otherSingleOffers[0].nickname.slice(0, 2)}
+                              <span style={{ fontSize: "22px" }}>***</span>
+                            </Col>
+                          ) : (
+                            <Col>{offerarr.otherSingleOffers[0].nickname}</Col>
+                          )}
                         <Col>
                           {offerarr.otherSingleOffers[0].destinationCountry}
                         </Col>
@@ -324,14 +341,14 @@ class OfferHistory extends Component {
                         <Row>
                           <Col>#{offer.id}</Col>
                           {localStorage.getItem("id") !==
-                          localStorage.getItem("visitId") ? (
-                            <Col>
-                              {offer.nickname.slice(0, 2)}
-                              <span style={{ fontSize: "22px" }}>***</span>
-                            </Col>
-                          ) : (
-                            <Col>{offer.nickname}</Col>
-                          )}
+                            localStorage.getItem("visitId") ? (
+                              <Col>
+                                {offer.nickname.slice(0, 2)}
+                                <span style={{ fontSize: "22px" }}>***</span>
+                              </Col>
+                            ) : (
+                              <Col>{offer.nickname}</Col>
+                            )}
                           <Col>{offer.destinationCountry}</Col>
                           <Col>
                             {offer.amountInDes} {offer.destinationCurrency}

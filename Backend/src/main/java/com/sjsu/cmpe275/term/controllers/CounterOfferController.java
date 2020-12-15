@@ -94,9 +94,10 @@ public class CounterOfferController {
 			Long otherOfferId = otherOffer != null ? otherOffer.getId() : null;
 
 			// create the counter offer record
+
 			CounterOffer counterOffer = new CounterOffer(srcUserId, srcOfferId, tgtUserId, tgtOfferId, isCounterSplit,
 					otherUserId, otherOfferId, counterAmtFromSrcToTgt, counterCurrencyFromSrcToTgt, counterStatus);
-			counterOfferService.createCounterOffer(counterOffer);
+			CounterOffer co = counterOfferService.createCounterOffer(counterOffer);
 
 			// Update the offer status of the party who proposed the counter offer
 			srcOffer.setOfferStatus(Constant.COUNTERMADE);
@@ -123,11 +124,10 @@ public class CounterOfferController {
 				new java.util.Timer().schedule(new java.util.TimerTask() {
 					@Override
 					public void run() {
-						int counterStatus = counterOffer.getCounterStatus();
-						if (counterStatus != Constant.COUNTER_ACCEPTED || counterStatus != Constant.COUNTER_REJECTED
-								|| counterStatus != Constant.COUNTER_ABORTED) {
-							counterOffer.setCounterStatus(Constant.COUNTER_TIMEDOUT);
-							counterOfferService.createCounterOffer(counterOffer);
+						int counterStatus = counterOfferService.getById(co.getId()).getCounterStatus();
+						if (counterStatus == Constant.COUNTER_MADE) {
+							co.setCounterStatus(Constant.COUNTER_TIMEDOUT);
+							counterOfferService.createCounterOffer(co);
 							srcOffer.setOfferStatus(Constant.OFFEROPEN);
 							offerService.postOffer(srcOffer);
 
@@ -400,11 +400,11 @@ public class CounterOfferController {
 									ratingService.createRating(rating3);
 								}
 								offer11.setOfferStatus(Constant.OFFEROPEN);
-			    				offerService.postOffer(offer11);
-			    				offer22.setOfferStatus(Constant.OFFEROPEN);
-			    				offerService.postOffer(offer22);
-			    				offer33.setOfferStatus(Constant.OFFEROPEN);
-			    				offerService.postOffer(offer33);
+								offerService.postOffer(offer11);
+								offer22.setOfferStatus(Constant.OFFEROPEN);
+								offerService.postOffer(offer22);
+								offer33.setOfferStatus(Constant.OFFEROPEN);
+								offerService.postOffer(offer33);
 							}
 						}
 					}, TIMETRANSACTION);

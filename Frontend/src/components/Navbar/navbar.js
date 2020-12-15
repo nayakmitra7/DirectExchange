@@ -37,7 +37,7 @@ class NavigationBar extends Component {
                   localStorage.setItem("visitId", localStorage.getItem("id"))
                 }
               >
-                My Monthly Report
+                My Report
               </NavDropdown.Item>
               <NavDropdown.Item href="/sendMessage">
                 Send a message

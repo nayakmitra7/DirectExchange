@@ -68,7 +68,7 @@ class OfferModal extends Component {
   accept = (offer2) => {
     if (
       Math.round(offer2.amountInDes) ==
-        Math.round(this.props.offer.amountInSrc) &&
+      Math.round(this.props.offer.amountInSrc) &&
       offer2.destinationCurrency == this.props.offer.sourceCurrency
     ) {
       this.setState({ spinner: true });
@@ -125,7 +125,7 @@ class OfferModal extends Component {
           if (res.status === 200) {
             toast.success(
               "Counter offer email has been sent to " +
-                this.state.selectedCounterOffer.nickname
+              this.state.selectedCounterOffer.nickname
             );
           }
         })
@@ -139,6 +139,7 @@ class OfferModal extends Component {
 
   render() {
     localStorage.setItem("visitId", this.props.offer.userId);
+    localStorage.setItem("visitNickname", this.props.offer.nickname);
 
     return (
       <div>
@@ -197,53 +198,56 @@ class OfferModal extends Component {
                 variant="dark"
                 className="list-group-style-offermodal"
               >
-                <Row className="header-bold-auto-matching ">
-                  <Col>Offer ID</Col>
-                  <Col>Username</Col>
-                  <Col>Country(des)</Col>
-                  <Col>Amount(des)</Col>
-                  <Col>Amount(src)</Col>
-                  <Col>Country(src)</Col>
-                  <Col>Exp Date</Col>
-                  <Col>Reputation</Col>
-                </Row>
-                <Row>
-                  <Col>#{this.props.offer.id}</Col>
-                  <Col>{this.props.offer.nickname}</Col>
-                  <Col>{this.props.offer.destinationCountry}</Col>
-                  <Col>
-                    {this.props.offer.amountInDes}{" "}
-                    {this.props.offer.destinationCurrency}
-                  </Col>
-                  <Col>
-                    {this.props.offer.amountInSrc}{" "}
-                    {this.props.offer.sourceCurrency}
-                  </Col>
-                  <Col>{this.props.offer.sourceCountry}</Col>
-                  <Col>{this.props.offer.expirationDate}</Col>
-                  {this.props.ratingCalculations[this.props.offer.userId] !=
-                    "N/A" && (
+                <Link className="reputation_style" to={this.state.url}>
+                  <Row className="header-bold-auto-matching ">
+                    <Col>Offer ID</Col>
+                    <Col>Username</Col>
+                    <Col>Country(des)</Col>
+                    <Col>Amount(des)</Col>
+                    <Col>Amount(src)</Col>
+                    <Col>Country(src)</Col>
+                    <Col>Exp Date</Col>
+                    <Col>Reputation</Col>
+                  </Row>
+                  <Row>
+                    <Col>#{this.props.offer.id}</Col>
+                    <Col>{this.props.offer.nickname}</Col>
+                    <Col>{this.props.offer.destinationCountry}</Col>
                     <Col>
-                      <Link to={this.state.url}>
-                        {" "}
-                        <ReactStars
-                          count={5}
-                          size={18}
-                          color2={"#ffd700"}
-                          value={parseInt(
-                            this.props.ratingCalculations[
-                              this.props.offer.userId
-                            ]
-                          )}
-                          edit={false}
-                        />
-                      </Link>
+                      {this.props.offer.amountInDes}{" "}
+                      {this.props.offer.destinationCurrency}
                     </Col>
-                  )}
+                    <Col>
+                      {this.props.offer.amountInSrc}{" "}
+                      {this.props.offer.sourceCurrency}
+                    </Col>
+                    <Col>{this.props.offer.sourceCountry}</Col>
+                    <Col>{this.props.offer.expirationDate}</Col>
 
-                  {this.props.ratingCalculations[this.props.offer.userId] ==
-                    "N/A" && <Col>N/A</Col>}
-                </Row>
+                    {this.props.ratingCalculations[this.props.offer.userId] !=
+                      "N/A" && (
+                        <Col>
+
+                          {" "}
+                          <ReactStars
+                            count={5}
+                            size={18}
+                            color2={"#ffd700"}
+                            value={parseInt(
+                              this.props.ratingCalculations[
+                              this.props.offer.userId
+                              ]
+                            )}
+                            edit={false}
+                          />
+
+                        </Col>
+                      )}
+
+                    {this.props.ratingCalculations[this.props.offer.userId] ==
+                      "N/A" && <Col>N/A</Col>}
+                  </Row>
+                </Link>
               </ListGroup.Item>
               <div className="mt-5">
                 <label style={{ fontWeight: "bold" }}>
@@ -282,8 +286,8 @@ class OfferModal extends Component {
                     Counter Offer
                   </button>
                 ) : (
-                  ""
-                )}
+                    ""
+                  )}
               </div>
             </div>
           </div>
