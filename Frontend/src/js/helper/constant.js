@@ -1,4 +1,6 @@
-export const address = "http://localhost:5000";
+// export const address = "http://localhost:5000";
+export const address = "http://52.53.245.23:5000";
+
 
 //Counter offer status
 export const COUNTEROFFER_OPEN = 0;
